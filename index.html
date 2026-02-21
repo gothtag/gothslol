@@ -4,21 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="build-id" content="2026-02-21T19:40:00Z">
 
-    <!-- SEO -->
     <title>goths.lol | Home</title>
     <meta name="description" content="links and profiles.">
     <meta name="keywords" content="goths, lol, goth community, profiles">
     <link rel="canonical" href="https://goths.lol/">
 
-    <!-- Open Graph -->
     <meta property="og:title" content="goths.lol | Home">
     <meta property="og:description" content="links and profiles.">
     <meta property="og:image" content="https://goths.lol/attached_assets/gothslol.png">
     <meta property="og:url" content="https://goths.lol/">
     <meta property="og:type" content="website">
 
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="goths.lol | Home">
     <meta name="twitter:description" content="links and profiles.">
@@ -28,22 +27,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700;900&display=swap" rel="stylesheet">
 
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="attached_assets/favicon.png?v=1">
     <link rel="apple-touch-icon" type="image/png" href="attached_assets/favicon.png?v=1">
-
-    <!-- Schema.org -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "goths.lol | Home",
-      "url": "https://goths.lol/",
-      "description": "links and profiles.",
-      "image": "https://goths.lol/attached_assets/favicon.png",
-      "logo": "https://goths.lol/attached_assets/favicon.png"
-    }
-    </script>
 
     <style>
         @font-face {
@@ -51,41 +36,60 @@
             src: url(//cdn.fontshare.com/wf/XASL35KKT35X3ACCBCOQKKABSR6AT3FX/6MU5BWUUPHCFUHM2F3E3QPQGKXCVBUOO/WZY5PMNTII6NKOB2TTIAX7QVAWMSY2DQ.woff2) format('woff2'), url(//cdn.fontshare.com/wf/XASL35KKT35X3ACCBCOQKKABSR6AT3FX/6MU5BWUUPHCFUHM2F3E3QPQGKXCVBUOO/WZY5PMNTII6NKOB2TTIAX7QVAWMSY2DQ.woff) format('woff'), url(//cdn.fontshare.com/wf/XASL35KKT35X3ACCBCOQKKABSR6AT3FX/6MU5BWUUPHCFUHM2F3E3QPQGKXCVBUOO/WZY5PMNTII6NKOB2TTIAX7QVAWMSY2DQ.ttf) format('truetype');
         }
 
+        html {
+            background-color: #000000;
+            height: 100%;
+            min-height: 100dvh;
+        }
+
         body {
             margin: 0;
             padding: 0;
-            background: url('https://r2.guns.lol/ed920f02-a70f-47a3-a7e9-726df6ca5496.gif') no-repeat center center fixed;
-            background-size: cover;
+            background: #000000;
             color: white;
             font-family: 'Roboto', sans-serif;
             min-height: 100vh;
+            min-height: 100svh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: url('attached_assets/cursor3.png') 8 8, auto;
+            position: relative;
+            overflow-x: hidden;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
-        .logo {
-            font-size: 4rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            color: black;
-            font-family: 'Roboto', sans-serif;
-            animation: glow 2s ease-in-out infinite alternate;
-            filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.4))
-                    drop-shadow(0 0 10px rgba(0, 0, 0, 0.4));
-            text-transform: lowercase;
-            letter-spacing: 2px;
-            text-align: center;
-            will-change: transform, filter;
-            transform: translate3d(0, 0, 0);
-            cursor: url('attached_assets/cursor3.png') 8 8, pointer;
+        .background-layer {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            min-height: 100svh;
+            min-height: 100dvh;
+            z-index: 0;
+            pointer-events: none;
+            background: #000000 url('https://r2.guns.lol/ed920f02-a70f-47a3-a7e9-726df6ca5496.gif') no-repeat center center;
+            background-size: cover;
+            transform: translateZ(0);
+        }
+
+        .texture {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 100dvh;
+            z-index: 1;
+            opacity: 0.18;
+            pointer-events: none;
+            background: transparent url(https://assets.guns.lol/guns_dot.png) repeat 0 0;
         }
 
         .content-frame {
             position: relative;
-            z-index: 1;
+            z-index: 2;
             border: 1px solid rgba(255,255,255,0.1);
             background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
             padding: 3rem;
@@ -98,24 +102,28 @@
             transform: translate3d(0, 0, 0);
         }
 
-        .texture {
-            position: fixed;
-            inset: 0;
-            width: 100%;`r`n            height: 100%;`r`n            min-height: 100dvh;
-            z-index: 0;
-            opacity: 0.45;
-            background: transparent url(https://assets.guns.lol/guns_dot.png) repeat 0 0;
+        .logo {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            animation: glow 2s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 10px rgba(0, 0, 0, 0.4));
+            text-transform: lowercase;
+            letter-spacing: 2px;
+            text-align: center;
+            will-change: transform, filter;
+            transform: translate3d(0, 0, 0);
+            cursor: url('attached_assets/cursor3.png') 8 8, pointer;
         }
 
         @keyframes glow {
             from {
-                filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.4))
-                        drop-shadow(0 0 10px rgba(0, 0, 0, 0.4));
+                filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 10px rgba(0, 0, 0, 0.4));
             }
             to {
-                filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.6))
-                        drop-shadow(0 0 15px rgba(0, 0, 0, 0.6))
-                        drop-shadow(0 0 20px rgba(0, 0, 0, 0.5));
+                filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 15px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.5));
             }
         }
 
@@ -142,8 +150,8 @@
 
         .avatar-container {
             position: relative;
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             margin: 0 auto 1rem;
             display: flex;
             align-items: center;
@@ -152,8 +160,8 @@
 
         .avatar-gradient-ring {
             position: absolute;
-            width: 90px;
-            height: 90px;
+            width: 110px;
+            height: 110px;
             background: conic-gradient(from 0deg, #707070 0%, #707070 35%, #1a1a1a 50%, #707070 65%, #707070 100%);
             border-radius: 50%;
             animation: rotateGradient 3s linear infinite;
@@ -166,8 +174,8 @@
         }
 
         .avatar {
-            width: 85px;
-            height: 85px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             overflow: hidden;
             position: relative;
@@ -183,7 +191,7 @@
         }
 
         .avatar:hover .avatar-overlay {
-            opacity: 0.45;
+            opacity: 1;
         }
 
         .avatar-overlay {
@@ -229,31 +237,20 @@
                 gap: 1rem;
             }
             .avatar-container {
+                width: 110px;
+                height: 110px;
+            }
+            .avatar-gradient-ring {
+                width: 95px;
+                height: 95px;
+            }
+            .avatar {
                 width: 90px;
                 height: 90px;
             }
-            .avatar-gradient-ring {
-                width: 80px;
-                height: 80px;
-            }
-            .avatar {
-                width: 75px;
-                height: 75px;
-            }
             .content-frame {
-            position: relative;
-            z-index: 1;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
-            padding: 3rem;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            filter: brightness(1.1);
-            max-width: 700px;
-            width: 100%;
-            will-change: transform;
-            transform: translate3d(0, 0, 0);
-        }
+                padding: 1.5rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -264,31 +261,21 @@
                 gap: 0.8rem;
             }
             .avatar-container {
+                width: 100px;
+                height: 100px;
+            }
+            .avatar-gradient-ring {
+                width: 90px;
+                height: 90px;
+            }
+            .avatar {
                 width: 80px;
                 height: 80px;
             }
-            .avatar-gradient-ring {
-                width: 75px;
-                height: 75px;
-            }
-            .avatar {
-                width: 70px;
-                height: 70px;
-            }
             .content-frame {
-            position: relative;
-            z-index: 1;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
-            padding: 3rem;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            filter: brightness(1.1);
-            max-width: 700px;
-            width: 100%;
-            will-change: transform;
-            transform: translate3d(0, 0, 0);
-        }
+                padding: 1rem;
+                max-width: 95vw;
+            }
             .profile-name {
                 font-size: 1rem;
             }
@@ -299,6 +286,7 @@
     </style>
 </head>
 <body>
+    <div class="background-layer"></div>
     <div class="texture"></div>
     <div class="content-frame">
         <div class="logo">goths<span>.</span>lol</div>
@@ -307,7 +295,7 @@
                 <div class="avatar-container">
                     <div class="avatar-gradient-ring"></div>
                     <div class="avatar">
-                        <img src="attached_assets/985e453463ba0af44c2e2df2bcca2fe9.jpg" alt="@ev">
+                        <img src="attached_assets/985e453463ba0af44c2e2df2bcca2fe9.jpg" alt="@ev" data-discord-slot="ev">
                         <div class="avatar-overlay">
                             <span>➜]</span>
                         </div>
@@ -320,7 +308,7 @@
                 <div class="avatar-container">
                     <div class="avatar-gradient-ring"></div>
                     <div class="avatar">
-                        <img src="attached_assets/cce169f5e720f9a062dcf82f3934cd12.jpg" alt="@ey">
+                        <img src="attached_assets/cce169f5e720f9a062dcf82f3934cd12.jpg" alt="@ey" data-discord-slot="ey">
                         <div class="avatar-overlay">
                             <span>➜]</span>
                         </div>
@@ -333,7 +321,6 @@
     </div>
 
     <script>
-        // Parallax 3D sur le cadre
         const frame = document.querySelector('.content-frame');
         if (frame) {
             document.addEventListener('mousemove', function(e) {
@@ -346,6 +333,37 @@
                 frame.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
             });
         }
+
+        async function refreshDiscordAvatars() {
+            try {
+                const response = await fetch('/.netlify/functions/discord-avatars', {
+                    cache: 'no-store'
+                });
+
+                if (!response.ok) {
+                    return;
+                }
+
+                const data = await response.json();
+                const slots = ['ev', 'ey'];
+
+                for (const slot of slots) {
+                    const avatarUrl = data?.[slot]?.avatarUrl;
+                    if (!avatarUrl) {
+                        continue;
+                    }
+
+                    const image = document.querySelector(`img[data-discord-slot="${slot}"]`);
+                    if (image) {
+                        const separator = avatarUrl.includes('?') ? '&' : '?';
+                        image.src = `${avatarUrl}${separator}_=${Date.now()}`;
+                    }
+                }
+            } catch (_err) {
+            }
+        }
+
+        refreshDiscordAvatars();
     </script>
 </body>
 </html>
