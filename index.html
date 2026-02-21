@@ -323,6 +323,19 @@
             height: 20px;
         }
 
+        .volume-icon-unmuted,
+        .volume-icon-muted {
+            display: none;
+        }
+
+        .volume-button.unmuted .volume-icon-unmuted {
+            display: block;
+        }
+
+        .volume-button.muted .volume-icon-muted {
+            display: block;
+        }
+
         .volume-slider-container {
             width: 0;
             opacity: 0;
@@ -396,6 +409,17 @@
             pointer-events: none;
         }
 
+        body:not(.started) .content-frame,
+        body:not(.started) .volume-control {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        body:not(.started) .background-layer {
+            background-image: none !important;
+            background-color: #000000;
+        }
+
         .splash-logo {
             max-width: 300px;
             max-height: 300px;
@@ -432,8 +456,8 @@
     </audio>
 
     <div class="volume-control">
-        <div class="volume-button" id="volume-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 48 48">
+        <div class="volume-button unmuted" id="volume-button">
+            <svg class="volume-icon-unmuted" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 48 48">
                 <defs>
                     <mask id="volumeIcon">
                         <g fill="none" stroke="#fff" stroke-width="4">
@@ -444,6 +468,22 @@
                     </mask>
                 </defs>
                 <path fill="currentColor" d="M0 0h48v48H0z" mask="url(#volumeIcon)"></path>
+            </svg>
+            <svg class="volume-icon-muted" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 48 48">
+                <defs>
+                    <mask id="volumeMuteIcon">
+                        <mask id="volumeMuteCross" width="13" height="13" x="30" y="18" maskUnits="userSpaceOnUse" style="mask-type: alpha;">
+                            <path d="M30 18h13v13H30z"></path>
+                        </mask>
+                        <g fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="4">
+                            <g stroke-linecap="round" mask="url(#volumeMuteCross)">
+                                <path d="m40.735 20.286l-8.486 8.485m.001-8.485l8.485 8.485"></path>
+                            </g>
+                            <path fill="#555" d="M24 6v36c-7 0-12.201-9.16-12.201-9.16H6a2 2 0 0 1-2-2V17.01a2 2 0 0 1 2-2h5.799S17 6 24 6Z"></path>
+                        </g>
+                    </mask>
+                </defs>
+                <path fill="currentColor" d="M0 0h48v48H0z" mask="url(#volumeMuteIcon)"></path>
             </svg>
         </div>
         <div class="volume-slider-container">
@@ -623,10 +663,21 @@
         if (audio && volumeSlider && volumeFill) {
             audio.volume = 1.0;
 
+            const updateVolumeIcon = function() {
+                if (audio.volume === 0 || audio.muted || audio.paused) {
+                    volumeButton.classList.remove('unmuted');
+                    volumeButton.classList.add('muted');
+                } else {
+                    volumeButton.classList.remove('muted');
+                    volumeButton.classList.add('unmuted');
+                }
+            };
+
             const updateVolume = function(value) {
                 const volume = value / 100;
                 audio.volume = volume;
                 volumeFill.style.width = value + '%';
+                updateVolumeIcon();
             };
 
             volumeSlider.addEventListener('input', function(e) {
@@ -640,11 +691,19 @@
                 } else {
                     audio.pause();
                 }
+                updateVolumeIcon();
             });
+
+            audio.addEventListener('play', updateVolumeIcon);
+            audio.addEventListener('pause', updateVolumeIcon);
+            audio.addEventListener('volumechange', updateVolumeIcon);
+
+            updateVolumeIcon();
         }
 
         if (splashScreen) {
             splashScreen.addEventListener('click', function() {
+                document.body.classList.add('started');
                 splashScreen.classList.add('hidden');
                 if (audio) {
                     audio.play().catch(function() {});
