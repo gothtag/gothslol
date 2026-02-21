@@ -422,10 +422,12 @@
             }
             .profile-role {
                 font-size: 0.8rem;
+                margin-bottom: 3rem;
             }
 
             .corner-badges {
-                left: 20px;
+                left: 50%;
+                transform: translateX(-50%);
                 bottom: 12px;
                 gap: 10px;
             }
@@ -626,7 +628,7 @@
 
         @media (max-width: 768px) {
             .splash-logo {
-                max-width: 200px;
+                font-size: clamp(2.5rem, 8vw, 4rem);
             }
         }
     </style>
