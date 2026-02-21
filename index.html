@@ -162,8 +162,8 @@
 
         .avatar-gradient-ring {
             position: absolute;
-            width: 110px;
-            height: 110px;
+            width: 106px;
+            height: 106px;
             background: conic-gradient(from 0deg, #707070 0%, #707070 35%, #1a1a1a 50%, #707070 65%, #707070 100%);
             border-radius: 50%;
             animation: rotateGradient 3s linear infinite;
@@ -191,6 +191,24 @@
             height: 100%;
             object-fit: contain;
             opacity: 1;
+        }
+        
+        .avatar-decoration {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 15;
+            display: none;
+        }
+        
+        .avatar-decoration img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .avatar:hover .avatar-overlay {
@@ -544,6 +562,9 @@
                 <div class="avatar-container">
                     <div class="avatar-gradient-ring"></div>
                     <div class="avatar">
+                        <div class="avatar-decoration" data-discord-slot="ev" style="display: none;">
+                            <img src="" alt="">
+                        </div>
                         <img src="attached_assets/985e453463ba0af44c2e2df2bcca2fe9.jpg" alt="@ev" data-discord-slot="ev" data-fallback-src="attached_assets/985e453463ba0af44c2e2df2bcca2fe9.jpg" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
                         <div class="avatar-overlay">
                             <span>➜]</span>
@@ -563,6 +584,9 @@
                 <div class="avatar-container">
                     <div class="avatar-gradient-ring"></div>
                     <div class="avatar">
+                        <div class="avatar-decoration" data-discord-slot="ey" style="display: none;">
+                            <img src="" alt="">
+                        </div>
                         <img src="attached_assets/cce169f5e720f9a062dcf82f3934cd12.jpg" alt="@ey" data-discord-slot="ey" data-fallback-src="attached_assets/cce169f5e720f9a062dcf82f3934cd12.jpg" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
                         <div class="avatar-overlay">
                             <span>➜]</span>
@@ -608,6 +632,10 @@
 
         function clanTagStorageKey(slot) {
             return `discord-clan-tag:${slot}`;
+        }
+        
+        function avatarDecorationStorageKey(slot) {
+            return `discord-avatar-decoration:${slot}`;
         }
 
         function normalizeAvatarUrl(url) {
@@ -660,6 +688,25 @@
                 }
             }
         }
+        
+        function hydrateCachedAvatarDecorations() {
+            for (const slot of AVATAR_SLOTS) {
+                const decorationEl = document.querySelector(`.avatar-decoration[data-discord-slot="${slot}"]`);
+                if (!decorationEl) {
+                    continue;
+                }
+
+                const cachedDecorationUrl = localStorage.getItem(avatarDecorationStorageKey(slot));
+                
+                if (cachedDecorationUrl) {
+                    const decorationImg = decorationEl.querySelector('img');
+                    if (decorationImg) {
+                        decorationImg.src = cachedDecorationUrl;
+                        decorationEl.style.display = 'block';
+                    }
+                }
+            }
+        }
 
         async function fetchSlotData(slot, force = false) {
             try {
@@ -677,6 +724,7 @@
         async function syncAvatarSlot(slot, force = false) {
             const image = document.querySelector(`img[data-discord-slot="${slot}"]`);
             const clanBadgeEl = document.querySelector(`.clan-badge[data-discord-slot="${slot}"]`);
+            const avatarDecorationEl = document.querySelector(`.avatar-decoration[data-discord-slot="${slot}"]`);
             if (!image) {
                 return;
             }
@@ -731,6 +779,30 @@
                     clanBadgeEl.style.display = 'none';
                 }
             }
+            
+            // Sync avatar decoration with smart update
+            if (avatarDecorationEl) {
+                const cachedDecorationUrl = localStorage.getItem(avatarDecorationStorageKey(slot));
+                const newDecorationUrl = slotData.avatarDecorationUrl || null;
+                
+                if (newDecorationUrl) {
+                    const decorationImg = avatarDecorationEl.querySelector('img');
+                    
+                    if (decorationImg) {
+                        // Only update if decoration URL changed
+                        if (cachedDecorationUrl !== newDecorationUrl) {
+                            decorationImg.src = newDecorationUrl;
+                            avatarDecorationEl.style.display = 'block';
+                        }
+                        // Always update cache
+                        localStorage.setItem(avatarDecorationStorageKey(slot), newDecorationUrl);
+                    }
+                } else {
+                    // No decoration - clear cache and hide
+                    localStorage.removeItem(avatarDecorationStorageKey(slot));
+                    avatarDecorationEl.style.display = 'none';
+                }
+            }
         }
 
         async function syncAllAvatars(force = false) {
@@ -758,6 +830,7 @@
         attachAvatarFallbacks();
         hydrateCachedAvatars();
         hydrateCachedClanBadges();
+        hydrateCachedAvatarDecorations();
         syncAllAvatars(true);
 
         setInterval(function() {

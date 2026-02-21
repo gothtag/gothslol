@@ -136,6 +136,11 @@ async function resolveSlotAvatar({ slot, refreshToken, expectedUserId, clientId,
 
   const avatarUrl = buildAvatarUrl(profile.id, profile.avatar);
   const userMismatch = expectedUserId && expectedUserId !== profile.id;
+  
+  let avatarDecorationUrl = null;
+  if (profile.avatar_decoration_data && profile.avatar_decoration_data.asset) {
+    avatarDecorationUrl = `https://cdn.discordapp.com/avatar-decoration-presets/${profile.avatar_decoration_data.asset}.png`;
+  }
 
   if (tokenData.refresh_token) {
     await setJson(`discord:${slot}:refresh_token`, {
@@ -155,6 +160,12 @@ async function resolveSlotAvatar({ slot, refreshToken, expectedUserId, clientId,
       value: clanInfo.badgeUrl,
     });
   }
+  
+  if (avatarDecorationUrl) {
+    await setJson(`discord:${slot}:avatar_decoration_url`, {
+      value: avatarDecorationUrl,
+    });
+  }
 
   return {
     slot,
@@ -162,6 +173,7 @@ async function resolveSlotAvatar({ slot, refreshToken, expectedUserId, clientId,
     username: profile.username,
     avatar: profile.avatar,
     avatarUrl,
+    avatarDecorationUrl,
     clanTag: clanInfo?.tag || null,
     clanBadgeUrl: clanInfo?.badgeUrl || null,
     userMismatch,
@@ -190,13 +202,14 @@ exports.handler = async function handler(event) {
 
   try {
     if (requestedSlot) {
-      const [storedToken, storedUserId, storedAvatarUrl, storedAvatarUpdatedAt, storedClanTag, storedClanBadgeUrl] = await Promise.all([
+      const [storedToken, storedUserId, storedAvatarUrl, storedAvatarUpdatedAt, storedClanTag, storedClanBadgeUrl, storedAvatarDecorationUrl] = await Promise.all([
         getJson(`discord:${requestedSlot}:refresh_token`),
         getJson(`discord:${requestedSlot}:user_id`),
         getJson(`discord:${requestedSlot}:avatar_url`),
         getJson(`discord:${requestedSlot}:avatar_updated_at`),
         getJson(`discord:${requestedSlot}:clan_tag`),
         getJson(`discord:${requestedSlot}:clan_badge_url`),
+        getJson(`discord:${requestedSlot}:avatar_decoration_url`),
       ]);
 
       const cachedUrl = storedAvatarUrl?.value || null;
@@ -208,6 +221,7 @@ exports.handler = async function handler(event) {
           [requestedSlot]: {
             slot: requestedSlot,
             avatarUrl: cachedUrl,
+            avatarDecorationUrl: storedAvatarDecorationUrl?.value || null,
             clanTag: storedClanTag?.value || null,
             clanBadgeUrl: storedClanBadgeUrl?.value || null,
             cached: true,
@@ -246,6 +260,14 @@ exports.handler = async function handler(event) {
               }),
               setJson(`discord:${requestedSlot}:clan_badge_url`, {
                 value: resolved.clanBadgeUrl,
+              })
+            );
+          }
+
+          if (resolved.avatarDecorationUrl) {
+            cacheUpdates.push(
+              setJson(`discord:${requestedSlot}:avatar_decoration_url`, {
+                value: resolved.avatarDecorationUrl,
               })
             );
           }
