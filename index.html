@@ -294,32 +294,34 @@
             z-index: 9999;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 0;
             background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 15px;
             backdrop-filter: blur(10px);
-            padding: 12px;
-            width: 60px;
-            height: 60px;
+            padding: 8px;
+            width: 48px;
+            height: 48px;
             overflow: hidden;
-            transition: width 0.35s ease;
+            transition: width 0.35s ease, gap 0.35s ease;
         }
 
         .volume-control:hover {
-            width: 225px;
+            gap: 12px;
+            width: 200px;
         }
 
         .volume-button {
-            min-width: 60px;
-            width: 60px;
-            height: 60px;
+            min-width: 32px;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: url('attached_assets/cursor3.png') 8 8, pointer;
             color: rgba(255, 255, 255, 0.5);
             transition: color 0.2s ease;
+            flex-shrink: 0;
         }
 
         .volume-button:hover {
@@ -327,8 +329,8 @@
         }
 
         .volume-button svg {
-            width: 29px;
-            height: 29px;
+            width: 24px;
+            height: 24px;
         }
 
         .volume-icon-unmuted,
@@ -345,11 +347,16 @@
         }
 
         .volume-slider-container {
-            width: 0;
-            opacity: 1;
-            overflow: visible;
+            width: 120px;
+            opacity: 0;
+            overflow: hidden;
             display: flex;
             align-items: center;
+            transition: opacity 0.35s ease;
+        }
+
+        .volume-control:hover .volume-slider-container {
+            opacity: 1;
         }
 
         .volume-slider-wrapper {
@@ -399,12 +406,20 @@
             left: 0;
             width: 100%;
             height: 100%;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            background-color: rgba(0, 0, 0, 0.775);
+            background: url('attached_assets/backgroundpause.png') no-repeat center center;
+            background-size: cover;
             z-index: 99999;
             transition: opacity 0.75s ease, visibility 0.75s ease;
             cursor: url('attached_assets/cursor3.png') 8 8, pointer;
+        }
+
+        .splash-screen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
         }
 
         .splash-screen.hidden {
@@ -425,6 +440,8 @@
             width: 80%;
             height: auto;
             animation: pulse 2s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
         }
 
         @keyframes pulse {
