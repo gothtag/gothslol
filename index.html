@@ -551,7 +551,7 @@
                 <div class="avatar-container">
                     <div class="avatar-gradient-ring"></div>
                     <div class="avatar-decoration" data-discord-slot="ev" style="display: none;">
-                        <img src="" alt="">
+                        <img src="" alt="" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
                     </div>
                     <div class="avatar">
                         <img src="attached_assets/985e453463ba0af44c2e2df2bcca2fe9.jpg" alt="@ev" data-discord-slot="ev" data-fallback-src="attached_assets/985e453463ba0af44c2e2df2bcca2fe9.jpg" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
@@ -573,7 +573,7 @@
                 <div class="avatar-container">
                     <div class="avatar-gradient-ring"></div>
                     <div class="avatar-decoration" data-discord-slot="ey" style="display: none;">
-                        <img src="" alt="">
+                        <img src="" alt="" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
                     </div>
                     <div class="avatar">
                         <img src="attached_assets/cce169f5e720f9a062dcf82f3934cd12.jpg" alt="@ey" data-discord-slot="ey" data-fallback-src="attached_assets/cce169f5e720f9a062dcf82f3934cd12.jpg" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
@@ -686,12 +686,14 @@
                 }
 
                 const cachedDecorationUrl = localStorage.getItem(avatarDecorationStorageKey(slot));
-                
+
                 if (cachedDecorationUrl) {
                     const decorationImg = decorationEl.querySelector('img');
                     if (decorationImg) {
+                        decorationImg.onload = function() {
+                            decorationEl.style.display = 'block';
+                        };
                         decorationImg.src = cachedDecorationUrl;
-                        decorationEl.style.display = 'block';
                     }
                 }
             }
@@ -710,7 +712,7 @@
             }
         }
 
-        async function syncAvatarSlot(slot, force = false) {
+        async function syncAvatarSlot(slot, force = false, syncDecorations = true) {
             const image = document.querySelector(`img[data-discord-slot="${slot}"]`);
             const clanBadgeEl = document.querySelector(`.clan-badge[data-discord-slot="${slot}"]`);
             const avatarDecorationEl = document.querySelector(`.avatar-decoration[data-discord-slot="${slot}"]`);
@@ -770,21 +772,29 @@
             }
             
             // Sync avatar decoration with smart update
-            if (avatarDecorationEl) {
+            if (syncDecorations && avatarDecorationEl) {
                 const cachedDecorationUrl = localStorage.getItem(avatarDecorationStorageKey(slot));
                 const newDecorationUrl = slotData.avatarDecorationUrl || null;
-                
+
                 if (newDecorationUrl) {
                     const decorationImg = avatarDecorationEl.querySelector('img');
-                    
+
                     if (decorationImg) {
-                        // Only update if decoration URL changed
-                        if (cachedDecorationUrl !== newDecorationUrl) {
+                        if (cachedDecorationUrl === newDecorationUrl) {
+                            decorationImg.onload = function() {
+                                avatarDecorationEl.style.display = 'block';
+                            };
                             decorationImg.src = newDecorationUrl;
-                            avatarDecorationEl.style.display = 'block';
+                            localStorage.setItem(avatarDecorationStorageKey(slot), newDecorationUrl);
+                        } else {
+                            const preload = new Image();
+                            preload.onload = function() {
+                                decorationImg.src = newDecorationUrl;
+                                avatarDecorationEl.style.display = 'block';
+                                localStorage.setItem(avatarDecorationStorageKey(slot), newDecorationUrl);
+                            };
+                            preload.src = newDecorationUrl;
                         }
-                        // Always update cache
-                        localStorage.setItem(avatarDecorationStorageKey(slot), newDecorationUrl);
                     }
                 } else {
                     // No decoration - clear cache and hide
@@ -794,8 +804,8 @@
             }
         }
 
-        async function syncAllAvatars(force = false) {
-            await Promise.all(AVATAR_SLOTS.map((slot) => syncAvatarSlot(slot, force)));
+        async function syncAllAvatars(force = false, syncDecorations = true) {
+            await Promise.all(AVATAR_SLOTS.map((slot) => syncAvatarSlot(slot, force, syncDecorations)));
         }
 
         function attachAvatarFallbacks() {
@@ -820,17 +830,17 @@
         hydrateCachedAvatars();
         hydrateCachedClanBadges();
         hydrateCachedAvatarDecorations();
-        syncAllAvatars(true);
+        syncAllAvatars(true, true);
 
         setInterval(function() {
             if (document.visibilityState === 'visible') {
-                syncAllAvatars(false);
+                syncAllAvatars(false, false);
             }
         }, AVATAR_POLL_INTERVAL_MS);
 
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState === 'visible') {
-                syncAllAvatars(true);
+                syncAllAvatars(true, true);
             }
         });
 
