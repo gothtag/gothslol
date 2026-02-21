@@ -13,6 +13,28 @@ function json(statusCode, body) {
   };
 }
 
+function redirect(location) {
+  return {
+    statusCode: 302,
+    headers: {
+      location,
+      "cache-control": "no-store",
+    },
+    body: "",
+  };
+}
+
+function plain(statusCode, message) {
+  return {
+    statusCode,
+    headers: {
+      "content-type": "text/plain; charset=utf-8",
+      "cache-control": "no-store",
+    },
+    body: message,
+  };
+}
+
 function buildAvatarUrl(userId, avatarHash) {
   if (!userId) {
     return null;
@@ -102,9 +124,11 @@ async function resolveSlotAvatar({ slot, refreshToken, expectedUserId, clientId,
   };
 }
 
-exports.handler = async function handler() {
+exports.handler = async function handler(event) {
   const clientId = process.env.DISCORD_CLIENT_ID;
   const clientSecret = process.env.DISCORD_CLIENT_SECRET;
+  const requestedSlot = event?.queryStringParameters?.slot;
+  const direct = event?.queryStringParameters?.direct === "1";
 
   if (!clientId || !clientSecret) {
     return json(500, {
@@ -112,7 +136,40 @@ exports.handler = async function handler() {
     });
   }
 
+  if (requestedSlot && !["ev", "ey"].includes(requestedSlot)) {
+    return json(400, {
+      error: "Invalid slot. Use ev or ey.",
+    });
+  }
+
   try {
+    if (requestedSlot) {
+      const [storedToken, storedUserId] = await Promise.all([
+        getJson(`discord:${requestedSlot}:refresh_token`),
+        getJson(`discord:${requestedSlot}:user_id`),
+      ]);
+
+      const resolved = await resolveSlotAvatar({
+        slot: requestedSlot,
+        refreshToken: storedToken?.value || process.env[`DISCORD_${requestedSlot.toUpperCase()}_REFRESH_TOKEN`],
+        expectedUserId: storedUserId?.value || process.env[`DISCORD_${requestedSlot.toUpperCase()}_USER_ID`],
+        clientId,
+        clientSecret,
+      });
+
+      if (direct) {
+        if (!resolved.avatarUrl) {
+          return plain(404, "Avatar unavailable");
+        }
+
+        return redirect(resolved.avatarUrl);
+      }
+
+      return json(200, {
+        [requestedSlot]: resolved,
+      });
+    }
+
     const [evStoredToken, eyStoredToken, evStoredUserId, eyStoredUserId] = await Promise.all([
       getJson("discord:ev:refresh_token"),
       getJson("discord:ey:refresh_token"),
