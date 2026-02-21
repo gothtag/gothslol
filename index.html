@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0a0a0a">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="build-id" content="2026-02-21T20:35:00Z">
+    <meta name="build-id" content="2026-02-21T20:50:00Z">
 
     <title>goths.lol | Home</title>
     <meta name="description" content="links and profiles.">
@@ -298,7 +298,7 @@
                 <div class="avatar-container">
                     <div class="avatar-gradient-ring"></div>
                     <div class="avatar">
-                        <img src="/.netlify/functions/discord-avatars?slot=ev&direct=1" alt="@ev" data-discord-slot="ev" data-fallback-src="attached_assets/985e453463ba0af44c2e2df2bcca2fe9.jpg" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
+                        <img src="attached_assets/985e453463ba0af44c2e2df2bcca2fe9.jpg" alt="@ev" data-discord-slot="ev" data-fallback-src="attached_assets/985e453463ba0af44c2e2df2bcca2fe9.jpg" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
                         <div class="avatar-overlay">
                             <span>➜]</span>
                         </div>
@@ -311,7 +311,7 @@
                 <div class="avatar-container">
                     <div class="avatar-gradient-ring"></div>
                     <div class="avatar">
-                        <img src="/.netlify/functions/discord-avatars?slot=ey&direct=1" alt="@ey" data-discord-slot="ey" data-fallback-src="attached_assets/cce169f5e720f9a062dcf82f3934cd12.jpg" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
+                        <img src="attached_assets/cce169f5e720f9a062dcf82f3934cd12.jpg" alt="@ey" data-discord-slot="ey" data-fallback-src="attached_assets/cce169f5e720f9a062dcf82f3934cd12.jpg" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
                         <div class="avatar-overlay">
                             <span>➜]</span>
                         </div>
@@ -337,27 +337,82 @@
             });
         }
 
-        let lastAvatarRefreshAt = 0;
+        const AVATAR_SLOTS = ['ev', 'ey'];
+        const AVATAR_POLL_INTERVAL_MS = 10000;
 
-        function refreshDirectDiscordAvatarSources(force = false) {
-            const now = Date.now();
-            if (!force && now - lastAvatarRefreshAt < 5000) {
-                return;
+        function avatarStorageKey(slot) {
+            return `discord-avatar-url:${slot}`;
+        }
+
+        function normalizeAvatarUrl(url) {
+            if (!url) {
+                return '';
             }
 
-            lastAvatarRefreshAt = now;
-            const images = document.querySelectorAll('img[data-discord-slot]');
-            const cacheKey = now;
+            return String(url).split('?')[0];
+        }
 
-            for (const image of images) {
-                const slot = image.getAttribute('data-discord-slot');
-                if (!slot) {
+        function addCacheBuster(url) {
+            const separator = url.includes('?') ? '&' : '?';
+            return `${url}${separator}v=${Date.now()}`;
+        }
+
+        function hydrateCachedAvatars() {
+            for (const slot of AVATAR_SLOTS) {
+                const image = document.querySelector(`img[data-discord-slot="${slot}"]`);
+                if (!image) {
                     continue;
                 }
 
-                const refreshMode = force ? '&force=1' : '';
-                image.src = `/.netlify/functions/discord-avatars?slot=${slot}&direct=1${refreshMode}&_=${cacheKey}`;
+                const cachedUrl = localStorage.getItem(avatarStorageKey(slot));
+                if (cachedUrl) {
+                    image.src = cachedUrl;
+                }
             }
+        }
+
+        async function fetchSlotAvatarUrl(slot, force = false) {
+            try {
+                const response = await fetch(`/.netlify/functions/discord-avatars?slot=${slot}${force ? '&force=1' : ''}`, {
+                    cache: 'no-store'
+                });
+
+                const data = await response.json();
+                return data?.[slot]?.avatarUrl || null;
+            } catch (_err) {
+                return null;
+            }
+        }
+
+        async function syncAvatarSlot(slot, force = false) {
+            const image = document.querySelector(`img[data-discord-slot="${slot}"]`);
+            if (!image) {
+                return;
+            }
+
+            const avatarUrl = await fetchSlotAvatarUrl(slot, force);
+            if (!avatarUrl) {
+                return;
+            }
+
+            const nextUrl = addCacheBuster(avatarUrl);
+            const currentBase = normalizeAvatarUrl(image.src);
+            const nextBase = normalizeAvatarUrl(nextUrl);
+            if (currentBase === nextBase) {
+                localStorage.setItem(avatarStorageKey(slot), nextUrl);
+                return;
+            }
+
+            const preload = new Image();
+            preload.onload = function() {
+                image.src = nextUrl;
+                localStorage.setItem(avatarStorageKey(slot), nextUrl);
+            };
+            preload.src = nextUrl;
+        }
+
+        async function syncAllAvatars(force = false) {
+            await Promise.all(AVATAR_SLOTS.map((slot) => syncAvatarSlot(slot, force)));
         }
 
         function attachAvatarFallbacks() {
@@ -379,15 +434,18 @@
         }
 
         attachAvatarFallbacks();
-        setTimeout(function() {
-            refreshDirectDiscordAvatarSources(true);
-        }, 700);
+        hydrateCachedAvatars();
+        syncAllAvatars(true);
+
+        setInterval(function() {
+            if (document.visibilityState === 'visible') {
+                syncAllAvatars(false);
+            }
+        }, AVATAR_POLL_INTERVAL_MS);
 
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState === 'visible') {
-                if (Date.now() - lastAvatarRefreshAt > 30000) {
-                    refreshDirectDiscordAvatarSources(true);
-                }
+                syncAllAvatars(true);
             }
         });
 

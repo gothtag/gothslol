@@ -1,7 +1,7 @@
 const DISCORD_TOKEN_URL = "https://discord.com/api/oauth2/token";
 const DISCORD_ME_URL = "https://discord.com/api/users/@me";
 const { getJson, setJson } = require("./discord-store");
-const AVATAR_CACHE_MS = 15000;
+const AVATAR_CACHE_MS = 5000;
 
 function json(statusCode, body) {
   return {
@@ -164,6 +164,17 @@ exports.handler = async function handler(event) {
       const cachedUrl = storedAvatarUrl?.value || null;
       const cachedAt = Number(storedAvatarUpdatedAt?.value || 0);
       const cacheFresh = cachedUrl && cachedAt && Date.now() - cachedAt < AVATAR_CACHE_MS;
+
+      if (!direct && !force && cacheFresh) {
+        return json(200, {
+          [requestedSlot]: {
+            slot: requestedSlot,
+            avatarUrl: cachedUrl,
+            cached: true,
+            refreshedAt: new Date(cachedAt).toISOString(),
+          },
+        });
+      }
 
       if (direct && !force && cacheFresh) {
         return redirect(cachedUrl);
