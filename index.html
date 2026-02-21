@@ -228,6 +228,11 @@
             align-items: center;
             gap: 0.3rem;
             margin-left: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
         }
 
         .clan-badge-img {
@@ -598,6 +603,14 @@
             return `discord-avatar-url:${slot}`;
         }
 
+        function clanBadgeStorageKey(slot) {
+            return `discord-clan-badge:${slot}`;
+        }
+
+        function clanTagStorageKey(slot) {
+            return `discord-clan-tag:${slot}`;
+        }
+
         function normalizeAvatarUrl(url) {
             if (!url) {
                 return '';
@@ -621,6 +634,30 @@
                 const cachedUrl = localStorage.getItem(avatarStorageKey(slot));
                 if (cachedUrl) {
                     image.src = cachedUrl;
+                }
+            }
+        }
+
+        function hydrateCachedClanBadges() {
+            for (const slot of AVATAR_SLOTS) {
+                const clanBadgeEl = document.querySelector(`.clan-badge[data-discord-slot="${slot}"]`);
+                if (!clanBadgeEl) {
+                    continue;
+                }
+
+                const cachedBadgeUrl = localStorage.getItem(clanBadgeStorageKey(slot));
+                const cachedTag = localStorage.getItem(clanTagStorageKey(slot));
+                
+                if (cachedBadgeUrl && cachedTag) {
+                    const badgeImg = clanBadgeEl.querySelector('.clan-badge-img');
+                    const badgeTag = clanBadgeEl.querySelector('.clan-tag');
+                    
+                    if (badgeImg && badgeTag) {
+                        badgeImg.src = cachedBadgeUrl;
+                        badgeImg.alt = cachedTag;
+                        badgeTag.textContent = cachedTag;
+                        clanBadgeEl.style.display = 'inline-flex';
+                    }
                 }
             }
         }
@@ -665,19 +702,35 @@
                 preload.src = nextUrl;
             }
 
-            // Sync clan badge
-            if (clanBadgeEl && slotData.clanBadgeUrl && slotData.clanTag) {
-                const badgeImg = clanBadgeEl.querySelector('.clan-badge-img');
-                const badgeTag = clanBadgeEl.querySelector('.clan-tag');
-                
-                if (badgeImg && badgeTag) {
-                    badgeImg.src = slotData.clanBadgeUrl;
-                    badgeImg.alt = slotData.clanTag;
-                    badgeTag.textContent = slotData.clanTag;
-                    clanBadgeEl.style.display = 'inline-flex';
+            // Sync clan badge with smart update
+            if (clanBadgeEl) {
+                const cachedBadgeUrl = localStorage.getItem(clanBadgeStorageKey(slot));
+                const cachedTag = localStorage.getItem(clanTagStorageKey(slot));
+                const newBadgeUrl = slotData.clanBadgeUrl || null;
+                const newTag = slotData.clanTag || null;
+
+                if (newBadgeUrl && newTag) {
+                    const badgeImg = clanBadgeEl.querySelector('.clan-badge-img');
+                    const badgeTag = clanBadgeEl.querySelector('.clan-tag');
+                    
+                    if (badgeImg && badgeTag) {
+                        // Only update if badge URL or tag changed
+                        if (cachedBadgeUrl !== newBadgeUrl || cachedTag !== newTag) {
+                            badgeImg.src = newBadgeUrl;
+                            badgeImg.alt = newTag;
+                            badgeTag.textContent = newTag;
+                            clanBadgeEl.style.display = 'inline-flex';
+                        }
+                        // Always update cache
+                        localStorage.setItem(clanBadgeStorageKey(slot), newBadgeUrl);
+                        localStorage.setItem(clanTagStorageKey(slot), newTag);
+                    }
+                } else {
+                    // No clan badge - clear cache and hide
+                    localStorage.removeItem(clanBadgeStorageKey(slot));
+                    localStorage.removeItem(clanTagStorageKey(slot));
+                    clanBadgeEl.style.display = 'none';
                 }
-            } else if (clanBadgeEl) {
-                clanBadgeEl.style.display = 'none';
             }
         }
 
@@ -705,6 +758,7 @@
 
         attachAvatarFallbacks();
         hydrateCachedAvatars();
+        hydrateCachedClanBadges();
         syncAllAvatars(true);
 
         setInterval(function() {
