@@ -116,14 +116,13 @@ exports.handler = async function handler(event) {
 <head><meta charset="utf-8"><title>Discord linked</title></head>
 <body style="font-family:Arial,sans-serif;background:#111;color:#eee;padding:24px;">
   <h1>Discord linked for slot: ${safe(slot)}</h1>
-  <p>User: <strong>${safe(me.username)}#${safe(me.discriminator)}</strong> (${safe(me.id)})</p>
-  <p>Saved automatically to Netlify Blobs for this slot.</p>
-  <p>Fallback values (only if you want to store manually in env vars):</p>
-  <pre style="white-space:pre-wrap;background:#1c1c1c;padding:12px;border-radius:8px;">DISCORD_${safe(slot).toUpperCase()}_USER_ID=${safe(me.id)}
-DISCORD_${safe(slot).toUpperCase()}_REFRESH_TOKEN=${safe(tokenData.refresh_token)}</pre>
-  <p>Avatar preview:</p>
+  <p>User: <strong>${safe(me.username)}#${safe(me.discriminator)}</strong></p>
+  <p>All set. You can close this tab.</p>
   <img src="${safe(avatarUrl)}" alt="avatar" width="96" height="96" style="border-radius:50%;" />
-  <p style="margin-top:18px;color:#bbb;">After saving env vars, redeploy your Netlify site.</p>
+  <script>
+    try { history.replaceState({}, "", "/discord-linked"); } catch (e) {}
+    setTimeout(function () { window.location.href = "/"; }, 1500);
+  </script>
 </body>
 </html>`
     );
