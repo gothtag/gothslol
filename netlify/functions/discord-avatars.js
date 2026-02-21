@@ -99,7 +99,6 @@ async function resolveSlotAvatar({ slot, refreshToken, expectedUserId, clientId,
     avatarUrl,
     userMismatch,
     refreshedAt: new Date().toISOString(),
-    nextRefreshToken: tokenData.refresh_token || null,
   };
 }
 
