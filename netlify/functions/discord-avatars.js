@@ -97,6 +97,30 @@ async function fetchDiscordProfile(accessToken) {
   return data;
 }
 
+async function fetchClanBadge(accessToken, userId) {
+  try {
+    const profile = await fetchDiscordProfile(accessToken);
+    
+    if (profile.clan) {
+      const clanBadge = profile.clan.badge;
+      const clanTag = profile.clan.tag;
+      const clanIdentityGuildId = profile.clan.identity_guild_id;
+      
+      if (clanBadge && clanIdentityGuildId) {
+        const badgeUrl = `https://cdn.discordapp.com/clan-badges/${clanIdentityGuildId}/${clanBadge}.png`;
+        return {
+          tag: clanTag || null,
+          badgeUrl,
+        };
+      }
+    }
+    
+    return null;
+  } catch (err) {
+    return null;
+  }
+}
+
 async function resolveSlotAvatar({ slot, refreshToken, expectedUserId, clientId, clientSecret }) {
   if (!refreshToken) {
     return {
@@ -108,6 +132,7 @@ async function resolveSlotAvatar({ slot, refreshToken, expectedUserId, clientId,
 
   const tokenData = await refreshAccessToken(refreshToken, clientId, clientSecret);
   const profile = await fetchDiscordProfile(tokenData.access_token);
+  const clanInfo = await fetchClanBadge(tokenData.access_token, profile.id);
 
   const avatarUrl = buildAvatarUrl(profile.id, profile.avatar);
   const userMismatch = expectedUserId && expectedUserId !== profile.id;
@@ -122,12 +147,23 @@ async function resolveSlotAvatar({ slot, refreshToken, expectedUserId, clientId,
     value: profile.id,
   });
 
+  if (clanInfo) {
+    await setJson(`discord:${slot}:clan_tag`, {
+      value: clanInfo.tag,
+    });
+    await setJson(`discord:${slot}:clan_badge_url`, {
+      value: clanInfo.badgeUrl,
+    });
+  }
+
   return {
     slot,
     userId: profile.id,
     username: profile.username,
     avatar: profile.avatar,
     avatarUrl,
+    clanTag: clanInfo?.tag || null,
+    clanBadgeUrl: clanInfo?.badgeUrl || null,
     userMismatch,
     refreshedAt: new Date().toISOString(),
   };
@@ -154,11 +190,13 @@ exports.handler = async function handler(event) {
 
   try {
     if (requestedSlot) {
-      const [storedToken, storedUserId, storedAvatarUrl, storedAvatarUpdatedAt] = await Promise.all([
+      const [storedToken, storedUserId, storedAvatarUrl, storedAvatarUpdatedAt, storedClanTag, storedClanBadgeUrl] = await Promise.all([
         getJson(`discord:${requestedSlot}:refresh_token`),
         getJson(`discord:${requestedSlot}:user_id`),
         getJson(`discord:${requestedSlot}:avatar_url`),
         getJson(`discord:${requestedSlot}:avatar_updated_at`),
+        getJson(`discord:${requestedSlot}:clan_tag`),
+        getJson(`discord:${requestedSlot}:clan_badge_url`),
       ]);
 
       const cachedUrl = storedAvatarUrl?.value || null;
@@ -170,6 +208,8 @@ exports.handler = async function handler(event) {
           [requestedSlot]: {
             slot: requestedSlot,
             avatarUrl: cachedUrl,
+            clanTag: storedClanTag?.value || null,
+            clanBadgeUrl: storedClanBadgeUrl?.value || null,
             cached: true,
             refreshedAt: new Date(cachedAt).toISOString(),
           },
@@ -190,14 +230,27 @@ exports.handler = async function handler(event) {
         });
 
         if (resolved.avatarUrl) {
-          await Promise.all([
+          const cacheUpdates = [
             setJson(`discord:${requestedSlot}:avatar_url`, {
               value: resolved.avatarUrl,
             }),
             setJson(`discord:${requestedSlot}:avatar_updated_at`, {
               value: String(Date.now()),
             }),
-          ]);
+          ];
+
+          if (resolved.clanBadgeUrl) {
+            cacheUpdates.push(
+              setJson(`discord:${requestedSlot}:clan_tag`, {
+                value: resolved.clanTag,
+              }),
+              setJson(`discord:${requestedSlot}:clan_badge_url`, {
+                value: resolved.clanBadgeUrl,
+              })
+            );
+          }
+
+          await Promise.all(cacheUpdates);
         }
 
         if (direct) {

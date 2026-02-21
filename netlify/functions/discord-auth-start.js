@@ -33,7 +33,7 @@ exports.handler = async function handler(event) {
     client_id: clientId,
     response_type: "code",
     redirect_uri: redirectUri,
-    scope: "identify",
+    scope: "identify guilds guilds.members.read",
     prompt: "consent",
     state,
   });

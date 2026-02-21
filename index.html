@@ -223,6 +223,25 @@
             margin-bottom: 0.5rem;
         }
 
+        .clan-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-left: 0.5rem;
+        }
+
+        .clan-badge-img {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+        }
+
+        .clan-tag {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
         .profile-role {
             color: rgba(255, 255, 255, 0.6);
             font-size: 0.9rem;
@@ -527,7 +546,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="profile-name">ev</div>
+                <div class="profile-name">
+                    ev
+                    <span class="clan-badge" data-discord-slot="ev" style="display: none;">
+                        <img class="clan-badge-img" src="" alt="">
+                        <span class="clan-tag"></span>
+                    </span>
+                </div>
                 <div class="profile-role">socials</div>
             </a>
             <a href="ey.html" class="profile-card">
@@ -540,7 +565,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="profile-name">ey</div>
+                <div class="profile-name">
+                    ey
+                    <span class="clan-badge" data-discord-slot="ey" style="display: none;">
+                        <img class="clan-badge-img" src="" alt="">
+                        <span class="clan-tag"></span>
+                    </span>
+                </div>
                 <div class="profile-role">socials</div>
             </a>
         </div>
@@ -594,14 +625,14 @@
             }
         }
 
-        async function fetchSlotAvatarUrl(slot, force = false) {
+        async function fetchSlotData(slot, force = false) {
             try {
                 const response = await fetch(`/.netlify/functions/discord-avatars?slot=${slot}${force ? '&force=1' : ''}`, {
                     cache: 'no-store'
                 });
 
                 const data = await response.json();
-                return data?.[slot]?.avatarUrl || null;
+                return data?.[slot] || null;
             } catch (_err) {
                 return null;
             }
@@ -609,29 +640,45 @@
 
         async function syncAvatarSlot(slot, force = false) {
             const image = document.querySelector(`img[data-discord-slot="${slot}"]`);
+            const clanBadgeEl = document.querySelector(`.clan-badge[data-discord-slot="${slot}"]`);
             if (!image) {
                 return;
             }
 
-            const avatarUrl = await fetchSlotAvatarUrl(slot, force);
-            if (!avatarUrl) {
+            const slotData = await fetchSlotData(slot, force);
+            if (!slotData || !slotData.avatarUrl) {
                 return;
             }
 
+            const avatarUrl = slotData.avatarUrl;
             const nextUrl = addCacheBuster(avatarUrl);
             const currentBase = normalizeAvatarUrl(image.src);
             const nextBase = normalizeAvatarUrl(nextUrl);
             if (currentBase === nextBase) {
                 localStorage.setItem(avatarStorageKey(slot), nextUrl);
-                return;
+            } else {
+                const preload = new Image();
+                preload.onload = function() {
+                    image.src = nextUrl;
+                    localStorage.setItem(avatarStorageKey(slot), nextUrl);
+                };
+                preload.src = nextUrl;
             }
 
-            const preload = new Image();
-            preload.onload = function() {
-                image.src = nextUrl;
-                localStorage.setItem(avatarStorageKey(slot), nextUrl);
-            };
-            preload.src = nextUrl;
+            // Sync clan badge
+            if (clanBadgeEl && slotData.clanBadgeUrl && slotData.clanTag) {
+                const badgeImg = clanBadgeEl.querySelector('.clan-badge-img');
+                const badgeTag = clanBadgeEl.querySelector('.clan-tag');
+                
+                if (badgeImg && badgeTag) {
+                    badgeImg.src = slotData.clanBadgeUrl;
+                    badgeImg.alt = slotData.clanTag;
+                    badgeTag.textContent = slotData.clanTag;
+                    clanBadgeEl.style.display = 'inline-flex';
+                }
+            } else if (clanBadgeEl) {
+                clanBadgeEl.style.display = 'none';
+            }
         }
 
         async function syncAllAvatars(force = false) {
