@@ -63,6 +63,18 @@
             padding-bottom: env(safe-area-inset-bottom);
         }
 
+        *, *::before, *::after {
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        img, a, svg {
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
         .background-layer {
             position: fixed;
             inset: 0;
@@ -75,6 +87,33 @@
             background: #000000 url('https://r2.guns.lol/ed920f02-a70f-47a3-a7e9-726df6ca5496.gif') no-repeat center center;
             background-size: cover;
             transform: translateZ(0);
+        }
+
+        .gradient-layer {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            min-height: 100svh;
+            min-height: 100dvh;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.35;
+            background: linear-gradient(120deg, #0a0a0a 0%, #141414 45%, #050505 100%);
+            background-size: 200% 200%;
+            animation: ambientShift 18s ease-in-out infinite;
+        }
+
+        @keyframes ambientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         .texture {
@@ -108,10 +147,15 @@
             font-size: 4rem;
             font-weight: 700;
             margin-bottom: 2rem;
-            color: black;
+            color: #000000;
             font-family: 'Roboto', sans-serif;
-            animation: glow 2s ease-in-out infinite alternate;
-            filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 10px rgba(0, 0, 0, 0.4));
+            background: linear-gradient(180deg, #000000 0%, #3a3a3a 50%, #000000 100%);
+            background-size: 100% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate, logoShift 10s ease-in-out infinite;
+            filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.6));
             text-transform: lowercase;
             letter-spacing: 2px;
             text-align: center;
@@ -120,12 +164,24 @@
             cursor: url('attached_assets/cursor3.png') 8 8, pointer;
         }
 
+        @keyframes logoShift {
+            0% {
+                background-position: 50% 0%;
+            }
+            50% {
+                background-position: 50% 100%;
+            }
+            100% {
+                background-position: 50% 0%;
+            }
+        }
+
         @keyframes glow {
             from {
-                filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 10px rgba(0, 0, 0, 0.4));
+                filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.45));
             }
             to {
-                filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 15px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.5));
+                filter: drop-shadow(0 0 9px rgba(0, 0, 0, 0.65));
             }
         }
 
@@ -244,6 +300,18 @@
             margin-bottom: 0.5rem;
         }
 
+        .profile-name,
+        .clan-tag {
+            -webkit-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+
+        ::selection {
+            background: #757575;
+            color: #000000;
+        }
+
         .clan-badge {
             display: inline-flex;
             align-items: center;
@@ -273,6 +341,46 @@
             font-weight: 300;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            margin-bottom: 1.5rem;
+        }
+
+        .corner-badges {
+            position: absolute;
+            left: 32px;
+            bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            pointer-events: none;
+        }
+
+        .corner-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #757575;
+            font-family: 'Chillax', sans-serif !important;
+            font-size: 0.95rem;
+            font-weight: 450;
+            text-decoration: none;
+            pointer-events: auto;
+        }
+
+        .corner-link svg,
+        .corner-link img {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+            filter: grayscale(1) brightness(0.55);
+            opacity: 0.9;
+        }
+
+        .corner-divider {
+            width: 2px;
+            height: 15px;
+            border-radius: 100px;
+            background: rgba(117, 117, 117, 0.14);
+            margin: 0 2px;
         }
 
         @media (max-width: 768px) {
@@ -314,6 +422,16 @@
             }
             .profile-role {
                 font-size: 0.8rem;
+            }
+
+            .corner-badges {
+                left: 20px;
+                bottom: 12px;
+                gap: 10px;
+            }
+
+            .corner-link {
+                font-size: 0.85rem;
             }
         }
 
@@ -467,13 +585,32 @@
         }
 
         .splash-logo {
-            max-width: 300px;
-            max-height: 300px;
-            width: 80%;
-            height: auto;
-            animation: pulse 2s ease-in-out infinite;
+            font-family: 'Roboto', sans-serif;
+            font-size: clamp(4rem, 12vw, 8rem);
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: lowercase;
+            margin: 0;
             position: relative;
             z-index: 1;
+            background: linear-gradient(180deg, #000000 0%, #5a5a5a 50%, #000000 100%);
+            background-size: 100% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 2s ease-in-out infinite, splashShift 8s ease-in-out infinite;
+        }
+
+        @keyframes splashShift {
+            0% {
+                background-position: 50% 0%;
+            }
+            50% {
+                background-position: 50% 100%;
+            }
+            100% {
+                background-position: 50% 0%;
+            }
         }
 
         @keyframes pulse {
@@ -496,7 +633,7 @@
 </head>
 <body>
     <div class="splash-screen" id="splash-screen">
-        <img src="attached_assets/gothslogo.png" alt="goths.lol" class="splash-logo">
+        <div class="splash-logo">goths<span>.</span>lol</div>
     </div>
 
     <audio id="background-music" loop>
@@ -542,6 +679,7 @@
         </div>
     </div>
 
+    <div class="gradient-layer"></div>
     <div class="background-layer"></div>
     <div class="texture"></div>
     <div class="content-frame">
@@ -592,10 +730,24 @@
                 <div class="profile-role">socials</div>
             </a>
         </div>
+        <div class="corner-badges">
+            <a class="corner-link" href="https://discord.gg/gothtag" target="_blank" rel="noopener noreferrer">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="4 2 16 20" aria-hidden="true">
+                    <path fill="currentColor" d="M12 12q.825 0 1.413-.587T14 10t-.587-1.412T12 8t-1.412.588T10 10t.588 1.413T12 12m0 10q-4.025-3.425-6.012-6.362T4 10.2q0-3.75 2.413-5.975T12 2t5.588 2.225T20 10.2q0 2.5-1.987 5.438T12 22" />
+                </svg>
+                <span class="location-text">GOTHTAG</span>
+            </a>
+            <div class="corner-divider" aria-hidden="true"></div>
+            <a class="corner-link" href="https://gothtag.com" target="_blank" rel="noopener noreferrer">
+                <img class="no-context" src="attached_assets/tag.png" alt="GOTHTAG" draggable="false">
+                <span class="location-text">WEBSITE</span>
+            </a>
+        </div>
     </div>
 
     <script>
         const frame = document.querySelector('.content-frame');
+        const noContextElements = document.querySelectorAll('.no-context');
         if (frame) {
             const resetFrameTransform = function() {
                 frame.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
@@ -631,6 +783,12 @@
 
                 document.addEventListener('mouseleave', resetFrameTransform);
             }
+        }
+
+        for (const element of noContextElements) {
+            element.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
         }
 
         const AVATAR_SLOTS = ['ev', 'ey'];
