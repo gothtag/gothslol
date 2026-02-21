@@ -95,7 +95,7 @@
             border: 1px solid rgba(255,255,255,0.1);
             background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
             padding: 3rem;
-            border-radius: 20px;
+            border-radius: 65px;
             backdrop-filter: blur(10px);
             filter: brightness(1.1);
             max-width: 700px;
@@ -597,15 +597,40 @@
     <script>
         const frame = document.querySelector('.content-frame');
         if (frame) {
-            document.addEventListener('mousemove', function(e) {
-                const x = (e.clientX / window.innerWidth - 0.5) * 20;
-                const y = (e.clientY / window.innerHeight - 0.5) * 20;
-                frame.style.transform = `perspective(1000px) rotateY(${x}deg) rotateX(${-y}deg) scale(1.02)`;
-            });
-
-            document.addEventListener('mouseleave', function() {
+            const resetFrameTransform = function() {
                 frame.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
-            });
+            };
+
+            const applyFrameTransform = function(clientX, clientY) {
+                const x = (clientX / window.innerWidth - 0.5) * 20;
+                const y = (clientY / window.innerHeight - 0.5) * 20;
+                frame.style.transform = `perspective(1000px) rotateY(${x}deg) rotateX(${-y}deg) scale(1.02)`;
+            };
+
+            if (window.matchMedia('(pointer: coarse)').matches) {
+                frame.addEventListener('touchstart', function(e) {
+                    const touch = e.touches[0];
+                    if (touch) {
+                        applyFrameTransform(touch.clientX, touch.clientY);
+                    }
+                }, { passive: true });
+
+                frame.addEventListener('touchmove', function(e) {
+                    const touch = e.touches[0];
+                    if (touch) {
+                        applyFrameTransform(touch.clientX, touch.clientY);
+                    }
+                }, { passive: true });
+
+                frame.addEventListener('touchend', resetFrameTransform);
+                frame.addEventListener('touchcancel', resetFrameTransform);
+            } else {
+                document.addEventListener('mousemove', function(e) {
+                    applyFrameTransform(e.clientX, e.clientY);
+                });
+
+                document.addEventListener('mouseleave', resetFrameTransform);
+            }
         }
 
         const AVATAR_SLOTS = ['ev', 'ey'];
