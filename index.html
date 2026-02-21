@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0a0a0a">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="build-id" content="2026-02-21T20:05:00Z">
+    <meta name="build-id" content="2026-02-21T20:20:00Z">
 
     <title>goths.lol | Home</title>
     <meta name="description" content="links and profiles.">
@@ -298,7 +298,7 @@
                 <div class="avatar-container">
                     <div class="avatar-gradient-ring"></div>
                     <div class="avatar">
-                        <img src="/.netlify/functions/discord-avatars?slot=ev&direct=1" alt="@ev" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
+                        <img src="/.netlify/functions/discord-avatars?slot=ev&direct=1" alt="@ev" data-discord-slot="ev" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
                         <div class="avatar-overlay">
                             <span>➜]</span>
                         </div>
@@ -311,7 +311,7 @@
                 <div class="avatar-container">
                     <div class="avatar-gradient-ring"></div>
                     <div class="avatar">
-                        <img src="attached_assets/cce169f5e720f9a062dcf82f3934cd12.jpg" alt="@ey" loading="eager" decoding="sync" fetchpriority="high">
+                        <img src="/.netlify/functions/discord-avatars?slot=ey&direct=1" alt="@ey" data-discord-slot="ey" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
                         <div class="avatar-overlay">
                             <span>➜]</span>
                         </div>
@@ -336,6 +336,27 @@
                 frame.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
             });
         }
+
+        function refreshDirectDiscordAvatarSources() {
+            const images = document.querySelectorAll('img[data-discord-slot]');
+            const cacheKey = Date.now();
+
+            for (const image of images) {
+                const slot = image.getAttribute('data-discord-slot');
+                if (!slot) {
+                    continue;
+                }
+
+                image.src = `/.netlify/functions/discord-avatars?slot=${slot}&direct=1&_=${cacheKey}`;
+            }
+        }
+
+        refreshDirectDiscordAvatarSources();
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                refreshDirectDiscordAvatarSources();
+            }
+        });
 
     </script>
 </body>
