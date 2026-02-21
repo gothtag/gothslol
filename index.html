@@ -151,9 +151,12 @@
         }
 
         .avatar-container {
+            --avatar-size: 100px;
+            --decoration-size: 140px;
+            --ring-size: 106px;
             position: relative;
-            width: 140px;
-            height: 140px;
+            width: var(--decoration-size);
+            height: var(--decoration-size);
             margin: 0 auto 1rem;
             display: flex;
             align-items: center;
@@ -162,8 +165,8 @@
 
         .avatar-gradient-ring {
             position: absolute;
-            width: 106px;
-            height: 106px;
+            width: var(--ring-size);
+            height: var(--ring-size);
             background: conic-gradient(from 0deg, #707070 0%, #707070 35%, #1a1a1a 50%, #707070 65%, #707070 100%);
             border-radius: 50%;
             animation: rotateGradient 3s linear infinite;
@@ -176,8 +179,8 @@
         }
 
         .avatar {
-            width: 100px;
-            height: 100px;
+            width: var(--avatar-size);
+            height: var(--avatar-size);
             border-radius: 50%;
             overflow: hidden;
             position: relative;
@@ -198,10 +201,10 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 100%;
-            height: 100%;
+            width: var(--decoration-size);
+            height: var(--decoration-size);
             pointer-events: none;
-            z-index: 15;
+            z-index: 20;
             display: none;
         }
         
@@ -281,16 +284,9 @@
                 gap: 1rem;
             }
             .avatar-container {
-                width: 110px;
-                height: 110px;
-            }
-            .avatar-gradient-ring {
-                width: 95px;
-                height: 95px;
-            }
-            .avatar {
-                width: 90px;
-                height: 90px;
+                --avatar-size: 90px;
+                --decoration-size: 126px;
+                --ring-size: 96px;
             }
             .content-frame {
                 padding: 1.5rem;
@@ -305,16 +301,9 @@
                 gap: 0.8rem;
             }
             .avatar-container {
-                width: 100px;
-                height: 100px;
-            }
-            .avatar-gradient-ring {
-                width: 90px;
-                height: 90px;
-            }
-            .avatar {
-                width: 80px;
-                height: 80px;
+                --avatar-size: 80px;
+                --decoration-size: 112px;
+                --ring-size: 86px;
             }
             .content-frame {
                 padding: 1rem;
@@ -561,10 +550,10 @@
             <a href="ev.html" class="profile-card">
                 <div class="avatar-container">
                     <div class="avatar-gradient-ring"></div>
+                    <div class="avatar-decoration" data-discord-slot="ev" style="display: none;">
+                        <img src="" alt="">
+                    </div>
                     <div class="avatar">
-                        <div class="avatar-decoration" data-discord-slot="ev" style="display: none;">
-                            <img src="" alt="">
-                        </div>
                         <img src="attached_assets/985e453463ba0af44c2e2df2bcca2fe9.jpg" alt="@ev" data-discord-slot="ev" data-fallback-src="attached_assets/985e453463ba0af44c2e2df2bcca2fe9.jpg" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
                         <div class="avatar-overlay">
                             <span>➜]</span>
@@ -583,10 +572,10 @@
             <a href="ey.html" class="profile-card">
                 <div class="avatar-container">
                     <div class="avatar-gradient-ring"></div>
+                    <div class="avatar-decoration" data-discord-slot="ey" style="display: none;">
+                        <img src="" alt="">
+                    </div>
                     <div class="avatar">
-                        <div class="avatar-decoration" data-discord-slot="ey" style="display: none;">
-                            <img src="" alt="">
-                        </div>
                         <img src="attached_assets/cce169f5e720f9a062dcf82f3934cd12.jpg" alt="@ey" data-discord-slot="ey" data-fallback-src="attached_assets/cce169f5e720f9a062dcf82f3934cd12.jpg" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
                         <div class="avatar-overlay">
                             <span>➜]</span>
