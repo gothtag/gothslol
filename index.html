@@ -188,6 +188,12 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
+            opacity: 1;
+            transition: opacity 0.2s ease;
+        }
+
+        .avatar img.is-swapping {
+            opacity: 0;
         }
 
         .avatar:hover .avatar-overlay {
@@ -334,6 +340,53 @@
             });
         }
 
+        function setAvatarSource(image, nextUrl, options = {}) {
+            const { smooth = true } = options;
+
+            if (!image || !nextUrl) {
+                return;
+            }
+
+            const currentSrc = image.getAttribute('src') || '';
+            const normalizedCurrent = currentSrc.split('?')[0];
+            const normalizedNext = nextUrl.split('?')[0];
+
+            if (normalizedCurrent === normalizedNext) {
+                return;
+            }
+
+            const preload = new Image();
+            preload.onload = () => {
+                if (smooth) {
+                    image.classList.add('is-swapping');
+                    setTimeout(() => {
+                        image.src = nextUrl;
+                        requestAnimationFrame(() => {
+                            image.classList.remove('is-swapping');
+                        });
+                    }, 100);
+                } else {
+                    image.src = nextUrl;
+                }
+            };
+            preload.src = nextUrl;
+        }
+
+        function hydrateCachedAvatars() {
+            const slots = ['ev', 'ey'];
+            for (const slot of slots) {
+                const image = document.querySelector(`img[data-discord-slot="${slot}"]`);
+                if (!image) {
+                    continue;
+                }
+
+                const cached = localStorage.getItem(`discord-avatar-${slot}`);
+                if (cached) {
+                    setAvatarSource(image, cached, { smooth: false });
+                }
+            }
+        }
+
         async function refreshDiscordAvatars() {
             try {
                 const response = await fetch('/.netlify/functions/discord-avatars', {
@@ -356,13 +409,16 @@
                     const image = document.querySelector(`img[data-discord-slot="${slot}"]`);
                     if (image) {
                         const separator = avatarUrl.includes('?') ? '&' : '?';
-                        image.src = `${avatarUrl}${separator}_=${Date.now()}`;
+                        const finalUrl = `${avatarUrl}${separator}_=${Date.now()}`;
+                        setAvatarSource(image, finalUrl, { smooth: true });
+                        localStorage.setItem(`discord-avatar-${slot}`, finalUrl);
                     }
                 }
             } catch (_err) {
             }
         }
 
+        hydrateCachedAvatars();
         refreshDiscordAvatars();
     </script>
 </body>
