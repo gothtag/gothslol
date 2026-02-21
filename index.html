@@ -806,6 +806,9 @@
                         localStorage.setItem(clanBadgeStorageKey(slot), newBadgeUrl);
                         localStorage.setItem(clanTagStorageKey(slot), newTag);
                     }
+                } else if (slotData.cached && cachedBadgeUrl && cachedTag) {
+                    // Keep cached badge on cached responses to avoid flicker
+                    clanBadgeEl.style.display = 'inline-flex';
                 } else {
                     // No clan badge - clear cache and hide
                     localStorage.removeItem(clanBadgeStorageKey(slot));
@@ -841,6 +844,9 @@
                             preload.src = newDecorationUrl;
                         }
                     }
+                } else if (slotData.cached && cachedDecorationUrl) {
+                    // Keep cached decoration on cached responses to avoid flicker
+                    avatarDecorationEl.style.display = 'block';
                 } else {
                     // No decoration - clear cache and hide
                     localStorage.removeItem(avatarDecorationStorageKey(slot));
