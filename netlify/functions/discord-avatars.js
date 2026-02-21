@@ -1,6 +1,7 @@
 const DISCORD_TOKEN_URL = "https://discord.com/api/oauth2/token";
 const DISCORD_ME_URL = "https://discord.com/api/users/@me";
 const { getJson, setJson } = require("./discord-store");
+const AVATAR_CACHE_MS = 15000;
 
 function json(statusCode, body) {
   return {
@@ -33,6 +34,14 @@ function plain(statusCode, message) {
     },
     body: message,
   };
+}
+
+function defaultAvatarUrl(userId) {
+  if (!userId) {
+    return "https://cdn.discordapp.com/embed/avatars/0.png";
+  }
+
+  return buildAvatarUrl(userId, null);
 }
 
 function buildAvatarUrl(userId, avatarHash) {
@@ -129,6 +138,7 @@ exports.handler = async function handler(event) {
   const clientSecret = process.env.DISCORD_CLIENT_SECRET;
   const requestedSlot = event?.queryStringParameters?.slot;
   const direct = event?.queryStringParameters?.direct === "1";
+  const force = event?.queryStringParameters?.force === "1";
 
   if (!clientId || !clientSecret) {
     return json(500, {
@@ -144,30 +154,61 @@ exports.handler = async function handler(event) {
 
   try {
     if (requestedSlot) {
-      const [storedToken, storedUserId] = await Promise.all([
+      const [storedToken, storedUserId, storedAvatarUrl, storedAvatarUpdatedAt] = await Promise.all([
         getJson(`discord:${requestedSlot}:refresh_token`),
         getJson(`discord:${requestedSlot}:user_id`),
+        getJson(`discord:${requestedSlot}:avatar_url`),
+        getJson(`discord:${requestedSlot}:avatar_updated_at`),
       ]);
 
-      const resolved = await resolveSlotAvatar({
-        slot: requestedSlot,
-        refreshToken: storedToken?.value || process.env[`DISCORD_${requestedSlot.toUpperCase()}_REFRESH_TOKEN`],
-        expectedUserId: storedUserId?.value || process.env[`DISCORD_${requestedSlot.toUpperCase()}_USER_ID`],
-        clientId,
-        clientSecret,
-      });
+      const cachedUrl = storedAvatarUrl?.value || null;
+      const cachedAt = Number(storedAvatarUpdatedAt?.value || 0);
+      const cacheFresh = cachedUrl && cachedAt && Date.now() - cachedAt < AVATAR_CACHE_MS;
 
-      if (direct) {
-        if (!resolved.avatarUrl) {
-          return plain(404, "Avatar unavailable");
-        }
-
-        return redirect(resolved.avatarUrl);
+      if (direct && !force && cacheFresh) {
+        return redirect(cachedUrl);
       }
 
-      return json(200, {
-        [requestedSlot]: resolved,
-      });
+      try {
+        const resolved = await resolveSlotAvatar({
+          slot: requestedSlot,
+          refreshToken: storedToken?.value || process.env[`DISCORD_${requestedSlot.toUpperCase()}_REFRESH_TOKEN`],
+          expectedUserId: storedUserId?.value || process.env[`DISCORD_${requestedSlot.toUpperCase()}_USER_ID`],
+          clientId,
+          clientSecret,
+        });
+
+        if (resolved.avatarUrl) {
+          await Promise.all([
+            setJson(`discord:${requestedSlot}:avatar_url`, {
+              value: resolved.avatarUrl,
+            }),
+            setJson(`discord:${requestedSlot}:avatar_updated_at`, {
+              value: String(Date.now()),
+            }),
+          ]);
+        }
+
+        if (direct) {
+          return redirect(resolved.avatarUrl || cachedUrl || defaultAvatarUrl(storedUserId?.value));
+        }
+
+        return json(200, {
+          [requestedSlot]: resolved,
+        });
+      } catch (err) {
+        if (direct) {
+          return redirect(cachedUrl || defaultAvatarUrl(storedUserId?.value));
+        }
+
+        return json(500, {
+          error: String(err.message || err),
+          [requestedSlot]: {
+            slot: requestedSlot,
+            avatarUrl: cachedUrl || null,
+          },
+        });
+      }
     }
 
     const [evStoredToken, eyStoredToken, evStoredUserId, eyStoredUserId] = await Promise.all([
