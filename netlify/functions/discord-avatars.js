@@ -1,5 +1,6 @@
 const DISCORD_TOKEN_URL = "https://discord.com/api/oauth2/token";
 const DISCORD_ME_URL = "https://discord.com/api/users/@me";
+const { getJson, setJson } = require("./discord-store");
 
 function json(statusCode, body) {
   return {
@@ -80,6 +81,16 @@ async function resolveSlotAvatar({ slot, refreshToken, expectedUserId, clientId,
   const avatarUrl = buildAvatarUrl(profile.id, profile.avatar);
   const userMismatch = expectedUserId && expectedUserId !== profile.id;
 
+  if (tokenData.refresh_token) {
+    await setJson(`discord:${slot}:refresh_token`, {
+      value: tokenData.refresh_token,
+    });
+  }
+
+  await setJson(`discord:${slot}:user_id`, {
+    value: profile.id,
+  });
+
   return {
     slot,
     userId: profile.id,
@@ -103,18 +114,25 @@ exports.handler = async function handler() {
   }
 
   try {
+    const [evStoredToken, eyStoredToken, evStoredUserId, eyStoredUserId] = await Promise.all([
+      getJson("discord:ev:refresh_token"),
+      getJson("discord:ey:refresh_token"),
+      getJson("discord:ev:user_id"),
+      getJson("discord:ey:user_id"),
+    ]);
+
     const [ev, ey] = await Promise.all([
       resolveSlotAvatar({
         slot: "ev",
-        refreshToken: process.env.DISCORD_EV_REFRESH_TOKEN,
-        expectedUserId: process.env.DISCORD_EV_USER_ID,
+        refreshToken: evStoredToken?.value || process.env.DISCORD_EV_REFRESH_TOKEN,
+        expectedUserId: evStoredUserId?.value || process.env.DISCORD_EV_USER_ID,
         clientId,
         clientSecret,
       }),
       resolveSlotAvatar({
         slot: "ey",
-        refreshToken: process.env.DISCORD_EY_REFRESH_TOKEN,
-        expectedUserId: process.env.DISCORD_EY_USER_ID,
+        refreshToken: eyStoredToken?.value || process.env.DISCORD_EY_REFRESH_TOKEN,
+        expectedUserId: eyStoredUserId?.value || process.env.DISCORD_EY_USER_ID,
         clientId,
         clientSecret,
       }),

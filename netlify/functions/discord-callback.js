@@ -1,5 +1,6 @@
 const DISCORD_TOKEN_URL = "https://discord.com/api/oauth2/token";
 const DISCORD_ME_URL = "https://discord.com/api/users/@me";
+const { setJson } = require("./discord-store");
 
 function html(statusCode, markup) {
   return {
@@ -92,6 +93,15 @@ exports.handler = async function handler(event) {
     const me = await fetchMe(tokenData.access_token);
     const avatarUrl = toAvatarUrl(me.id, me.avatar);
 
+    if (slot === "ev" || slot === "ey") {
+      await setJson(`discord:${slot}:refresh_token`, {
+        value: tokenData.refresh_token,
+      });
+      await setJson(`discord:${slot}:user_id`, {
+        value: me.id,
+      });
+    }
+
     const safe = (value) => String(value || "").replace(/[&<>\"]/g, (ch) => ({
       "&": "&amp;",
       "<": "&lt;",
@@ -107,7 +117,8 @@ exports.handler = async function handler(event) {
 <body style="font-family:Arial,sans-serif;background:#111;color:#eee;padding:24px;">
   <h1>Discord linked for slot: ${safe(slot)}</h1>
   <p>User: <strong>${safe(me.username)}#${safe(me.discriminator)}</strong> (${safe(me.id)})</p>
-  <p>Copy these values into Netlify environment variables:</p>
+  <p>Saved automatically to Netlify Blobs for this slot.</p>
+  <p>Fallback values (only if you want to store manually in env vars):</p>
   <pre style="white-space:pre-wrap;background:#1c1c1c;padding:12px;border-radius:8px;">DISCORD_${safe(slot).toUpperCase()}_USER_ID=${safe(me.id)}
 DISCORD_${safe(slot).toUpperCase()}_REFRESH_TOKEN=${safe(tokenData.refresh_token)}</pre>
   <p>Avatar preview:</p>
