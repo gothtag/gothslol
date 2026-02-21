@@ -371,10 +371,63 @@
                 left: 16px;
             }
         }
+
+        .splash-screen {
+            user-select: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            background-color: rgba(0, 0, 0, 0.775);
+            z-index: 99999;
+            transition: opacity 0.75s ease, visibility 0.75s ease;
+            cursor: url('attached_assets/cursor3.png') 8 8, pointer;
+        }
+
+        .splash-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .splash-logo {
+            max-width: 300px;
+            max-height: 300px;
+            width: 80%;
+            height: auto;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .splash-logo {
+                max-width: 200px;
+            }
+        }
     </style>
 </head>
 <body>
-    <audio id="background-music" loop autoplay>
+    <div class="splash-screen" id="splash-screen">
+        <img src="attached_assets/gothslogo.png" alt="goths.lol" class="splash-logo">
+    </div>
+
+    <audio id="background-music" loop>
         <source src="attached_assets/deadprettygirlee.mp3" type="audio/mpeg">
     </audio>
 
@@ -565,6 +618,7 @@
         const volumeSlider = document.getElementById('volume-slider');
         const volumeFill = document.getElementById('volume-fill');
         const volumeButton = document.getElementById('volume-button');
+        const splashScreen = document.getElementById('splash-screen');
 
         if (audio && volumeSlider && volumeFill) {
             audio.volume = 1.0;
@@ -587,12 +641,15 @@
                     audio.pause();
                 }
             });
+        }
 
-            document.addEventListener('click', function() {
-                if (audio.paused) {
+        if (splashScreen) {
+            splashScreen.addEventListener('click', function() {
+                splashScreen.classList.add('hidden');
+                if (audio) {
                     audio.play().catch(function() {});
                 }
-            }, { once: true });
+            });
         }
 
     </script>
