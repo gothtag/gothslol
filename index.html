@@ -627,6 +627,48 @@
             return `discord-avatar-decoration:${slot}`;
         }
 
+        const DECORATION_CACHE_KEY = 'discord-decoration-cache';
+
+        function getDecorationCacheList() {
+            try {
+                const raw = localStorage.getItem(DECORATION_CACHE_KEY);
+                const parsed = raw ? JSON.parse(raw) : [];
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (_err) {
+                return [];
+            }
+        }
+
+        function setDecorationCacheList(list) {
+            localStorage.setItem(DECORATION_CACHE_KEY, JSON.stringify(list));
+        }
+
+        function addDecorationToCache(url) {
+            if (!url) {
+                return;
+            }
+
+            const list = getDecorationCacheList();
+            if (list.includes(url)) {
+                return;
+            }
+
+            list.unshift(url);
+            if (list.length > 20) {
+                list.length = 20;
+            }
+
+            setDecorationCacheList(list);
+        }
+
+        function prefetchDecorationUrls() {
+            const list = getDecorationCacheList();
+            for (const url of list) {
+                const img = new Image();
+                img.src = url;
+            }
+        }
+
         function normalizeAvatarUrl(url) {
             if (!url) {
                 return '';
@@ -695,6 +737,7 @@
                         };
                         decorationImg.src = cachedDecorationUrl;
                     }
+                    addDecorationToCache(cachedDecorationUrl);
                 }
             }
         }
@@ -786,12 +829,14 @@
                             };
                             decorationImg.src = newDecorationUrl;
                             localStorage.setItem(avatarDecorationStorageKey(slot), newDecorationUrl);
+                            addDecorationToCache(newDecorationUrl);
                         } else {
                             const preload = new Image();
                             preload.onload = function() {
                                 decorationImg.src = newDecorationUrl;
                                 avatarDecorationEl.style.display = 'block';
                                 localStorage.setItem(avatarDecorationStorageKey(slot), newDecorationUrl);
+                                addDecorationToCache(newDecorationUrl);
                             };
                             preload.src = newDecorationUrl;
                         }
@@ -830,6 +875,7 @@
         hydrateCachedAvatars();
         hydrateCachedClanBadges();
         hydrateCachedAvatarDecorations();
+        prefetchDecorationUrls();
         syncAllAvatars(true, true);
 
         setInterval(function() {
