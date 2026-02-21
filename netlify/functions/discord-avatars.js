@@ -123,6 +123,7 @@ async function fetchClanBadge(accessToken, userId) {
 
 async function resolveSlotAvatar({ slot, refreshToken, expectedUserId, clientId, clientSecret }) {
   if (!refreshToken) {
+    console.error(`[${slot}] Missing refresh token`);
     return {
       slot,
       error: `Missing DISCORD_${slot.toUpperCase()}_REFRESH_TOKEN`,
@@ -130,55 +131,75 @@ async function resolveSlotAvatar({ slot, refreshToken, expectedUserId, clientId,
     };
   }
 
-  const tokenData = await refreshAccessToken(refreshToken, clientId, clientSecret);
-  const profile = await fetchDiscordProfile(tokenData.access_token);
-  const clanInfo = await fetchClanBadge(tokenData.access_token, profile.id);
+  try {
+    console.log(`[${slot}] Refreshing access token...`);
+    const tokenData = await refreshAccessToken(refreshToken, clientId, clientSecret);
+    
+    console.log(`[${slot}] Fetching Discord profile...`);
+    const profile = await fetchDiscordProfile(tokenData.access_token);
+    console.log(`[${slot}] Profile fetched for user ${profile.id} (${profile.username})`);
+    
+    console.log(`[${slot}] Fetching clan badge...`);
+    const clanInfo = await fetchClanBadge(tokenData.access_token, profile.id);
+    if (clanInfo) {
+      console.log(`[${slot}] Clan badge found: ${clanInfo.tag}`);
+    } else {
+      console.log(`[${slot}] No clan badge found`);
+    }
 
-  const avatarUrl = buildAvatarUrl(profile.id, profile.avatar);
-  const userMismatch = expectedUserId && expectedUserId !== profile.id;
-  
-  let avatarDecorationUrl = null;
-  if (profile.avatar_decoration_data && profile.avatar_decoration_data.asset) {
-    avatarDecorationUrl = `https://cdn.discordapp.com/avatar-decoration-presets/${profile.avatar_decoration_data.asset}.png`;
-  }
+    const avatarUrl = buildAvatarUrl(profile.id, profile.avatar);
+    const userMismatch = expectedUserId && expectedUserId !== profile.id;
+    
+    let avatarDecorationUrl = null;
+    if (profile.avatar_decoration_data && profile.avatar_decoration_data.asset) {
+      avatarDecorationUrl = `https://cdn.discordapp.com/avatar-decoration-presets/${profile.avatar_decoration_data.asset}.png`;
+      console.log(`[${slot}] Avatar decoration found: ${profile.avatar_decoration_data.asset}`);
+    } else {
+      console.log(`[${slot}] No avatar decoration found`);
+    }
 
-  if (tokenData.refresh_token) {
-    await setJson(`discord:${slot}:refresh_token`, {
-      value: tokenData.refresh_token,
+    if (tokenData.refresh_token) {
+      await setJson(`discord:${slot}:refresh_token`, {
+        value: tokenData.refresh_token,
+      });
+    }
+
+    await setJson(`discord:${slot}:user_id`, {
+      value: profile.id,
     });
-  }
 
-  await setJson(`discord:${slot}:user_id`, {
-    value: profile.id,
-  });
+    if (clanInfo) {
+      await setJson(`discord:${slot}:clan_tag`, {
+        value: clanInfo.tag,
+      });
+      await setJson(`discord:${slot}:clan_badge_url`, {
+        value: clanInfo.badgeUrl,
+      });
+    }
+    
+    if (avatarDecorationUrl) {
+      await setJson(`discord:${slot}:avatar_decoration_url`, {
+        value: avatarDecorationUrl,
+      });
+    }
 
-  if (clanInfo) {
-    await setJson(`discord:${slot}:clan_tag`, {
-      value: clanInfo.tag,
-    });
-    await setJson(`discord:${slot}:clan_badge_url`, {
-      value: clanInfo.badgeUrl,
-    });
+    console.log(`[${slot}] Successfully resolved avatar`);
+    return {
+      slot,
+      userId: profile.id,
+      username: profile.username,
+      avatar: profile.avatar,
+      avatarUrl,
+      avatarDecorationUrl,
+      clanTag: clanInfo?.tag || null,
+      clanBadgeUrl: clanInfo?.badgeUrl || null,
+      userMismatch,
+      refreshedAt: new Date().toISOString(),
+    };
+  } catch (err) {
+    console.error(`[${slot}] Error resolving avatar:`, err.message || err);
+    throw err;
   }
-  
-  if (avatarDecorationUrl) {
-    await setJson(`discord:${slot}:avatar_decoration_url`, {
-      value: avatarDecorationUrl,
-    });
-  }
-
-  return {
-    slot,
-    userId: profile.id,
-    username: profile.username,
-    avatar: profile.avatar,
-    avatarUrl,
-    avatarDecorationUrl,
-    clanTag: clanInfo?.tag || null,
-    clanBadgeUrl: clanInfo?.badgeUrl || null,
-    userMismatch,
-    refreshedAt: new Date().toISOString(),
-  };
 }
 
 exports.handler = async function handler(event) {
