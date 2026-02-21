@@ -192,6 +192,14 @@
             transition: opacity 0.2s ease;
         }
 
+        .avatar img[data-discord-slot] {
+            opacity: 0;
+        }
+
+        .avatar img.avatar-ready {
+            opacity: 1;
+        }
+
         .avatar img.is-swapping {
             opacity: 0;
         }
@@ -361,30 +369,17 @@
                     image.classList.add('is-swapping');
                     setTimeout(() => {
                         image.src = nextUrl;
+                        image.classList.add('avatar-ready');
                         requestAnimationFrame(() => {
                             image.classList.remove('is-swapping');
                         });
                     }, 100);
                 } else {
                     image.src = nextUrl;
+                    image.classList.add('avatar-ready');
                 }
             };
             preload.src = nextUrl;
-        }
-
-        function hydrateCachedAvatars() {
-            const slots = ['ev', 'ey'];
-            for (const slot of slots) {
-                const image = document.querySelector(`img[data-discord-slot="${slot}"]`);
-                if (!image) {
-                    continue;
-                }
-
-                const cached = localStorage.getItem(`discord-avatar-${slot}`);
-                if (cached) {
-                    setAvatarSource(image, cached, { smooth: false });
-                }
-            }
         }
 
         async function refreshDiscordAvatars() {
@@ -401,24 +396,32 @@
                 const slots = ['ev', 'ey'];
 
                 for (const slot of slots) {
-                    const avatarUrl = data?.[slot]?.avatarUrl;
-                    if (!avatarUrl) {
+                    const image = document.querySelector(`img[data-discord-slot="${slot}"]`);
+                    if (!image) {
                         continue;
                     }
 
-                    const image = document.querySelector(`img[data-discord-slot="${slot}"]`);
-                    if (image) {
-                        const separator = avatarUrl.includes('?') ? '&' : '?';
-                        const finalUrl = `${avatarUrl}${separator}_=${Date.now()}`;
-                        setAvatarSource(image, finalUrl, { smooth: true });
-                        localStorage.setItem(`discord-avatar-${slot}`, finalUrl);
+                    const avatarUrl = data?.[slot]?.avatarUrl;
+                    if (!avatarUrl) {
+                        image.classList.add('avatar-ready');
+                        continue;
                     }
+
+                    const separator = avatarUrl.includes('?') ? '&' : '?';
+                    const finalUrl = `${avatarUrl}${separator}_=${Date.now()}`;
+                    setAvatarSource(image, finalUrl, { smooth: false });
                 }
             } catch (_err) {
+                const slots = ['ev', 'ey'];
+                for (const slot of slots) {
+                    const image = document.querySelector(`img[data-discord-slot="${slot}"]`);
+                    if (image) {
+                        image.classList.add('avatar-ready');
+                    }
+                }
             }
         }
 
-        hydrateCachedAvatars();
         refreshDiscordAvatars();
     </script>
 </body>
