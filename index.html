@@ -294,33 +294,41 @@
             z-index: 9999;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
+            background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            padding: 12px;
+            width: 60px;
+            height: 60px;
+            overflow: hidden;
+            transition: width 0.35s ease;
+        }
+
+        .volume-control:hover {
+            width: 225px;
         }
 
         .volume-button {
-            width: 40px;
-            height: 40px;
+            min-width: 60px;
+            width: 60px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
             cursor: url('attached_assets/cursor3.png') 8 8, pointer;
             color: rgba(255, 255, 255, 0.5);
-            transition: all 0.2s ease;
-            backdrop-filter: blur(10px);
+            transition: color 0.2s ease;
         }
 
         .volume-button:hover {
-            background: rgba(0,0,0,0.3) url(https://assets.guns.lol/guns_dot.png) repeat;
-            border-color: rgba(255, 255, 255, 0.15);
             color: rgba(255, 255, 255, 0.7);
         }
 
         .volume-button svg {
-            width: 20px;
-            height: 20px;
+            width: 29px;
+            height: 29px;
         }
 
         .volume-icon-unmuted,
@@ -338,14 +346,10 @@
 
         .volume-slider-container {
             width: 0;
-            opacity: 0;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .volume-control:hover .volume-slider-container {
-            width: 120px;
             opacity: 1;
+            overflow: visible;
+            display: flex;
+            align-items: center;
         }
 
         .volume-slider-wrapper {
