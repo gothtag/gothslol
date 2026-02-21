@@ -84,26 +84,28 @@
         }
 
         .content-frame {
+            position: relative;
+            z-index: 1;
             border: 1px solid rgba(255,255,255,0.1);
             background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
             padding: 3rem;
             border-radius: 20px;
             backdrop-filter: blur(10px);
             filter: brightness(1.1);
-            max-width: 600px;
-            padding: 3rem;
+            max-width: 700px;
             width: 100%;
             will-change: transform;
             transform: translate3d(0, 0, 0);
         }
 
         .texture {
-            width: 100%;
-            height: 100%;
-            z-index: -1;
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
             opacity: 1;
             background: transparent url(https://assets.guns.lol/guns_dot.png) repeat 0 0;
-            position: fixed;
         }
 
         @keyframes glow {
@@ -240,8 +242,19 @@
                 height: 75px;
             }
             .content-frame {
-                padding: 1.5rem;
-            }
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
+            padding: 3rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            filter: brightness(1.1);
+            max-width: 700px;
+            width: 100%;
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+        }
         }
 
         @media (max-width: 480px) {
@@ -264,9 +277,19 @@
                 height: 70px;
             }
             .content-frame {
-                padding: 1rem;
-                max-width: 95vw;
-            }
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
+            padding: 3rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            filter: brightness(1.1);
+            max-width: 700px;
+            width: 100%;
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+        }
             .profile-name {
                 font-size: 1rem;
             }
@@ -327,4 +350,3 @@
     </script>
 </body>
 </html>
-<!-- force-commit-20260221-1825 -->
