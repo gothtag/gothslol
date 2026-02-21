@@ -286,9 +286,121 @@
                 font-size: 0.8rem;
             }
         }
+
+        .volume-control {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .volume-button {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: url('attached_assets/cursor3.png') 8 8, pointer;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .volume-button:hover {
+            background: rgba(0, 0, 0, 0.6);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 1);
+        }
+
+        .volume-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .volume-slider-container {
+            width: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .volume-control:hover .volume-slider-container {
+            width: 120px;
+            opacity: 1;
+        }
+
+        .volume-slider-wrapper {
+            position: relative;
+            width: 120px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .volume-slider-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            width: 100%;
+            transition: width 0.1s ease;
+        }
+
+        .volume-slider {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: url('attached_assets/cursor3.png') 8 8, pointer;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .volume-control {
+                top: 16px;
+                left: 16px;
+            }
+        }
     </style>
 </head>
 <body>
+    <audio id="background-music" loop autoplay>
+        <source src="attached_assets/deadprettygirlee.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="volume-control">
+        <div class="volume-button" id="volume-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 48 48">
+                <defs>
+                    <mask id="volumeIcon">
+                        <g fill="none" stroke="#fff" stroke-width="4">
+                            <path fill="#555" stroke-linejoin="round" d="M24 6v36c-7 0-12.201-9.16-12.201-9.16H6a2 2 0 0 1-2-2V17.01a2 2 0 0 1 2-2h5.799S17 6 24 6Z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M32 15a11.91 11.91 0 0 1 1.684 1.859A12.07 12.07 0 0 1 36 24c0 2.654-.846 5.107-2.278 7.09A11.936 11.936 0 0 1 32 33"></path>
+                            <path stroke-linecap="round" d="M34.236 41.186C40.084 37.696 44 31.305 44 24c0-7.192-3.796-13.496-9.493-17.02"></path>
+                        </g>
+                    </mask>
+                </defs>
+                <path fill="currentColor" d="M0 0h48v48H0z" mask="url(#volumeIcon)"></path>
+            </svg>
+        </div>
+        <div class="volume-slider-container">
+            <div class="volume-slider-wrapper">
+                <div class="volume-slider-fill" id="volume-fill"></div>
+                <input type="range" min="0" max="100" value="100" class="volume-slider" id="volume-slider" aria-label="Volume">
+            </div>
+        </div>
+    </div>
+
     <div class="background-layer"></div>
     <div class="texture"></div>
     <div class="content-frame">
@@ -448,6 +560,40 @@
                 syncAllAvatars(true);
             }
         });
+
+        const audio = document.getElementById('background-music');
+        const volumeSlider = document.getElementById('volume-slider');
+        const volumeFill = document.getElementById('volume-fill');
+        const volumeButton = document.getElementById('volume-button');
+
+        if (audio && volumeSlider && volumeFill) {
+            audio.volume = 1.0;
+
+            const updateVolume = function(value) {
+                const volume = value / 100;
+                audio.volume = volume;
+                volumeFill.style.width = value + '%';
+            };
+
+            volumeSlider.addEventListener('input', function(e) {
+                updateVolume(e.target.value);
+            });
+
+            volumeButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (audio.paused) {
+                    audio.play().catch(function() {});
+                } else {
+                    audio.pause();
+                }
+            });
+
+            document.addEventListener('click', function() {
+                if (audio.paused) {
+                    audio.play().catch(function() {});
+                }
+            }, { once: true });
+        }
 
     </script>
 </body>
