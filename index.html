@@ -303,19 +303,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 8px;
             cursor: url('attached_assets/cursor3.png') 8 8, pointer;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.5);
             transition: all 0.2s ease;
             backdrop-filter: blur(10px);
         }
 
         .volume-button:hover {
-            background: rgba(0, 0, 0, 0.6);
-            border-color: rgba(255, 255, 255, 0.2);
-            color: rgba(255, 255, 255, 1);
+            background: rgba(0,0,0,0.3) url(https://assets.guns.lol/guns_dot.png) repeat;
+            border-color: rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .volume-button svg {
@@ -351,9 +351,9 @@
         .volume-slider-wrapper {
             position: relative;
             width: 120px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 5px;
             overflow: hidden;
         }
 
@@ -362,7 +362,7 @@
             left: 0;
             top: 0;
             height: 100%;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.6);
             width: 100%;
             transition: width 0.1s ease;
         }
@@ -413,11 +413,6 @@
         body:not(.started) .volume-control {
             opacity: 0;
             pointer-events: none;
-        }
-
-        body:not(.started) .background-layer {
-            background-image: none !important;
-            background-color: #000000;
         }
 
         .splash-logo {
@@ -702,9 +697,17 @@
         }
 
         if (splashScreen) {
+            const bgLayer = document.querySelector('.background-layer');
+            if (bgLayer) {
+                bgLayer.style.backgroundImage = 'none';
+            }
+
             splashScreen.addEventListener('click', function() {
                 document.body.classList.add('started');
                 splashScreen.classList.add('hidden');
+                if (bgLayer) {
+                    bgLayer.style.backgroundImage = "url('https://r2.guns.lol/ed920f02-a70f-47a3-a7e9-726df6ca5496.gif')";
+                }
                 if (audio) {
                     audio.play().catch(function() {});
                 }
