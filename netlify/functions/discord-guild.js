@@ -110,7 +110,8 @@ exports.handler = async (event) => {
           // Check user.clan field
           if (member.user.clan && member.user.clan.identity_guild_id === guildId) {
             clanTag = member.user.clan.tag;
-            clanBadge = member.user.clan.badge ? `https://cdn.discordapp.com/badge-icons/${member.user.clan.badge}.png` : null;
+            // Try without .png extension - Discord badge URLs don't use file extensions
+            clanBadge = member.user.clan.badge ? `https://cdn.discordapp.com/badge-icons/${member.user.clan.badge}` : null;
             console.log("✓ Found clan tag from user.clan:", { tag: clanTag, badge: member.user.clan.badge });
             break;
           }
@@ -118,7 +119,7 @@ exports.handler = async (event) => {
           // Check user.primary_guild field (alternative naming)
           if (member.user.primary_guild && member.user.primary_guild.identity_guild_id === guildId) {
             clanTag = member.user.primary_guild.tag;
-            clanBadge = member.user.primary_guild.badge ? `https://cdn.discordapp.com/badge-icons/${member.user.primary_guild.badge}.png` : null;
+            clanBadge = member.user.primary_guild.badge ? `https://cdn.discordapp.com/badge-icons/${member.user.primary_guild.badge}` : null;
             console.log("✓ Found clan tag from user.primary_guild:", { tag: clanTag, badge: member.user.primary_guild.badge });
             break;
           }
