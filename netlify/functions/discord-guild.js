@@ -37,7 +37,7 @@ function buildGuildBannerUrl(guildId, bannerHash) {
   }
 
   const extension = bannerHash.startsWith("a_") ? "gif" : "png";
-  return `https://cdn.discordapp.com/banners/${guildId}/${bannerHash}.${extension}?size=1024`;
+  return `https://cdn.discordapp.com/discovery-splashes/${guildId}/${bannerHash}.${extension}?size=1024`;
 }
 
 exports.handler = async (event) => {
@@ -85,7 +85,7 @@ exports.handler = async (event) => {
 
     const data = result.data;
     const iconUrl = buildGuildIconUrl(guildId, data.icon);
-    const bannerUrl = buildGuildBannerUrl(guildId, data.banner);
+    const bannerUrl = buildGuildBannerUrl(guildId, data.discovery_splash);
     
     return {
       statusCode: 200,
@@ -97,6 +97,7 @@ exports.handler = async (event) => {
         icon_url: iconUrl,
         banner_url: bannerUrl,
         vanity_url_code: data.vanity_url_code,
+        clan_tag: data.vanity_url_code ? data.vanity_url_code.toUpperCase() : null,
         approximate_member_count: data.approximate_member_count,
         approximate_presence_count: data.approximate_presence_count,
       }),

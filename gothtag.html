@@ -11,12 +11,12 @@
     <title>goths.lol | GOTHTAG</title>
     <meta name="description" content="GOTHTAG Discord server profile.">
     <meta name="keywords" content="gothtag, discord server, goth community">
-    <link rel="canonical" href="https://goths.lol/gothtag">
+    <link rel="canonical" href="https://goths.lol/goth">
 
     <meta property="og:title" content="goths.lol | GOTHTAG">
     <meta property="og:description" content="GOTHTAG Discord server profile.">
     <meta property="og:image" content="https://goths.lol/attached_assets/gothslol.png">
-    <meta property="og:url" content="https://goths.lol/gothtag">
+    <meta property="og:url" content="https://goths.lol/goth">
     <meta property="og:type" content="website">
 
     <meta name="twitter:card" content="summary_large_image">
@@ -87,9 +87,13 @@
             min-height: 100dvh;
             z-index: 0;
             pointer-events: none;
-            background: #000000 url('https://r2.guns.lol/ed920f02-a70f-47a3-a7e9-726df6ca5496.gif') no-repeat center center;
-            background-size: cover;
-            transform: translateZ(0);
+            background: #000000;
+        }
+
+        .background-layer video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .gradient-layer {
@@ -131,105 +135,95 @@
             background: transparent url(https://assets.guns.lol/guns_dot.png) repeat 0 0;
         }
 
-        .content-frame {
+        .content-container {
             position: relative;
             z-index: 2;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
-            padding: 3rem;
-            border-radius: 65px;
-            backdrop-filter: blur(10px);
-            filter: brightness(1.1);
             max-width: 700px;
             width: 100%;
             will-change: transform;
             transform: translate3d(0, 0, 0);
         }
 
-        .top-logo {
-            position: relative;
-            z-index: 2;
-            margin-bottom: 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-        }
-
         .guild-banner {
-            width: 120px;
-            height: 120px;
-            border-radius: 12px;
+            width: 100%;
+            height: 200px;
             object-fit: cover;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.3);
+            border-radius: 65px 65px 0 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: none;
+            display: block;
+            box-sizing: border-box;
         }
 
-        .guild-info {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
+        .content-frame {
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-top: none;
+            background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
+            padding: 3rem;
+            border-radius: 0 0 65px 65px;
+            backdrop-filter: blur(10px);
+            filter: brightness(1.1);
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        .guild-title {
-            font-family: 'Chillax', sans-serif !important;
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.8);
-            text-transform: lowercase;
-            letter-spacing: 0.5px;
-            margin: 0;
-        }
-
-        .guild-subtitle {
+        .logo {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: #000000;
             font-family: 'Roboto', sans-serif;
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.5);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin: 0;
+            background: linear-gradient(180deg, #000000 0%, #3a3a3a 50%, #000000 100%);
+            background-size: 100% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate, logoShift 10s ease-in-out infinite;
+            filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.6));
+            text-transform: lowercase;
+            letter-spacing: 2px;
+            text-align: center;
+            will-change: transform, filter;
+            transform: translate3d(0, 0, 0);
+            cursor: url('attached_assets/cursor3.png') 8 8, pointer;
         }
 
         @media (max-width: 768px) {
-            .top-logo {
-                flex-direction: column;
-                gap: 0.8rem;
-                margin-bottom: 1rem;
-            }
-
             .guild-banner {
-                width: 100px;
-                height: 100px;
+                height: 150px;
+                border-radius: 42px 42px 0 0;
             }
 
-            .guild-info {
-                align-items: center;
-            }
-
-            .guild-title {
-                font-size: 1.4rem;
+            .content-frame {
+                border-radius: 0 0 42px 42px;
             }
         }
 
         @media (max-width: 480px) {
-            .top-logo {
-                flex-direction: column;
-                gap: 0.6rem;
-                margin-bottom: 0.8rem;
-            }
-
             .guild-banner {
-                width: 80px;
-                height: 80px;
+                height: 120px;
             }
+        }
 
-            .guild-title {
-                font-size: 1.1rem;
+        @keyframes logoShift {
+            0% {
+                background-position: 50% 0%;
             }
+            50% {
+                background-position: 50% 100%;
+            }
+            100% {
+                background-position: 50% 0%;
+            }
+        }
 
-            .guild-subtitle {
-                font-size: 0.75rem;
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.45));
+            }
+            to {
+                filter: drop-shadow(0 0 9px rgba(0, 0, 0, 0.65));
             }
         }
 
@@ -336,6 +330,23 @@
             user-select: text;
         }
 
+        .guild-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 6px;
+            padding: 1px 4px;
+            background: rgba(117, 117, 117, 0.08);
+            border: 2px solid rgba(117, 117, 117, 0.04);
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            font-weight: 400;
+            -webkit-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+
         ::selection {
             background: #757575;
             color: #000000;
@@ -392,8 +403,8 @@
 
         .server-stats {
             position: absolute;
-            right: 32px;
-            bottom: 20px;
+            right: 2rem;
+            top: 2rem;
             display: flex;
             flex-direction: column;
             align-items: flex-end;
@@ -421,6 +432,9 @@
         }
 
         @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
             .links {
                 flex-direction: column;
                 gap: 1rem;
@@ -436,6 +450,9 @@
         }
 
         @media (max-width: 480px) {
+            .logo {
+                font-size: 2rem;
+            }
             .links {
                 gap: 0.8rem;
             }
@@ -471,11 +488,9 @@
             }
 
             .server-stats {
-                right: 50%;
-                transform: translateX(50%);
-                align-items: center;
-                bottom: auto;
-                top: 12px;
+                right: 1rem;
+                top: 1rem;
+                align-items: flex-end;
             }
         }
 
@@ -621,6 +636,11 @@
                 margin-bottom: 0.6rem;
             }
 
+            .logo {
+                font-size: 2rem;
+                margin-bottom: 0;
+            }
+
             .content-frame {
                 max-width: 92vw;
                 padding: 1rem 1.2rem;
@@ -660,11 +680,20 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('attached_assets/backgroundpause.png') no-repeat center center;
-            background-size: cover;
+            background: #000000;
             z-index: 99999;
             transition: opacity 0.75s ease, visibility 0.75s ease;
             cursor: url('attached_assets/cursor3.png') 8 8, pointer;
+        }
+
+        .splash-screen video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
         }
 
         .splash-screen::before {
@@ -674,6 +703,7 @@
             background-color: rgba(0, 0, 0, 0.92);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
+            z-index: 1;
         }
 
         .splash-screen.hidden {
@@ -696,7 +726,7 @@
             text-transform: lowercase;
             margin: 0;
             position: relative;
-            z-index: 1;
+            z-index: 2;
             background: linear-gradient(180deg, #000000 0%, #5a5a5a 50%, #000000 100%);
             background-size: 100% 200%;
             -webkit-background-clip: text;
@@ -737,11 +767,14 @@
 </head>
 <body>
     <div class="splash-screen" id="splash-screen">
-        <div class="splash-logo">goths<span>.</span>lol</div>
+        <video muted playsinline>
+            <source src="https://r2.guns.lol/068e94e3-9a98-4e52-a932-64aec377d834.mp4" type="video/mp4">
+        </video>
+        <div class="splash-logo">GOTHTAG</div>
     </div>
 
     <audio id="background-music" loop>
-        <source src="attached_assets/deadprettygirlee.mp3" type="audio/mpeg">
+        <source src="attached_assets/crynomoregoth.mp3" type="audio/mpeg">
     </audio>
 
     <div class="volume-control">
@@ -784,17 +817,26 @@
     </div>
 
     <div class="gradient-layer"></div>
-    <div class="background-layer"></div>
-    <div class="texture"></div>
-    <div class="top-logo">
-        <img id="guild-banner" class="guild-banner" src="attached_assets/tag.png" alt="Server Banner">
-        <div class="guild-info">
-            <div class="guild-title" id="guild-title">gothtag</div>
-            <div class="guild-subtitle">Discord Server</div>
-        </div>
+    <div class="background-layer">
+        <video id="background-video" loop muted playsinline>
+            <source src="https://r2.guns.lol/068e94e3-9a98-4e52-a932-64aec377d834.mp4" type="video/mp4">
+        </video>
     </div>
-    <div class="content-frame">
-        <div class="links">
+    <div class="texture"></div>
+    <div class="content-container">
+        <img id="guild-banner" class="guild-banner" src="attached_assets/tag.png" alt="Server Banner">
+        <div class="content-frame">
+            <div class="server-stats">
+                <div class="stat-row">
+                    <span class="stat-label">Members:</span>
+                    <span class="stat-value" id="member-count">...</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Online:</span>
+                    <span class="stat-value" id="online-count">...</span>
+                </div>
+            </div>
+            <div class="links">
             <a href="https://discord.gg/gothtag" target="_blank" rel="noopener noreferrer" class="profile-card">
                 <div class="avatar-container">
                     <div class="avatar-gradient-ring"></div>
@@ -805,7 +847,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="profile-name" id="guild-name">gothtag</div>
+                <div class="profile-name">
+                    <span id="guild-name">gothtag</span>
+                    <span class="guild-tag" id="guild-tag" style="display: none;"></span>
+                </div>
                 <div class="profile-role">Server</div>
             </a>
         </div>
@@ -838,27 +883,16 @@
                 <span class="location-text">X</span>
             </a>
             <div class="corner-divider" aria-hidden="true"></div>
-            <a class="corner-link" href="https://goths.lol" target="_blank" rel="noopener noreferrer">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-                    <circle cx="12" cy="12" r="10" style="filter: grayscale(1) brightness(0.55); opacity: 0.9;"/>
-                </svg>
-                <span class="location-text">GOTHS</span>
+            <a class="corner-link" href="https://gothtag.com" target="_blank" rel="noopener noreferrer">
+                <img class="no-context" src="attached_assets/tag.png" alt="GOTHTAG" draggable="false">
+                <span class="location-text">WEBSITE</span>
             </a>
         </div>
-        <div class="server-stats">
-            <div class="stat-row">
-                <span class="stat-label">Members:</span>
-                <span class="stat-value" id="member-count">Loading...</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">Online:</span>
-                <span class="stat-value" id="online-count">Loading...</span>
-            </div>
         </div>
     </div>
 
     <script>
-        const frame = document.querySelector('.content-frame');
+        const frame = document.querySelector('.content-container');
         const noContextElements = document.querySelectorAll('.no-context');
         
         if (frame) {
@@ -925,8 +959,17 @@
                     // Update guild name
                     const guildName = guildInfo.name || 'gothtag';
                     console.log('Setting guild name:', guildName);
-                    document.getElementById('guild-title').textContent = guildName;
                     document.getElementById('guild-name').textContent = guildName;
+                    
+                    // Update guild tag (clan tag / vanity URL)
+                    if (guildInfo.clan_tag) {
+                        console.log('Setting guild tag:', guildInfo.clan_tag);
+                        const guildTagEl = document.getElementById('guild-tag');
+                        if (guildTagEl) {
+                            guildTagEl.textContent = guildInfo.clan_tag;
+                            guildTagEl.style.display = 'inline-flex';
+                        }
+                    }
                     
                     // Update avatar
                     if (guildInfo.icon_url) {
@@ -935,10 +978,12 @@
                     }
                     
                     // Display member counts
-                    if (guildInfo.approximate_member_count) {
+                    console.log('Member count:', guildInfo.approximate_member_count);
+                    console.log('Online count:', guildInfo.approximate_presence_count);
+                    if (guildInfo.approximate_member_count !== undefined) {
                         document.getElementById('member-count').textContent = guildInfo.approximate_member_count.toLocaleString();
                     }
-                    if (guildInfo.approximate_presence_count) {
+                    if (guildInfo.approximate_presence_count !== undefined) {
                         document.getElementById('online-count').textContent = guildInfo.approximate_presence_count.toLocaleString();
                     }
                 } else {
@@ -1022,16 +1067,16 @@
         }
 
         if (splashScreen) {
-            const bgLayer = document.querySelector('.background-layer');
-            if (bgLayer) {
-                bgLayer.style.backgroundImage = 'none';
+            const bgVideo = document.getElementById('background-video');
+            if (bgVideo) {
+                bgVideo.pause();
             }
 
             splashScreen.addEventListener('click', function() {
                 document.body.classList.add('started');
                 splashScreen.classList.add('hidden');
-                if (bgLayer) {
-                    bgLayer.style.backgroundImage = "url('https://r2.guns.lol/ed920f02-a70f-47a3-a7e9-726df6ca5496.gif')";
+                if (bgVideo) {
+                    bgVideo.play().catch(function() {});
                 }
                 if (audio) {
                     audio.play().catch(function() {});
