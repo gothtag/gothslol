@@ -93,10 +93,13 @@ exports.handler = async (event) => {
     
     const inviteCode = event.queryStringParameters?.invite || "gothtag";
     try {
-      // Make request without bot auth - clan data may only be in public response
-      const inviteUrl = `https://discord.com/api/v10/invites/${inviteCode}?with_counts=true&with_expiration=true`;
-      const inviteResult = await new Promise((resolve, reject) => {
-        https.get(inviteUrl, { headers: { 'User-Agent': 'goths.lol' } }, (res) => {
+      // Try both API v9 and v10, without bot auth - clan data may only be in public response
+      const inviteUrlV9 = `https://discord.com/api/v9/invites/${inviteCode}?with_counts=true&with_expiration=true`;
+      const inviteUrlV10 = `https://discord.com/api/v10/invites/${inviteCode}?with_counts=true&with_expiration=true`;
+      
+      // Try v9 first
+      let inviteResult = await new Promise((resolve, reject) => {
+        https.get(inviteUrlV9, { headers: { 'User-Agent': 'goths.lol' } }, (res) => {
           let data = '';
           res.on('data', chunk => data += chunk);
           res.on('end', () => {
@@ -109,15 +112,16 @@ exports.handler = async (event) => {
         }).on('error', reject);
       });
       
+      console.log("=== API v9 Response ===");
       console.log("Invite API Status:", inviteResult.status);
-      console.log("Full Invite Response:", JSON.stringify(inviteResult.data, null, 2));
+      console.log("Full Response:", JSON.stringify(inviteResult.data, null, 2));
       
       if (inviteResult.status === 200 && inviteResult.data) {
         console.log("Invite data keys:", Object.keys(inviteResult.data));
         
         if (inviteResult.data.guild) {
           console.log("Guild keys:", Object.keys(inviteResult.data.guild));
-          console.log("Guild clan:", inviteResult.data.guild.clan);
+          console.log("Guild clan field:", inviteResult.data.guild.clan);
           
           const guild = inviteResult.data.guild;
           
@@ -125,13 +129,49 @@ exports.handler = async (event) => {
           if (guild.clan) {
             clanTag = guild.clan.tag;
             clanBadge = guild.clan.badge ? `https://cdn.discordapp.com/clan-badges/${guild.clan.badge}.png` : null;
-            console.log("Found clan:", { tag: clanTag, badge: clanBadge });
+            console.log("Found clan from v9:", { tag: clanTag, badge: clanBadge });
           } else if (guild.clan_tag) {
             clanTag = guild.clan_tag;
             clanBadge = guild.clan_badge ? `https://cdn.discordapp.com/clan-badges/${guild.clan_badge}.png` : null;
-            console.log("Found clan_tag:", { tag: clanTag, badge: clanBadge });
+            console.log("Found clan_tag from v9:", { tag: clanTag, badge: clanBadge });
+          }
+        }
+      }
+      
+      // If no clan data from v9, try v10
+      if (!clanTag) {
+        console.log("=== Trying API v10 ===");
+        const inviteResultV10 = await new Promise((resolve, reject) => {
+          https.get(inviteUrlV10, { headers: { 'User-Agent': 'goths.lol' } }, (res) => {
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => {
+              try {
+                resolve({ status: res.statusCode, data: JSON.parse(data) });
+              } catch (e) {
+                resolve({ status: res.statusCode, data: null, error: e.message });
+              }
+            });
+          }).on('error', reject);
+        });
+        
+        console.log("V10 Status:", inviteResultV10.status);
+        console.log("V10 Response:", JSON.stringify(inviteResultV10.data, null, 2));
+        
+        if (inviteResultV10.status === 200 && inviteResultV10.data && inviteResultV10.data.guild) {
+          const guild = inviteResultV10.data.guild;
+          console.log("V10 Guild keys:", Object.keys(guild));
+          
+          if (guild.clan) {
+            clanTag = guild.clan.tag;
+            clanBadge = guild.clan.badge ? `https://cdn.discordapp.com/clan-badges/${guild.clan.badge}.png` : null;
+            console.log("Found clan from v10:", { tag: clanTag, badge: clanBadge });
+          } else if (guild.clan_tag) {
+            clanTag = guild.clan_tag;
+            clanBadge = guild.clan_badge ? `https://cdn.discordapp.com/clan-badges/${guild.clan_badge}.png` : null;
+            console.log("Found clan_tag from v10:", { tag: clanTag, badge: clanBadge });
           } else {
-            console.log("No clan data in guild object, guild keys:", Object.keys(guild));
+            console.log("No clan data in v10 either");
           }
         }
       }
