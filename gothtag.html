@@ -952,6 +952,28 @@
 
         const GUILD_ID = "1369700887018344458";
 
+        // Cache management
+        function normalizeUrl(url) {
+            if (!url) return '';
+            return String(url).split('?')[0];
+        }
+
+        function getCachedBannerUrl() {
+            return localStorage.getItem('guild-banner-url');
+        }
+
+        function setCachedBannerUrl(url) {
+            localStorage.setItem('guild-banner-url', url);
+        }
+
+        function getCachedAvatarUrl() {
+            return localStorage.getItem('guild-avatar-url');
+        }
+
+        function setCachedAvatarUrl(url) {
+            localStorage.setItem('guild-avatar-url', url);
+        }
+
         async function loadGuildInfo() {
             try {
                 console.log('Loading guild info for ID:', GUILD_ID);
@@ -962,10 +984,23 @@
                 console.log('Guild info received:', guildInfo);
                 
                 if (guildInfo && !guildInfo.error) {
-                    // Update banner
+                    // Update banner with cache
                     if (guildInfo.banner_url) {
-                        console.log('Setting banner URL:', guildInfo.banner_url);
-                        document.getElementById('guild-banner').src = guildInfo.banner_url;
+                        const cachedBanner = getCachedBannerUrl();
+                        const bannerEl = document.getElementById('guild-banner');
+                        
+                        if (normalizeUrl(cachedBanner) === normalizeUrl(guildInfo.banner_url)) {
+                            // Same banner, use cached version
+                            bannerEl.src = cachedBanner;
+                        } else {
+                            // Different banner, preload and update
+                            const preload = new Image();
+                            preload.onload = function() {
+                                bannerEl.src = guildInfo.banner_url;
+                                setCachedBannerUrl(guildInfo.banner_url);
+                            };
+                            preload.src = guildInfo.banner_url;
+                        }
                     }
                     
                     // Update guild name
@@ -973,31 +1008,58 @@
                     console.log('Setting guild name:', guildName);
                     document.getElementById('guild-name').textContent = guildName;
                     
-                    // Update guild clan badge and tag
-                    if (guildInfo.clan_badge && guildInfo.clan_tag) {
-                        console.log('Setting clan badge:', guildInfo.clan_badge, guildInfo.clan_tag);
+                    // Update guild clan badge and tag (with fallback to vanity URL)
+                    const hasClan = guildInfo.clan_badge && guildInfo.clan_tag;
+                    const hasVanity = guildInfo.vanity_url_code;
+                    
+                    if (hasClan || hasVanity) {
                         const guildTagEl = document.getElementById('guild-tag');
                         if (guildTagEl) {
-                            const badgeImg = document.createElement('img');
-                            badgeImg.className = 'clan-badge-img';
-                            badgeImg.src = guildInfo.clan_badge;
-                            badgeImg.alt = guildInfo.clan_tag;
-                            
-                            const tagText = document.createElement('span');
-                            tagText.className = 'clan-tag';
-                            tagText.textContent = guildInfo.clan_tag;
-                            
                             guildTagEl.innerHTML = '';
-                            guildTagEl.appendChild(badgeImg);
-                            guildTagEl.appendChild(tagText);
+                            
+                            if (hasClan) {
+                                // Real clan badge
+                                const badgeImg = document.createElement('img');
+                                badgeImg.className = 'clan-badge-img';
+                                badgeImg.src = guildInfo.clan_badge;
+                                badgeImg.alt = guildInfo.clan_tag;
+                                
+                                const tagText = document.createElement('span');
+                                tagText.className = 'clan-tag';
+                                tagText.textContent = guildInfo.clan_tag;
+                                
+                                guildTagEl.appendChild(badgeImg);
+                                guildTagEl.appendChild(tagText);
+                            } else {
+                                // Fallback to vanity URL as tag
+                                const tagText = document.createElement('span');
+                                tagText.className = 'clan-tag';
+                                tagText.textContent = guildInfo.vanity_url_code.toUpperCase();
+                                
+                                guildTagEl.appendChild(tagText);
+                            }
+                            
                             guildTagEl.style.display = 'inline-flex';
                         }
                     }
                     
-                    // Update avatar
+                    // Update avatar with cache
                     if (guildInfo.icon_url) {
-                        console.log('Setting avatar URL:', guildInfo.icon_url);
-                        document.getElementById('guild-avatar').src = guildInfo.icon_url;
+                        const cachedAvatar = getCachedAvatarUrl();
+                        const avatarEl = document.getElementById('guild-avatar');
+                        
+                        if (normalizeUrl(cachedAvatar) === normalizeUrl(guildInfo.icon_url)) {
+                            // Same avatar, use cached version
+                            avatarEl.src = cachedAvatar;
+                        } else {
+                            // Different avatar, preload and update
+                            const preload = new Image();
+                            preload.onload = function() {
+                                avatarEl.src = guildInfo.icon_url;
+                                setCachedAvatarUrl(guildInfo.icon_url);
+                            };
+                            preload.src = guildInfo.icon_url;
+                        }
                     }
                     
                     // Display member counts
@@ -1015,6 +1077,17 @@
             } catch (_err) {
                 console.error("Error loading guild info:", _err);
             }
+        }
+
+        // Hydrate cached images on load
+        const cachedBanner = getCachedBannerUrl();
+        const cachedAvatar = getCachedAvatarUrl();
+        
+        if (cachedBanner) {
+            document.getElementById('guild-banner').src = cachedBanner;
+        }
+        if (cachedAvatar) {
+            document.getElementById('guild-avatar').src = cachedAvatar;
         }
 
         loadGuildInfo();
