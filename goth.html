@@ -498,26 +498,64 @@
             font-weight: 500;
         }
 
-        .guild-name-wrap {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .guild-type-icon {
-            width: 16px;
-            height: 16px;
-            color: rgba(117, 117, 117, 0.95);
+        .server-status-badge {
+            position: absolute;
+            left: 2rem;
+            top: 2rem;
+            width: 18px;
+            height: 18px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
+            pointer-events: auto;
+            cursor: help;
+            color: rgba(117, 117, 117, 0.9);
         }
 
-        .guild-type-icon svg {
+        .server-status-badge::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 50%;
+            bottom: calc(100% + 8px);
+            transform: translateX(-50%);
+            padding: 8px 12px;
+            border-radius: 10px;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid rgba(117, 117, 117, 0.3);
+            color: rgba(255, 255, 255, 0.82);
+            font-family: 'Chillax', sans-serif !important;
+            font-size: 0.82rem;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.18s ease;
+            z-index: 5;
+        }
+
+        .server-status-badge:hover::after,
+        .server-status-badge:focus-visible::after {
+            opacity: 1;
+        }
+
+        .server-status-badge svg {
             width: 100%;
             height: 100%;
             display: block;
+        }
+
+        .server-status-badge img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .server-status-badge.is-boosted {
+            color: #f47fff;
+        }
+
+        .server-status-badge.is-muted {
+            color: rgba(117, 117, 117, 0.9);
         }
 
         @media (max-width: 768px) {
@@ -640,9 +678,11 @@
                 font-size: 0.75rem;
             }
 
-            .guild-type-icon {
-                width: 14px;
-                height: 14px;
+            .server-status-badge {
+                left: 1rem;
+                top: 1rem;
+                width: 16px;
+                height: 16px;
             }
 
             .stat-row {
@@ -1012,6 +1052,7 @@
             <img id="guild-banner" class="guild-banner" src="attached_assets/tag.png" alt="Server Banner">
         </div>
         <div class="content-frame">
+            <span id="server-status-badge" class="server-status-badge" style="display: none;"></span>
             <div class="server-stats">
                 <div class="stat-row">
                     <span class="stat-label">Members:</span>
@@ -1038,10 +1079,7 @@
                     </div>
                 </div>
                 <div class="profile-name">
-                    <span class="guild-name-wrap">
-                        <span id="guild-type-icon" class="guild-type-icon" style="display: none;"></span>
-                        <span id="guild-name">gothtag</span>
-                    </span>
+                    <span id="guild-name">gothtag</span>
                     <span class="guild-tag" id="guild-tag" style="display: none;"></span>
                 </div>
                 <div class="profile-role" id="guild-description" style="font-size: 0.85rem; opacity: 0.9; max-width: 300px; line-height: 1.4;">...</div>
@@ -1155,25 +1193,85 @@
             });
         }
 
-        function getServerTypeFromFeatures(features) {
-            const list = Array.isArray(features) ? features : [];
-            if (list.includes('PARTNERED')) return 'partnered';
-            if (list.includes('VERIFIED')) return 'verified';
-            if (list.includes('COMMUNITY')) return 'community';
-            return null;
+        function getBoostLevel(boostCount) {
+            if (boostCount >= 14) return 3;
+            if (boostCount >= 7) return 2;
+            return 1;
         }
 
-        function getServerTypeIconSvg(type) {
-            if (type === 'partnered') {
-                return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m12 2l2.4 4.9l5.4.8l-3.9 3.8l.9 5.5L12 14.6L7.2 17l.9-5.5L4.2 7.7l5.4-.8z"/></svg>';
+        function getServerStatusFromFeatures(features, boostCount) {
+            const list = Array.isArray(features) ? features : [];
+            const boostLevel = getBoostLevel(boostCount);
+            const isDiscoverable = list.includes('DISCOVERABLE');
+
+            if (list.includes('PARTNERED')) {
+                return {
+                    label: 'Partner',
+                    iconUrl: 'https://cdn3.emoji.gg/emojis/2166-discord-partner.png'
+                };
             }
-            if (type === 'verified') {
-                return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l7 4v6c0 5-3.4 8.8-7 10c-3.6-1.2-7-5-7-10V6zm-1 13l6-6l-1.4-1.4L11 12.2L8.4 9.6L7 11z"/></svg>';
+
+            if (list.includes('VERIFIED')) {
+                return {
+                    label: 'Verified',
+                    iconUrl: 'https://cdn3.emoji.gg/emojis/3721-verified.png'
+                };
             }
-            if (type === 'community') {
-                return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2L3 6v6c0 5.2 3.8 9.6 9 10c5.2-.4 9-4.8 9-10V6zm0 4a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m0 12c-2 0-3.8-.8-5-2.2c.1-2 4-3.1 5-3.1s4.9 1.1 5 3.1c-1.2 1.4-3 2.2-5 2.2"/></svg>';
+
+            if (list.includes('COMMUNITY')) {
+                if (isDiscoverable) {
+                    if (boostLevel === 3) {
+                        return {
+                            label: 'Community Server Boosted (Discoverable)',
+                            iconUrl: 'https://cdn3.emoji.gg/emojis/2376-community-server-boost-public.png'
+                        };
+                    }
+                    if (boostLevel === 2) {
+                        return {
+                            label: 'Community Server (Discoverable)',
+                            iconUrl: 'https://cdn3.emoji.gg/emojis/3150-community-server-public-d.png'
+                        };
+                    }
+                    return {
+                        label: 'Community Server (Discoverable)',
+                        iconUrl: 'https://cdn3.emoji.gg/emojis/8873-community-server-public-w.png'
+                    };
+                }
+
+                if (boostLevel === 3) {
+                    return {
+                        label: 'Community Server Boosted',
+                        iconUrl: 'https://cdn3.emoji.gg/emojis/8390-community-server-boost.png'
+                    };
+                }
+                if (boostLevel === 2) {
+                    return {
+                        label: 'Community Server',
+                        iconUrl: 'https://cdn3.emoji.gg/emojis/9202-community-server-d.png'
+                    };
+                }
+                return {
+                    label: 'Community Server',
+                    iconUrl: 'https://cdn3.emoji.gg/emojis/9991-community-server-w.png'
+                };
             }
-            return '';
+
+            if (boostLevel === 3) {
+                return {
+                    label: 'Server Boost Level 3',
+                    iconUrl: 'https://cdn3.emoji.gg/emojis/9211-boost-level-3-white.png'
+                };
+            }
+            if (boostLevel === 2) {
+                return {
+                    label: 'Server Boost Level 2',
+                    iconUrl: 'https://cdn3.emoji.gg/emojis/9010-boost-level-2-white.png'
+                };
+            }
+            return {
+                label: 'Server Boost Level 1',
+                iconUrl: 'https://cdn3.emoji.gg/emojis/5306-boost-level-1.png'
+            };
         }
 
         // Cache management
@@ -1238,20 +1336,30 @@
                         createdAtEl.textContent = formatCreatedAt(guildInfo.id || GUILD_ID);
                     }
 
-                    // Show server type icon (partnered / verified / community) with boost tooltip
-                    const serverType = getServerTypeFromFeatures(guildInfo.features);
-                    const typeIconEl = document.getElementById('guild-type-icon');
-                    if (typeIconEl && serverType) {
-                        typeIconEl.innerHTML = getServerTypeIconSvg(serverType);
-                        typeIconEl.style.display = 'inline-flex';
+                    const boosts = Number.isFinite(Number(guildInfo.premium_subscription_count))
+                        ? Number(guildInfo.premium_subscription_count)
+                        : 0;
+                    const tier = Number.isFinite(Number(guildInfo.premium_tier))
+                        ? Number(guildInfo.premium_tier)
+                        : 0;
 
-                        const boosts = Number.isFinite(Number(guildInfo.premium_subscription_count))
-                            ? Number(guildInfo.premium_subscription_count)
-                            : 0;
-                        const tier = Number.isFinite(Number(guildInfo.premium_tier))
-                            ? Number(guildInfo.premium_tier)
-                            : 0;
-                        typeIconEl.title = `Boosts: ${boosts.toLocaleString()} · Level ${tier}`;
+                    // Show server status icon top-left (Discord-like) with boost tooltip
+                    const statusInfo = getServerStatusFromFeatures(guildInfo.features, boosts);
+                    const statusBadgeEl = document.getElementById('server-status-badge');
+                    if (statusBadgeEl && statusInfo) {
+                        statusBadgeEl.innerHTML = '';
+                        const iconImg = document.createElement('img');
+                        iconImg.src = statusInfo.iconUrl;
+                        iconImg.alt = statusInfo.label;
+                        iconImg.loading = 'lazy';
+                        iconImg.decoding = 'async';
+                        iconImg.referrerPolicy = 'no-referrer';
+                        statusBadgeEl.appendChild(iconImg);
+                        statusBadgeEl.style.display = 'inline-flex';
+                        const tooltipText = `${statusInfo.label} · ${boosts.toLocaleString()} boosts · Level ${tier}`;
+                        statusBadgeEl.setAttribute('data-tooltip', tooltipText);
+                        statusBadgeEl.removeAttribute('title');
+                        statusBadgeEl.setAttribute('aria-label', statusInfo.label);
                     }
                     
                     // Update guild description
