@@ -336,6 +336,28 @@
             transform: translateY(-1px);
         }
 
+        .copy-feedback {
+            position: fixed;
+            left: 50%;
+            bottom: 22px;
+            transform: translateX(-50%);
+            padding: 8px 12px;
+            border-radius: 10px;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid rgba(117, 117, 117, 0.3);
+            color: rgba(255, 255, 255, 0.82);
+            font-family: 'Chillax', sans-serif !important;
+            font-size: 0.82rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.18s ease;
+            z-index: 9999;
+        }
+
+        .copy-feedback.show {
+            opacity: 1;
+        }
+
         .clan-badge-img {
             width: 16px;
             height: 16px;
@@ -1107,27 +1129,46 @@
         function setupClanBadgeCopy() {
             const badges = document.querySelectorAll('.clan-badge[data-discord-slot]');
 
+            const feedback = document.createElement('div');
+            feedback.className = 'copy-feedback';
+            document.body.appendChild(feedback);
+
+            let feedbackTimeout = null;
+
+            const showFeedback = function(message) {
+                feedback.textContent = message;
+                feedback.classList.add('show');
+                if (feedbackTimeout) {
+                    clearTimeout(feedbackTimeout);
+                }
+                feedbackTimeout = setTimeout(function() {
+                    feedback.classList.remove('show');
+                }, 1200);
+            };
+
             for (const badge of badges) {
                 badge.addEventListener('click', async function(e) {
                     e.preventDefault();
                     e.stopPropagation();
 
                     const inviteUrl = badge.dataset.inviteUrl || '';
-                    const guildId = badge.dataset.guildId || '';
-                    const fallbackUrl = guildId ? `https://discord.com/channels/${guildId}` : '';
-                    const textToCopy = inviteUrl || fallbackUrl;
+                    const textToCopy = inviteUrl;
 
                     if (!textToCopy) {
+                        showFeedback('Lien d\'invitation indisponible');
                         return;
                     }
 
                     try {
                         await navigator.clipboard.writeText(textToCopy);
                         badge.classList.add('copied');
+                        showFeedback('Lien copié');
+                        window.open(textToCopy, '_blank', 'noopener,noreferrer');
                         setTimeout(function() {
                             badge.classList.remove('copied');
                         }, 900);
                     } catch (_err) {
+                        showFeedback('Échec de la copie');
                     }
                 });
             }
