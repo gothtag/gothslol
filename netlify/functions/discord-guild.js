@@ -6,6 +6,9 @@ function json(statusCode, body) {
     headers: {
       "content-type": "application/json; charset=utf-8",
       "cache-control": "public, max-age=300",
+      "access-control-allow-origin": "*",
+      "access-control-allow-methods": "GET, OPTIONS",
+      "access-control-allow-headers": "Content-Type",
     },
     body: JSON.stringify(body),
   };
@@ -74,6 +77,19 @@ async function fetchGuildInfo(guildId) {
 }
 
 exports.handler = async (event) => {
+  // Handle CORS preflight
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 200,
+      headers: {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-allow-headers": "Content-Type",
+      },
+      body: "",
+    };
+  }
+
   const guildId = event.queryStringParameters?.id;
 
   if (!guildId) {
