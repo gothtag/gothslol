@@ -347,6 +347,18 @@
             user-select: text;
         }
 
+        .clan-badge-img {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+        }
+
+        .clan-tag {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
         ::selection {
             background: #757575;
             color: #000000;
@@ -961,12 +973,23 @@
                     console.log('Setting guild name:', guildName);
                     document.getElementById('guild-name').textContent = guildName;
                     
-                    // Update guild tag (clan tag / vanity URL)
-                    if (guildInfo.clan_tag) {
-                        console.log('Setting guild tag:', guildInfo.clan_tag);
+                    // Update guild clan badge and tag
+                    if (guildInfo.clan_badge && guildInfo.clan_tag) {
+                        console.log('Setting clan badge:', guildInfo.clan_badge, guildInfo.clan_tag);
                         const guildTagEl = document.getElementById('guild-tag');
                         if (guildTagEl) {
-                            guildTagEl.textContent = guildInfo.clan_tag;
+                            const badgeImg = document.createElement('img');
+                            badgeImg.className = 'clan-badge-img';
+                            badgeImg.src = guildInfo.clan_badge;
+                            badgeImg.alt = guildInfo.clan_tag;
+                            
+                            const tagText = document.createElement('span');
+                            tagText.className = 'clan-tag';
+                            tagText.textContent = guildInfo.clan_tag;
+                            
+                            guildTagEl.innerHTML = '';
+                            guildTagEl.appendChild(badgeImg);
+                            guildTagEl.appendChild(tagText);
                             guildTagEl.style.display = 'inline-flex';
                         }
                     }

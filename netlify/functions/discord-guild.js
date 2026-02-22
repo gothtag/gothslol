@@ -68,8 +68,8 @@ exports.handler = async (event) => {
   }
 
   try {
-    // Try to get full guild info first (requires bot to be in the server)
-    let result = await makeRequest(`https://discord.com/api/v10/guilds/${guildId}`);
+    // Try to get full guild info with counts
+    let result = await makeRequest(`https://discord.com/api/v10/guilds/${guildId}?with_counts=true`);
     
     // Fallback to preview endpoint if not accessible
     if (result.status !== 200 || !result.data) {
@@ -97,7 +97,8 @@ exports.handler = async (event) => {
         icon_url: iconUrl,
         banner_url: bannerUrl,
         vanity_url_code: data.vanity_url_code,
-        clan_tag: data.vanity_url_code ? data.vanity_url_code.toUpperCase() : null,
+        clan_tag: data.clan ? data.clan.tag : null,
+        clan_badge: data.clan && data.clan.badge ? `https://cdn.discordapp.com/clan-badges/${data.clan.badge}.png` : null,
         approximate_member_count: data.approximate_member_count,
         approximate_presence_count: data.approximate_presence_count,
       }),
