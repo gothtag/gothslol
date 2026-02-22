@@ -9,6 +9,16 @@
   package = "@netlify/plugin-functions-install-core"
 
 [[redirects]]
+  from = "/goth"
+  to = "/goth.html"
+  status = 200
+
+[[redirects]]
+  from = "/gothtag"
+  to = "/gothtag.html"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
