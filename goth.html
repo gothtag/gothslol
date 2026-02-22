@@ -961,22 +961,29 @@
 
         async function loadGuildInfo() {
             try {
+                console.log('Loading guild info for ID:', GUILD_ID);
                 const response = await fetch(`/.netlify/functions/discord-guild?id=${GUILD_ID}`);
-                const guildInfo = await response.json();
+                console.log('API response status:', response.status);
                 
-                if (guildInfo) {
+                const guildInfo = await response.json();
+                console.log('Guild info received:', guildInfo);
+                
+                if (guildInfo && !guildInfo.error) {
                     // Update banner
                     if (guildInfo.banner_url) {
+                        console.log('Setting banner URL:', guildInfo.banner_url);
                         document.getElementById('guild-banner').src = guildInfo.banner_url;
                     }
                     
                     // Update guild name
                     const guildName = guildInfo.name || 'gothtag';
+                    console.log('Setting guild name:', guildName);
                     document.getElementById('guild-title').textContent = guildName;
                     document.getElementById('guild-name').textContent = guildName;
                     
                     // Update avatar
                     if (guildInfo.icon_url) {
+                        console.log('Setting avatar URL:', guildInfo.icon_url);
                         document.getElementById('guild-avatar').src = guildInfo.icon_url;
                     }
                     
@@ -987,6 +994,8 @@
                     if (guildInfo.approximate_presence_count) {
                         document.getElementById('online-count').textContent = guildInfo.approximate_presence_count.toLocaleString();
                     }
+                } else {
+                    console.error('Guild info error:', guildInfo?.error || 'Unknown error');
                 }
             } catch (_err) {
                 console.error("Error loading guild info:", _err);
