@@ -501,12 +501,13 @@
             }
 
             .server-stats {
-                position: static;
+                position: absolute;
+                right: 1.5rem;
+                top: 1.5rem;
                 display: flex;
-                justify-content: center;
-                gap: 2rem;
-                margin-bottom: 1rem;
-                text-align: center;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 6px;
             }
 
             .corner-badges {
@@ -538,6 +539,10 @@
         }
 
         @media (max-width: 480px) {
+            body {
+                padding-top: 80px;
+            }
+
             .guild-banner {
                 height: 150px;
                 max-height: 22vh;
