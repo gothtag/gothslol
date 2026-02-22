@@ -95,21 +95,28 @@ exports.handler = async (event) => {
     try {
       const inviteResult = await makeRequest(`https://discord.com/api/v10/invites/${inviteCode}?with_counts=true&with_expiration=true`);
       
-      if (inviteResult.status === 200 && inviteResult.data && inviteResult.data.guild) {
-        const inviteGuild = inviteResult.data.guild;
-        
-        // Clan info is in the guild object from invite
-        if (inviteGuild.clan) {
-          clanTag = inviteGuild.clan.tag;
-          clanBadge = inviteGuild.clan.badge ? `https://cdn.discordapp.com/clan-badges/${inviteGuild.clan.badge}.png` : null;
-        }
-      }
-    } catch (inviteErr) {
-      console.error("Failed to fetch invite data:", inviteErr);
-    }
+    console.log("Invite API Status:", inviteResult.status);
+    console.log("Full Invite Response:", JSON.stringify(inviteResult.data, null, 2));
     
-    return {
-      statusCode: 200,
+    if (inviteResult.status === 200 && inviteResult.data) {
+      console.log("Invite data structure:", Object.keys(inviteResult.data));
+      
+      if (inviteResult.data.guild) {
+        console.log("Guild from invite:", Object.keys(inviteResult.data.guild));
+        console.log("Guild clan field:", inviteResult.data.guild.clan);
+      }
+      
+      // Check all possible locations for clan data
+      const guild = inviteResult.data.guild;
+      if (guild) {
+        // Try different possible field names
+        if (guild.clan) {
+          clanTag = guild.clan.tag;
+          clanBadge = guild.clan.badge ? `https://cdn.discordapp.com/clan-badges/${guild.clan.badge}.png` : null;
+        } else if (guild.clan_tag) {
+          clanTag = guild.clan_tag;
+          clanBadge = guild.clan_badge ? `https://cdn.discordapp.com/clan-badges/${guild.clan_badge}.png` : null;
+        }
       headers,
       body: JSON.stringify({
         id: data.id,
