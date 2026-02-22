@@ -68,8 +68,13 @@ exports.handler = async (event) => {
   }
 
   try {
-    const result = await makeRequest(`https://discord.com/api/v10/guilds/${guildId}/preview`);
+    // Try to get full guild info first (requires bot to be in the server)
+    let result = await makeRequest(`https://discord.com/api/v10/guilds/${guildId}`);
     
+    // Fallback to preview endpoint if not accessible
+    if (result.status !== 200 || !result.data) {
+      result = await makeRequest(`https://discord.com/api/v10/guilds/${guildId}/preview`);
+    }
     if (result.status !== 200 || !result.data) {
       return {
         statusCode: 404,
