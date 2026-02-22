@@ -142,6 +142,8 @@
             width: 100%;
             will-change: transform;
             transform: translate3d(0, 0, 0);
+            padding: 0 1rem;
+            box-sizing: border-box;
         }
 
         .guild-banner {
@@ -153,6 +155,10 @@
             border-bottom: none;
             display: block;
             box-sizing: border-box;
+            margin-left: -1rem;
+            margin-right: -1rem;
+            margin-top: -1rem;
+            width: calc(100% + 2rem);
         }
 
         .content-frame {
@@ -387,14 +393,22 @@
         }
 
         .corner-badges {
-            position: absolute;
-            left: 32px;
-            bottom: 20px;
+            position: relative;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 14px;
-            pointer-events: none;
+            pointer-events: auto;
             flex-wrap: wrap;
+            width: 100%;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            margin-left: -2rem;
+            margin-right: -2rem;
+            margin-bottom: -2rem;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
         .corner-link {
@@ -407,6 +421,11 @@
             font-weight: 450;
             text-decoration: none;
             pointer-events: auto;
+            transition: all 0.2s ease;
+        }
+        
+        .corner-link:hover {
+            color: #999999;
         }
 
         .corner-link svg,
@@ -457,65 +476,156 @@
         }
 
         @media (max-width: 768px) {
+            .guild-banner {
+                height: 180px;
+                border-radius: 42px 42px 0 0;
+                max-height: 25vh;
+                margin-left: -1rem;
+                margin-right: -1rem;
+                width: calc(100% + 2rem);
+            }
+
+            .content-frame {
+                border-radius: 0 0 42px 42px;
+                padding: 1.5rem 1rem;
+                gap: 1.5rem;
+            }
+
             .logo {
                 font-size: 2.5rem;
+                margin-bottom: 1rem;
             }
+
             .links {
-                flex-direction: column;
-                gap: 1rem;
+                gap: 1.5rem;
             }
+
             .avatar-container {
                 --avatar-size: 90px;
                 --decoration-size: 112px;
                 --ring-size: 96px;
             }
-            .content-frame {
-                padding: 1.5rem;
+
+            .server-stats {
+                position: static;
+                display: flex;
+                justify-content: center;
+                gap: 2rem;
+                margin-bottom: 1rem;
+                text-align: center;
+            }
+
+            .corner-badges {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                flex-wrap: wrap;
+                width: 100%;
+                padding: 1rem;
+                margin: 0 -1rem -1rem -1rem;
+                border-radius: 0 0 42px 42px;
+                border-top: 1px solid rgba(255,255,255,0.05);
+            }
+
+            .corner-link .location-text {
+                display: none;
+            }
+
+            .corner-link {
+                font-size: 0.8rem;
+                padding: 8px;
+            }
+
+            .corner-divider {
+                display: none;
             }
         }
 
         @media (max-width: 480px) {
+            .guild-banner {
+                height: 150px;
+                max-height: 22vh;
+                margin-left: -1rem;
+                margin-right: -1rem;
+                width: calc(100% + 2rem);
+            }
+
+            .content-frame {
+                padding: 1rem;
+                border-radius: 0 0 32px 32px;
+                gap: 1rem;
+            }
+
             .logo {
                 font-size: 2rem;
+                margin-bottom: 0.8rem;
             }
+
             .links {
-                gap: 0.8rem;
+                gap: 1rem;
+                width: 100%;
             }
+
             .avatar-container {
                 --avatar-size: 80px;
                 --decoration-size: 100px;
                 --ring-size: 86px;
             }
-            .content-frame {
-                padding: 1rem;
-                max-width: 95vw;
+
+            .profile-card {
+                width: 100%;
+                max-width: 100%;
             }
+
             .profile-name {
                 font-size: 1rem;
             }
+
             .profile-role {
                 font-size: 0.8rem;
-                margin-bottom: 3rem;
-            }
-
-            .corner-badges {
-                left: 50%;
-                transform: translateX(-50%);
-                bottom: 12px;
-                gap: 10px;
-                flex-wrap: wrap;
-                max-width: 90vw;
-                justify-content: center;
-            }
-
-            .corner-link {
-                font-size: 0.85rem;
             }
 
             .server-stats {
-                right: 1rem;
-                top: 1rem;
-                align-items: flex-end;
+                display: flex;
+                justify-content: center;
+                gap: 1.5rem;
+                font-size: 0.75rem;
+                position: static;
+                margin-bottom: 1rem;
+            }
+
+            .stat-row {
+                flex-direction: column;
+                gap: 3px;
+            }
+
+            .corner-badges {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                flex-wrap: wrap;
+                width: 100%;
+                padding: 0.8rem 1rem;
+                margin: 0 -1rem -1rem -1rem;
+                border-radius: 0 0 32px 32px;
+                border-top: 1px solid rgba(255,255,255,0.05);
+            }
+
+            .corner-link {
+                font-size: 0.75rem;
+                padding: 6px;
+            }
+
+            .corner-link .location-text {
+                display: none;
+            }
+
+            .corner-divider {
+                display: none;
             }
         }
 

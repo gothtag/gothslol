@@ -390,13 +390,22 @@
         }
 
         .corner-badges {
-            position: absolute;
-            left: 32px;
-            bottom: 20px;
+            position: relative;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 14px;
-            pointer-events: none;
+            pointer-events: auto;
+            flex-wrap: wrap;
+            width: 100%;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            margin-left: -2rem;
+            margin-right: -2rem;
+            margin-bottom: -2rem;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
         .corner-link {
@@ -408,6 +417,13 @@
             font-size: 0.95rem;
             font-weight: 450;
             text-decoration: none;
+            pointer-events: auto;
+            transition: all 0.2s ease;
+        }
+        
+        .corner-link:hover {
+            color: #999999;
+        }
             pointer-events: auto;
         }
 
