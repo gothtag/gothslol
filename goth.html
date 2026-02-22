@@ -146,6 +146,24 @@
             box-sizing: border-box;
         }
 
+        .guild-banner-wrap {
+            position: relative;
+            width: 100%;
+            border-radius: 65px 65px 0 0;
+            overflow: hidden;
+        }
+
+        .guild-banner-wrap::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            pointer-events: none;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.44) 0%, rgba(0, 0, 0, 0.22) 38%, rgba(0, 0, 0, 0) 78%);
+        }
+
         .guild-banner {
             height: clamp(120px, 25vh, 280px);
             object-fit: cover;
@@ -196,6 +214,10 @@
         }
 
         @media (max-width: 768px) {
+            .guild-banner-wrap {
+                border-radius: 42px 42px 0 0;
+            }
+
             .guild-banner {
                 height: 150px;
                 border-radius: 42px 42px 0 0;
@@ -954,7 +976,9 @@
     </div>
     <div class="texture"></div>
     <div class="content-container">
-        <img id="guild-banner" class="guild-banner" src="attached_assets/tag.png" alt="Server Banner">
+        <div class="guild-banner-wrap">
+            <img id="guild-banner" class="guild-banner" src="attached_assets/tag.png" alt="Server Banner">
+        </div>
         <div class="content-frame">
             <div class="server-stats">
                 <div class="stat-row">
