@@ -146,7 +146,7 @@
 
         .guild-banner {
             width: 100%;
-            height: 200px;
+            height: clamp(120px, 25vh, 280px);
             object-fit: cover;
             border-radius: 65px 65px 0 0;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -160,12 +160,16 @@
             border: 1px solid rgba(255,255,255,0.1);
             border-top: none;
             background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
-            padding: 3rem;
+            padding: 2rem 1.5rem;
             border-radius: 0 0 65px 65px;
             backdrop-filter: blur(10px);
             filter: brightness(1.1);
             width: 100%;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
         }
 
         .logo {
@@ -191,18 +195,120 @@
 
         @media (max-width: 768px) {
             .guild-banner {
-                height: 150px;
+                height: 180px;
                 border-radius: 42px 42px 0 0;
+                max-height: 25vh;
             }
 
             .content-frame {
                 border-radius: 0 0 42px 42px;
+                padding: 1.5rem 1rem;
+                gap: 1.5rem;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+            }
+            
+            .links {
+                gap: 1.5rem;
+            }
+            
+            .avatar-container {
+                --avatar-size: 90px;
+                --decoration-size: 112px;
+                --ring-size: 96px;
+            }
+            
+            .server-stats {
+                position: static;
+                display: flex;
+                justify-content: center;
+                gap: 2rem;
+                margin-bottom: 1rem;
+                text-align: center;
+            }
+            
+            .corner-badges {
+                flex-wrap: wrap;
+                left: 50%;
+                transform: translateX(-50%);
+                width: auto;
+                max-width: 90vw;
+                bottom: 10px;
             }
         }
 
         @media (max-width: 480px) {
             .guild-banner {
-                height: 120px;
+                height: 150px;
+                max-height: 22vh;
+            }
+            
+            .content-frame {
+                padding: 1rem;
+                border-radius: 0 0 32px 32px;
+                gap: 1rem;
+            }
+            
+            .logo {
+                font-size: 2rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            .links {
+                gap: 1rem;
+                width: 100%;
+            }
+            
+            .avatar-container {
+                --avatar-size: 80px;
+                --decoration-size: 100px;
+                --ring-size: 86px;
+            }
+            
+            .profile-card {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .profile-name {
+                font-size: 1rem;
+            }
+            
+            .profile-role {
+                font-size: 0.8rem;
+            }
+
+            .server-stats {
+                display: flex;
+                justify-content: center;
+                gap: 1.5rem;
+                font-size: 0.75rem;
+                position: static;
+                margin-bottom: 1rem;
+            }
+            
+            .stat-row {
+                flex-direction: column;
+                gap: 3px;
+            }
+
+            .corner-badges {
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 8px;
+                gap: 8px;
+                flex-wrap: wrap;
+                max-width: 90vw;
+                justify-content: center;
+                flex-direction: row;
+            }
+
+            .corner-link {
+                font-size: 0.8rem;
+                padding: 8px 12px;
             }
         }
 
@@ -229,10 +335,11 @@
 
         .links {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             gap: 2rem;
             align-items: center;
             justify-content: center;
+            width: 100%;
         }
 
         .profile-card {
