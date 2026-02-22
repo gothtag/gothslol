@@ -447,6 +447,18 @@
             opacity: 0.9;
         }
 
+        .corner-link svg {
+            filter: grayscale(1) brightness(0.55);
+        }
+
+        .corner-link img {
+            filter: grayscale(1) brightness(0.55);
+        }
+
+        .corner-link img.icon-dark-source {
+            filter: invert(1) grayscale(1) brightness(0.55);
+        }
+
         .corner-divider {
             width: 2px;
             height: 15px;
@@ -911,14 +923,17 @@
         </div>
         <div class="corner-badges">
             <a class="corner-link" href="https://discord.gg/gothtag" target="_blank" rel="noopener noreferrer">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="4 2 16 20" aria-hidden="true">
-                    <path fill="currentColor" d="M12 12q.825 0 1.413-.587T14 10t-.587-1.412T12 8t-1.412.588T10 10t.588 1.413T12 12m0 10q-4.025-3.425-6.012-6.362T4 10.2q0-3.75 2.413-5.975T12 2t5.588 2.225T20 10.2q0 2.5-1.987 5.438T12 22" />
-                </svg>
+                <img class="no-context icon-dark-source" src="attached_assets/discordlogo.png" alt="Discord" draggable="false">
+                <span class="location-text">GOTH</span>
+            </a>
+            <div class="corner-divider" aria-hidden="true"></div>
+            <a class="corner-link" href="/goth" target="_self" rel="noopener noreferrer">
+                <img class="no-context icon-dark-source" src="attached_assets/gothslink.png" alt="GOTHTAG" draggable="false">
                 <span class="location-text">GOTHTAG</span>
             </a>
             <div class="corner-divider" aria-hidden="true"></div>
             <a class="corner-link" href="https://gothtag.com" target="_blank" rel="noopener noreferrer">
-                <img class="no-context" src="attached_assets/tag.png" alt="GOTHTAG" draggable="false">
+                <img class="no-context" src="attached_assets/tag.png" alt="WEBSITE" draggable="false">
                 <span class="location-text">WEBSITE</span>
             </a>
         </div>
