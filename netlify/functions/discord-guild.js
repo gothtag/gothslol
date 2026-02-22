@@ -87,30 +87,25 @@ exports.handler = async (event) => {
     const iconUrl = buildGuildIconUrl(guildId, data.icon);
     const bannerUrl = buildGuildBannerUrl(guildId, data.discovery_splash);
     
-    // Try to get clan info from a guild member (use a known user ID)
+    // Get clan info from invite endpoint (public, no auth needed)
     let clanTag = null;
     let clanBadge = null;
     
-    const memberUserId = event.queryStringParameters?.memberUserId || "323177897575579660";
-    const memberResult = await makeRequest(`https://discord.com/api/v10/guilds/${guildId}/members/${memberUserId}`);
-    
-    if (memberResult.status === 200 && memberResult.data) {
-      const memberData = memberResult.data;
-      // Check for clan in member's avatar decoration data or clan field
-      if (memberData.avatar_decoration_data?.sku_id) {
-        // Member has clan, extract from their profile in this guild context
-        const userResult = await makeRequest(`https://discord.com/api/v10/users/${memberUserId}/profile?guild_id=${guildId}`);
-        if (userResult.status === 200 && userResult.data) {
-          const profile = userResult.data;
-          if (profile.guild_member_profile?.clan_tag) {
-            clanTag = profile.guild_member_profile.clan_tag;
-            clanBadge = profile.guild_member_profile.clan_badge ? `https://cdn.discordapp.com/clan-badges/${profile.guild_member_profile.clan_badge}.png` : null;
-          } else if (profile.user_profile?.clan_tag) {
-            clanTag = profile.user_profile.clan_tag;
-            clanBadge = profile.user_profile.clan_badge ? `https://cdn.discordapp.com/clan-badges/${profile.user_profile.clan_badge}.png` : null;
-          }
+    const inviteCode = event.queryStringParameters?.invite || "gothtag";
+    try {
+      const inviteResult = await makeRequest(`https://discord.com/api/v10/invites/${inviteCode}?with_counts=true&with_expiration=true`);
+      
+      if (inviteResult.status === 200 && inviteResult.data && inviteResult.data.guild) {
+        const inviteGuild = inviteResult.data.guild;
+        
+        // Clan info is in the guild object from invite
+        if (inviteGuild.clan) {
+          clanTag = inviteGuild.clan.tag;
+          clanBadge = inviteGuild.clan.badge ? `https://cdn.discordapp.com/clan-badges/${inviteGuild.clan.badge}.png` : null;
         }
       }
+    } catch (inviteErr) {
+      console.error("Failed to fetch invite data:", inviteErr);
     }
     
     return {
