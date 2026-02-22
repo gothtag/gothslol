@@ -87,96 +87,53 @@ exports.handler = async (event) => {
     const iconUrl = buildGuildIconUrl(guildId, data.icon);
     const bannerUrl = buildGuildBannerUrl(guildId, data.discovery_splash);
     
-    // Get clan info from invite endpoint - WITHOUT bot auth for clan data
+    // Get clan info from guild members - clan tags are USER properties, not guild properties!
     let clanTag = null;
     let clanBadge = null;
     
-    const inviteCode = event.queryStringParameters?.invite || "gothtag";
+    console.log("=== Fetching Guild Members for Clan Tag ===");
+    console.log("Guild ID:", guildId);
+    
     try {
-      // Try both API v9 and v10, without bot auth - clan data may only be in public response
-      const inviteUrlV9 = `https://discord.com/api/v9/invites/${inviteCode}?with_counts=true&with_expiration=true`;
-      const inviteUrlV10 = `https://discord.com/api/v10/invites/${inviteCode}?with_counts=true&with_expiration=true`;
+      // Fetch guild members - clan tags are stored in user.clan or user.primary_guild
+      const membersResult = await makeRequest(`https://discord.com/api/v10/guilds/${guildId}/members?limit=1000`);
       
-      // Try v9 first
-      let inviteResult = await new Promise((resolve, reject) => {
-        https.get(inviteUrlV9, { headers: { 'User-Agent': 'goths.lol' } }, (res) => {
-          let data = '';
-          res.on('data', chunk => data += chunk);
-          res.on('end', () => {
-            try {
-              resolve({ status: res.statusCode, data: JSON.parse(data) });
-            } catch (e) {
-              resolve({ status: res.statusCode, data: null, error: e.message });
-            }
-          });
-        }).on('error', reject);
-      });
+      console.log("Members API Status:", membersResult.status);
       
-      console.log("=== API v9 Response ===");
-      console.log("Invite API Status:", inviteResult.status);
-      console.log("Full Response:", JSON.stringify(inviteResult.data, null, 2));
-      
-      if (inviteResult.status === 200 && inviteResult.data) {
-        console.log("Invite data keys:", Object.keys(inviteResult.data));
+      if (membersResult.status === 200 && membersResult.data && Array.isArray(membersResult.data)) {
+        console.log(`Found ${membersResult.data.length} members, searching for clan tag...`);
         
-        if (inviteResult.data.guild) {
-          console.log("Guild keys:", Object.keys(inviteResult.data.guild));
-          console.log("Guild clan field:", inviteResult.data.guild.clan);
+        // Look for a member whose clan.identity_guild_id matches this guild
+        for (const member of membersResult.data) {
+          if (!member.user) continue;
           
-          const guild = inviteResult.data.guild;
+          // Check user.clan field
+          if (member.user.clan && member.user.clan.identity_guild_id === guildId) {
+            clanTag = member.user.clan.tag;
+            clanBadge = member.user.clan.badge ? `https://cdn.discordapp.com/clan-badges/${member.user.clan.badge}.png` : null;
+            console.log("✓ Found clan tag from user.clan:", { tag: clanTag, badge: member.user.clan.badge });
+            break;
+          }
           
-          // Check all possible field structures
-          if (guild.clan) {
-            clanTag = guild.clan.tag;
-            clanBadge = guild.clan.badge ? `https://cdn.discordapp.com/clan-badges/${guild.clan.badge}.png` : null;
-            console.log("Found clan from v9:", { tag: clanTag, badge: clanBadge });
-          } else if (guild.clan_tag) {
-            clanTag = guild.clan_tag;
-            clanBadge = guild.clan_badge ? `https://cdn.discordapp.com/clan-badges/${guild.clan_badge}.png` : null;
-            console.log("Found clan_tag from v9:", { tag: clanTag, badge: clanBadge });
+          // Check user.primary_guild field (alternative naming)
+          if (member.user.primary_guild && member.user.primary_guild.identity_guild_id === guildId) {
+            clanTag = member.user.primary_guild.tag;
+            clanBadge = member.user.primary_guild.badge ? `https://cdn.discordapp.com/clan-badges/${member.user.primary_guild.badge}.png` : null;
+            console.log("✓ Found clan tag from user.primary_guild:", { tag: clanTag, badge: member.user.primary_guild.badge });
+            break;
           }
         }
-      }
-      
-      // If no clan data from v9, try v10
-      if (!clanTag) {
-        console.log("=== Trying API v10 ===");
-        const inviteResultV10 = await new Promise((resolve, reject) => {
-          https.get(inviteUrlV10, { headers: { 'User-Agent': 'goths.lol' } }, (res) => {
-            let data = '';
-            res.on('data', chunk => data += chunk);
-            res.on('end', () => {
-              try {
-                resolve({ status: res.statusCode, data: JSON.parse(data) });
-              } catch (e) {
-                resolve({ status: res.statusCode, data: null, error: e.message });
-              }
-            });
-          }).on('error', reject);
-        });
         
-        console.log("V10 Status:", inviteResultV10.status);
-        console.log("V10 Response:", JSON.stringify(inviteResultV10.data, null, 2));
-        
-        if (inviteResultV10.status === 200 && inviteResultV10.data && inviteResultV10.data.guild) {
-          const guild = inviteResultV10.data.guild;
-          console.log("V10 Guild keys:", Object.keys(guild));
-          
-          if (guild.clan) {
-            clanTag = guild.clan.tag;
-            clanBadge = guild.clan.badge ? `https://cdn.discordapp.com/clan-badges/${guild.clan.badge}.png` : null;
-            console.log("Found clan from v10:", { tag: clanTag, badge: clanBadge });
-          } else if (guild.clan_tag) {
-            clanTag = guild.clan_tag;
-            clanBadge = guild.clan_badge ? `https://cdn.discordapp.com/clan-badges/${guild.clan_badge}.png` : null;
-            console.log("Found clan_tag from v10:", { tag: clanTag, badge: clanBadge });
-          } else {
-            console.log("No clan data in v10 either");
-          }
+        if (!clanTag) {
+          console.log("✗ No members found with clan.identity_guild_id matching this guild");
+          console.log("Sample member structure:", JSON.stringify(membersResult.data[0], null, 2));
         }
+      } else {
+        console.log("Failed to fetch members or invalid response");
+        console.log("Response data:", membersResult.data);
       }
-    } catch (inviteErr) {
-      console.error("Failed to fetch invite data:", inviteErr);
+    } catch (membersErr) {
+      console.error("Failed to fetch guild members:", membersErr);
     }
 
     return {
