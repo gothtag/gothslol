@@ -1,6 +1,7 @@
 const DISCORD_TOKEN_URL = "https://discord.com/api/oauth2/token";
 const DISCORD_ME_URL = "https://discord.com/api/users/@me";
 const DISCORD_GUILD_WIDGET_URL = "https://discord.com/api/guilds";
+const DISCORD_GUILD_PREVIEW_URL = "https://discord.com/api/v10/guilds";
 const { getJson, setJson } = require("./discord-store");
 const AVATAR_CACHE_MS = 60 * 1000;
 const INVALID_GRANT_COOLDOWN_MS = 6 * 60 * 60 * 1000;
@@ -112,11 +113,34 @@ async function fetchGuildInvite(guildId) {
     });
 
     if (!response.ok) {
+      throw new Error("widget_unavailable");
+    }
+
+    const data = await response.json();
+    if (typeof data?.instant_invite === "string" && data.instant_invite.length > 0) {
+      return data.instant_invite;
+    }
+  } catch (_err) {
+  }
+
+  try {
+    const response = await fetch(`${DISCORD_GUILD_PREVIEW_URL}/${guildId}/preview`, {
+      headers: {
+        "cache-control": "no-store",
+      },
+    });
+
+    if (!response.ok) {
       return null;
     }
 
     const data = await response.json();
-    return typeof data?.instant_invite === "string" ? data.instant_invite : null;
+    const vanityCode = typeof data?.vanity_url_code === "string" ? data.vanity_url_code : null;
+    if (vanityCode) {
+      return `https://discord.gg/${vanityCode}`;
+    }
+
+    return null;
   } catch (_err) {
     return null;
   }
@@ -290,7 +314,7 @@ exports.handler = async function handler(event) {
             clanTag: storedClanTag?.value || null,
             clanBadgeUrl: storedClanBadgeUrl?.value || null,
             clanGuildId: storedClanGuildId?.value || null,
-            clanInviteUrl: storedClanInviteUrl?.value || null,
+            clanInviteUrl: null,
             cached: true,
             warning: "invalid_grant_cooldown",
             cooldownUntil: new Date(authErrorUntil).toISOString(),
@@ -381,8 +405,9 @@ exports.handler = async function handler(event) {
         });
       } catch (err) {
         console.error(`Failed to resolve ${requestedSlot}:`, err.message || err);
+        const isInvalidGrant = String(err.message || err) === "invalid_grant";
 
-        if (String(err.message || err) === "invalid_grant") {
+        if (isInvalidGrant) {
           await setJson(`discord:${requestedSlot}:auth_error_until`, {
             value: String(Date.now() + INVALID_GRANT_COOLDOWN_MS),
           });
@@ -402,7 +427,7 @@ exports.handler = async function handler(event) {
               clanTag: storedClanTag?.value || null,
               clanBadgeUrl: storedClanBadgeUrl?.value || null,
               clanGuildId: storedClanGuildId?.value || null,
-              clanInviteUrl: storedClanInviteUrl?.value || null,
+              clanInviteUrl: isInvalidGrant ? null : (storedClanInviteUrl?.value || null),
               cached: true,
               warning: String(err.message || err),
               refreshedAt: storedAvatarUpdatedAt?.value ? new Date(Number(storedAvatarUpdatedAt.value)).toISOString() : null,
