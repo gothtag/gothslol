@@ -140,6 +140,10 @@
             transform: translate3d(0, 0, 0);
             padding: 0 1rem;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
         }
 
         .content-frame {
@@ -452,6 +456,11 @@
         }
 
         @media (max-width: 768px) {
+            .content-container {
+                max-width: 580px;
+                padding: 0 0.75rem;
+            }
+
             .logo {
                 font-size: 2.5rem;
             }
@@ -470,11 +479,16 @@
         }
 
         @media (max-width: 480px) {
+            .content-container {
+                max-width: 400px;
+                padding: 0 0.75rem;
+            }
+
             .logo {
-                font-size: 2rem;
+                font-size: 2.8rem;
             }
             .links {
-                gap: 0.8rem;
+                gap: 0.4rem;
                 flex-direction: column;
                 align-items: center;
             }
@@ -495,9 +509,17 @@
             }
 
             .corner-badges {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                flex-wrap: wrap;
                 width: 100%;
                 padding: 1rem;
-                gap: 10px;
+                margin: 0 -0.75rem -1rem -0.75rem;
+                border-radius: 0 0 42px 42px;
+                border-top: 1px solid rgba(255,255,255,0.05);
             }
 
             .corner-link {
@@ -677,7 +699,28 @@
             }
 
             .corner-badges {
-                bottom: 10px;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                flex-wrap: wrap;
+                width: 100%;
+                padding: 0.8rem 1rem;
+                margin: 0 -0.75rem -1rem -0.75rem;
+                border-radius: 0 0 32px 32px;
+                border-top: 1px solid rgba(255,255,255,0.05);
+            }
+        }
+
+        @media (min-width: 540px) and (max-width: 768px) {
+            .content-container {
+                max-width: 500px;
+                padding: 0 1rem;
+            }
+
+            .corner-badges {
+                margin: 0 -1rem -1rem -1rem;
             }
         }
 
@@ -817,8 +860,8 @@
     <div class="gradient-layer"></div>
     <div class="background-layer"></div>
     <div class="texture"></div>
-    <div class="logo top-logo">goths<span>.</span>lol</div>
     <div class="content-container">
+        <div class="logo top-logo">goths<span>.</span>lol</div>
         <div class="content-frame">
             <div class="links">
             <a href="ev.html" class="profile-card">
