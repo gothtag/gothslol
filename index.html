@@ -131,16 +131,25 @@
             background: transparent url(https://assets.guns.lol/guns_dot.png) repeat 0 0;
         }
 
-        .content-frame {
+        .content-container {
             position: relative;
             z-index: 2;
+            max-width: 700px;
+            width: 100%;
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+            padding: 0 1rem;
+            box-sizing: border-box;
+        }
+
+        .content-frame {
+            position: relative;
             border: 1px solid rgba(255,255,255,0.1);
             background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
             padding: 3rem;
             border-radius: 65px;
             backdrop-filter: blur(10px);
             filter: brightness(1.1);
-            max-width: 700px;
             width: 100%;
             will-change: transform;
             transform: translate3d(0, 0, 0);
@@ -443,10 +452,6 @@
         }
 
         @media (max-width: 768px) {
-            body {
-                padding: 0 0.5rem;
-            }
-
             .logo {
                 font-size: 2.5rem;
             }
@@ -465,10 +470,6 @@
         }
 
         @media (max-width: 480px) {
-            body {
-                padding: 0 1rem;
-            }
-
             .logo {
                 font-size: 2rem;
             }
@@ -484,8 +485,6 @@
             }
             .content-frame {
                 padding: 1rem;
-                width: 100%;
-                max-width: none;
             }
             .profile-name {
                 font-size: 1rem;
@@ -819,8 +818,9 @@
     <div class="background-layer"></div>
     <div class="texture"></div>
     <div class="logo top-logo">goths<span>.</span>lol</div>
-    <div class="content-frame">
-        <div class="links">
+    <div class="content-container">
+        <div class="content-frame">
+            <div class="links">
             <a href="ev.html" class="profile-card">
                 <div class="avatar-container">
                     <div class="avatar-gradient-ring"></div>
@@ -878,6 +878,7 @@
                 <img class="no-context" src="attached_assets/tag.png" alt="GOTHTAG" draggable="false">
                 <span class="location-text">WEBSITE</span>
             </a>
+        </div>
         </div>
     </div>
 
