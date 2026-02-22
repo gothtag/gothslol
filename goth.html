@@ -350,6 +350,11 @@
             text-transform: lowercase;
             letter-spacing: 1px;
             margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
         }
 
         .profile-name {
@@ -362,7 +367,7 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            margin-left: 6px;
+            margin-left: 0;
             padding: 1px 4px;
             background: rgba(117, 117, 117, 0.08);
             border: 2px solid rgba(117, 117, 117, 0.04);
@@ -493,6 +498,28 @@
             font-weight: 500;
         }
 
+        .guild-name-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .guild-type-icon {
+            width: 16px;
+            height: 16px;
+            color: rgba(117, 117, 117, 0.95);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .guild-type-icon svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
         @media (max-width: 768px) {
             .guild-banner {
                 height: 150px;
@@ -611,6 +638,11 @@
                 align-items: flex-end;
                 gap: 3px;
                 font-size: 0.75rem;
+            }
+
+            .guild-type-icon {
+                width: 14px;
+                height: 14px;
             }
 
             .stat-row {
@@ -989,6 +1021,10 @@
                     <span class="stat-label">Online:</span>
                     <span class="stat-value" id="online-count">...</span>
                 </div>
+                <div class="stat-row">
+                    <span class="stat-label">Created:</span>
+                    <span class="stat-value" id="created-at">...</span>
+                </div>
             </div>
             <div class="links">
             <a href="https://discord.gg/gothtag" target="_blank" rel="noopener noreferrer" class="profile-card">
@@ -1002,7 +1038,10 @@
                     </div>
                 </div>
                 <div class="profile-name">
-                    <span id="guild-name">gothtag</span>
+                    <span class="guild-name-wrap">
+                        <span id="guild-type-icon" class="guild-type-icon" style="display: none;"></span>
+                        <span id="guild-name">gothtag</span>
+                    </span>
                     <span class="guild-tag" id="guild-tag" style="display: none;"></span>
                 </div>
                 <div class="profile-role" id="guild-description" style="font-size: 0.85rem; opacity: 0.9; max-width: 300px; line-height: 1.4;">...</div>
@@ -1094,6 +1133,49 @@
 
         const GUILD_ID = "1369700887018344458";
 
+        function getDiscordSnowflakeDate(snowflake) {
+            try {
+                const DISCORD_EPOCH = 1420070400000;
+                const value = BigInt(snowflake);
+                const timestamp = Number((value >> 22n) + BigInt(DISCORD_EPOCH));
+                if (!Number.isFinite(timestamp)) return null;
+                return new Date(timestamp);
+            } catch (_err) {
+                return null;
+            }
+        }
+
+        function formatCreatedAt(snowflake) {
+            const createdDate = getDiscordSnowflakeDate(snowflake);
+            if (!createdDate) return 'Unknown';
+            return createdDate.toLocaleDateString(undefined, {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+        function getServerTypeFromFeatures(features) {
+            const list = Array.isArray(features) ? features : [];
+            if (list.includes('PARTNERED')) return 'partnered';
+            if (list.includes('VERIFIED')) return 'verified';
+            if (list.includes('COMMUNITY')) return 'community';
+            return null;
+        }
+
+        function getServerTypeIconSvg(type) {
+            if (type === 'partnered') {
+                return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m12 2l2.4 4.9l5.4.8l-3.9 3.8l.9 5.5L12 14.6L7.2 17l.9-5.5L4.2 7.7l5.4-.8z"/></svg>';
+            }
+            if (type === 'verified') {
+                return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l7 4v6c0 5-3.4 8.8-7 10c-3.6-1.2-7-5-7-10V6zm-1 13l6-6l-1.4-1.4L11 12.2L8.4 9.6L7 11z"/></svg>';
+            }
+            if (type === 'community') {
+                return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2L3 6v6c0 5.2 3.8 9.6 9 10c5.2-.4 9-4.8 9-10V6zm0 4a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m0 12c-2 0-3.8-.8-5-2.2c.1-2 4-3.1 5-3.1s4.9 1.1 5 3.1c-1.2 1.4-3 2.2-5 2.2"/></svg>';
+            }
+            return '';
+        }
+
         // Cache management
         function normalizeUrl(url) {
             if (!url) return '';
@@ -1149,6 +1231,28 @@
                     const guildName = guildInfo.name || 'gothtag';
                     console.log('Setting guild name:', guildName);
                     document.getElementById('guild-name').textContent = guildName;
+
+                    // Update created date from guild snowflake ID
+                    const createdAtEl = document.getElementById('created-at');
+                    if (createdAtEl) {
+                        createdAtEl.textContent = formatCreatedAt(guildInfo.id || GUILD_ID);
+                    }
+
+                    // Show server type icon (partnered / verified / community) with boost tooltip
+                    const serverType = getServerTypeFromFeatures(guildInfo.features);
+                    const typeIconEl = document.getElementById('guild-type-icon');
+                    if (typeIconEl && serverType) {
+                        typeIconEl.innerHTML = getServerTypeIconSvg(serverType);
+                        typeIconEl.style.display = 'inline-flex';
+
+                        const boosts = Number.isFinite(Number(guildInfo.premium_subscription_count))
+                            ? Number(guildInfo.premium_subscription_count)
+                            : 0;
+                        const tier = Number.isFinite(Number(guildInfo.premium_tier))
+                            ? Number(guildInfo.premium_tier)
+                            : 0;
+                        typeIconEl.title = `Boosts: ${boosts.toLocaleString()} · Level ${tier}`;
+                    }
                     
                     // Update guild description
                     if (guildInfo.description) {
