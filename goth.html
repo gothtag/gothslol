@@ -473,9 +473,9 @@
 
         @media (max-width: 768px) {
             .guild-banner {
-                height: 180px;
+                height: 150px;
                 border-radius: 42px 42px 0 0;
-                max-height: 25vh;
+                max-height: 22vh;
                 width: 100%;
             }
 
@@ -539,13 +539,9 @@
         }
 
         @media (max-width: 480px) {
-            body {
-                padding-top: 80px;
-            }
-
             .guild-banner {
-                height: 150px;
-                max-height: 22vh;
+                height: 100px;
+                max-height: 20vh;
                 width: 100%;
             }
 
@@ -585,12 +581,14 @@
             }
 
             .server-stats {
+                position: absolute;
+                right: 1rem;
+                top: 1rem;
                 display: flex;
-                justify-content: center;
-                gap: 1.5rem;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 3px;
                 font-size: 0.75rem;
-                position: static;
-                margin-bottom: 1rem;
             }
 
             .stat-row {
