@@ -321,6 +321,19 @@
             background: rgba(117, 117, 117, 0.08);
             border: 2px solid rgba(117, 117, 117, 0.04);
             border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+        }
+
+        .clan-badge:hover {
+            background: rgba(117, 117, 117, 0.14);
+            border-color: rgba(117, 117, 117, 0.16);
+        }
+
+        .clan-badge.copied {
+            background: rgba(117, 117, 117, 0.22);
+            border-color: rgba(117, 117, 117, 0.3);
+            transform: translateY(-1px);
         }
 
         .clan-badge-img {
@@ -807,6 +820,14 @@
         function clanTagStorageKey(slot) {
             return `discord-clan-tag:${slot}`;
         }
+
+        function clanGuildIdStorageKey(slot) {
+            return `discord-clan-guild-id:${slot}`;
+        }
+
+        function clanInviteUrlStorageKey(slot) {
+            return `discord-clan-invite-url:${slot}`;
+        }
         
         function avatarDecorationStorageKey(slot) {
             return `discord-avatar-decoration:${slot}`;
@@ -890,6 +911,8 @@
 
                 const cachedBadgeUrl = localStorage.getItem(clanBadgeStorageKey(slot));
                 const cachedTag = localStorage.getItem(clanTagStorageKey(slot));
+                const cachedGuildId = localStorage.getItem(clanGuildIdStorageKey(slot));
+                const cachedInviteUrl = localStorage.getItem(clanInviteUrlStorageKey(slot));
                 
                 if (cachedBadgeUrl && cachedTag) {
                     const badgeImg = clanBadgeEl.querySelector('.clan-badge-img');
@@ -899,6 +922,9 @@
                         badgeImg.src = cachedBadgeUrl;
                         badgeImg.alt = cachedTag;
                         badgeTag.textContent = cachedTag;
+                        clanBadgeEl.dataset.guildId = cachedGuildId || '';
+                        clanBadgeEl.dataset.inviteUrl = cachedInviteUrl || '';
+                        clanBadgeEl.title = 'Copier le lien du serveur';
                         clanBadgeEl.style.display = 'inline-flex';
                     }
                 }
@@ -972,8 +998,12 @@
             if (clanBadgeEl) {
                 const cachedBadgeUrl = localStorage.getItem(clanBadgeStorageKey(slot));
                 const cachedTag = localStorage.getItem(clanTagStorageKey(slot));
+                const cachedGuildId = localStorage.getItem(clanGuildIdStorageKey(slot));
+                const cachedInviteUrl = localStorage.getItem(clanInviteUrlStorageKey(slot));
                 const newBadgeUrl = slotData.clanBadgeUrl || null;
                 const newTag = slotData.clanTag || null;
+                const newGuildId = slotData.clanGuildId || null;
+                const newInviteUrl = slotData.clanInviteUrl || null;
 
                 if (newBadgeUrl && newTag) {
                     const badgeImg = clanBadgeEl.querySelector('.clan-badge-img');
@@ -987,17 +1017,29 @@
                             badgeTag.textContent = newTag;
                             clanBadgeEl.style.display = 'inline-flex';
                         }
+                        clanBadgeEl.dataset.guildId = newGuildId || '';
+                        clanBadgeEl.dataset.inviteUrl = newInviteUrl || '';
+                        clanBadgeEl.title = 'Copier le lien du serveur';
                         // Always update cache
                         localStorage.setItem(clanBadgeStorageKey(slot), newBadgeUrl);
                         localStorage.setItem(clanTagStorageKey(slot), newTag);
+                        localStorage.setItem(clanGuildIdStorageKey(slot), newGuildId || '');
+                        localStorage.setItem(clanInviteUrlStorageKey(slot), newInviteUrl || '');
                     }
                 } else if (slotData.cached && cachedBadgeUrl && cachedTag) {
                     // Keep cached badge on cached responses to avoid flicker
+                    clanBadgeEl.dataset.guildId = cachedGuildId || '';
+                    clanBadgeEl.dataset.inviteUrl = cachedInviteUrl || '';
+                    clanBadgeEl.title = 'Copier le lien du serveur';
                     clanBadgeEl.style.display = 'inline-flex';
                 } else {
                     // No clan badge - clear cache and hide
                     localStorage.removeItem(clanBadgeStorageKey(slot));
                     localStorage.removeItem(clanTagStorageKey(slot));
+                    localStorage.removeItem(clanGuildIdStorageKey(slot));
+                    localStorage.removeItem(clanInviteUrlStorageKey(slot));
+                    clanBadgeEl.dataset.guildId = '';
+                    clanBadgeEl.dataset.inviteUrl = '';
                     clanBadgeEl.style.display = 'none';
                 }
             }
@@ -1062,7 +1104,37 @@
             }
         }
 
+        function setupClanBadgeCopy() {
+            const badges = document.querySelectorAll('.clan-badge[data-discord-slot]');
+
+            for (const badge of badges) {
+                badge.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const inviteUrl = badge.dataset.inviteUrl || '';
+                    const guildId = badge.dataset.guildId || '';
+                    const fallbackUrl = guildId ? `https://discord.com/channels/${guildId}` : '';
+                    const textToCopy = inviteUrl || fallbackUrl;
+
+                    if (!textToCopy) {
+                        return;
+                    }
+
+                    try {
+                        await navigator.clipboard.writeText(textToCopy);
+                        badge.classList.add('copied');
+                        setTimeout(function() {
+                            badge.classList.remove('copied');
+                        }, 900);
+                    } catch (_err) {
+                    }
+                });
+            }
+        }
+
         attachAvatarFallbacks();
+        setupClanBadgeCopy();
         hydrateCachedAvatars();
         hydrateCachedClanBadges();
         hydrateCachedAvatarDecorations();
