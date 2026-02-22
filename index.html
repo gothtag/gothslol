@@ -831,6 +831,25 @@
         const AVATAR_SLOTS = ['ev', 'ey'];
         const AVATAR_POLL_INTERVAL_MS = 10000;
 
+        const COPY_UI = (function() {
+            const language = (navigator.language || 'en').toLowerCase();
+            const isFrench = language.startsWith('fr');
+            if (isFrench) {
+                return {
+                    tooltip: 'Copier le lien du serveur',
+                    copied: 'Lien copié',
+                    unavailable: 'Lien d\'invitation indisponible',
+                    failed: 'Échec de la copie'
+                };
+            }
+            return {
+                tooltip: 'Copy server link',
+                copied: 'Link copied',
+                unavailable: 'Invite link unavailable',
+                failed: 'Copy failed'
+            };
+        })();
+
         function avatarStorageKey(slot) {
             return `discord-avatar-url:${slot}`;
         }
@@ -946,7 +965,7 @@
                         badgeTag.textContent = cachedTag;
                         clanBadgeEl.dataset.guildId = cachedGuildId || '';
                         clanBadgeEl.dataset.inviteUrl = cachedInviteUrl || '';
-                        clanBadgeEl.title = 'Copier le lien du serveur';
+                        clanBadgeEl.title = COPY_UI.tooltip;
                         clanBadgeEl.style.display = 'inline-flex';
                     }
                 }
@@ -1041,7 +1060,7 @@
                         }
                         clanBadgeEl.dataset.guildId = newGuildId || '';
                         clanBadgeEl.dataset.inviteUrl = newInviteUrl || '';
-                        clanBadgeEl.title = 'Copier le lien du serveur';
+                        clanBadgeEl.title = COPY_UI.tooltip;
                         // Always update cache
                         localStorage.setItem(clanBadgeStorageKey(slot), newBadgeUrl);
                         localStorage.setItem(clanTagStorageKey(slot), newTag);
@@ -1052,7 +1071,7 @@
                     // Keep cached badge on cached responses to avoid flicker
                     clanBadgeEl.dataset.guildId = cachedGuildId || '';
                     clanBadgeEl.dataset.inviteUrl = cachedInviteUrl || '';
-                    clanBadgeEl.title = 'Copier le lien du serveur';
+                    clanBadgeEl.title = COPY_UI.tooltip;
                     clanBadgeEl.style.display = 'inline-flex';
                 } else {
                     // No clan badge - clear cache and hide
@@ -1155,20 +1174,20 @@
                     const textToCopy = inviteUrl;
 
                     if (!textToCopy) {
-                        showFeedback('Lien d\'invitation indisponible');
+                        showFeedback(COPY_UI.unavailable);
                         return;
                     }
 
                     try {
                         await navigator.clipboard.writeText(textToCopy);
                         badge.classList.add('copied');
-                        showFeedback('Lien copié');
+                        showFeedback(COPY_UI.copied);
                         window.open(textToCopy, '_blank', 'noopener,noreferrer');
                         setTimeout(function() {
                             badge.classList.remove('copied');
                         }, 900);
                     } catch (_err) {
-                        showFeedback('Échec de la copie');
+                        showFeedback(COPY_UI.failed);
                     }
                 });
             }
