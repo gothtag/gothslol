@@ -1,7 +1,8 @@
 const DISCORD_TOKEN_URL = "https://discord.com/api/oauth2/token";
 const DISCORD_ME_URL = "https://discord.com/api/users/@me";
 const { getJson, setJson } = require("./discord-store");
-const AVATAR_CACHE_MS = 5000;
+const AVATAR_CACHE_MS = 60 * 1000;
+const INVALID_GRANT_COOLDOWN_MS = 6 * 60 * 60 * 1000;
 
 function json(statusCode, body) {
   return {
@@ -223,7 +224,7 @@ exports.handler = async function handler(event) {
 
   try {
     if (requestedSlot) {
-      const [storedToken, storedUserId, storedAvatarUrl, storedAvatarUpdatedAt, storedClanTag, storedClanBadgeUrl, storedAvatarDecorationUrl] = await Promise.all([
+      const [storedToken, storedUserId, storedAvatarUrl, storedAvatarUpdatedAt, storedClanTag, storedClanBadgeUrl, storedAvatarDecorationUrl, storedAuthErrorUntil] = await Promise.all([
         getJson(`discord:${requestedSlot}:refresh_token`),
         getJson(`discord:${requestedSlot}:user_id`),
         getJson(`discord:${requestedSlot}:avatar_url`),
@@ -231,11 +232,33 @@ exports.handler = async function handler(event) {
         getJson(`discord:${requestedSlot}:clan_tag`),
         getJson(`discord:${requestedSlot}:clan_badge_url`),
         getJson(`discord:${requestedSlot}:avatar_decoration_url`),
+        getJson(`discord:${requestedSlot}:auth_error_until`),
       ]);
 
       const cachedUrl = storedAvatarUrl?.value || null;
       const cachedAt = Number(storedAvatarUpdatedAt?.value || 0);
       const cacheFresh = cachedUrl && cachedAt && Date.now() - cachedAt < AVATAR_CACHE_MS;
+      const authErrorUntil = Number(storedAuthErrorUntil?.value || 0);
+
+      if (!force && authErrorUntil > Date.now()) {
+        if (direct) {
+          return redirect(cachedUrl || defaultAvatarUrl(storedUserId?.value));
+        }
+
+        return json(200, {
+          [requestedSlot]: {
+            slot: requestedSlot,
+            avatarUrl: cachedUrl || null,
+            avatarDecorationUrl: storedAvatarDecorationUrl?.value || null,
+            clanTag: storedClanTag?.value || null,
+            clanBadgeUrl: storedClanBadgeUrl?.value || null,
+            cached: true,
+            warning: "invalid_grant_cooldown",
+            cooldownUntil: new Date(authErrorUntil).toISOString(),
+            refreshedAt: cachedAt ? new Date(cachedAt).toISOString() : null,
+          },
+        });
+      }
 
       if (!direct && !force && cacheFresh) {
         return json(200, {
@@ -293,6 +316,12 @@ exports.handler = async function handler(event) {
             );
           }
 
+          cacheUpdates.push(
+            setJson(`discord:${requestedSlot}:auth_error_until`, {
+              value: "0",
+            })
+          );
+
           await Promise.all(cacheUpdates);
         }
 
@@ -304,15 +333,40 @@ exports.handler = async function handler(event) {
           [requestedSlot]: resolved,
         });
       } catch (err) {
+        console.error(`Failed to resolve ${requestedSlot}:`, err.message || err);
+
+        if (String(err.message || err) === "invalid_grant") {
+          await setJson(`discord:${requestedSlot}:auth_error_until`, {
+            value: String(Date.now() + INVALID_GRANT_COOLDOWN_MS),
+          });
+        }
+        
         if (direct) {
           return redirect(cachedUrl || defaultAvatarUrl(storedUserId?.value));
         }
 
+        // If we have cached data, return it with warning instead of error
+        if (cachedUrl) {
+          return json(200, {
+            [requestedSlot]: {
+              slot: requestedSlot,
+              avatarUrl: cachedUrl,
+              avatarDecorationUrl: storedAvatarDecorationUrl?.value || null,
+              clanTag: storedClanTag?.value || null,
+              clanBadgeUrl: storedClanBadgeUrl?.value || null,
+              cached: true,
+              warning: String(err.message || err),
+              refreshedAt: storedAvatarUpdatedAt?.value ? new Date(Number(storedAvatarUpdatedAt.value)).toISOString() : null,
+            },
+          });
+        }
+
+        // No cache available, return error
         return json(500, {
           error: String(err.message || err),
           [requestedSlot]: {
             slot: requestedSlot,
-            avatarUrl: cachedUrl || null,
+            avatarUrl: null,
           },
         });
       }
