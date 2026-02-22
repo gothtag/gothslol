@@ -349,6 +349,14 @@
             -webkit-user-select: text;
             -ms-user-select: text;
             user-select: text;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .guild-tag:hover {
+            background: rgba(117, 117, 117, 0.15);
+            border-color: rgba(117, 117, 117, 0.1);
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .clan-badge-img {
@@ -386,6 +394,7 @@
             align-items: center;
             gap: 14px;
             pointer-events: none;
+            flex-wrap: wrap;
         }
 
         .corner-link {

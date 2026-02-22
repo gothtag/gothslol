@@ -231,12 +231,14 @@
             }
             
             .corner-badges {
-                flex-wrap: wrap;
                 left: 50%;
                 transform: translateX(-50%);
-                width: auto;
+                bottom: 12px;
+                gap: 10px;
+                flex-wrap: wrap;
                 max-width: 90vw;
-                bottom: 10px;
+                justify-content: center;
+                padding: 0 1rem;
             }
         }
 
@@ -301,9 +303,9 @@
                 bottom: 8px;
                 gap: 8px;
                 flex-wrap: wrap;
-                max-width: 90vw;
+                max-width: 95vw;
                 justify-content: center;
-                flex-direction: row;
+                padding: 0 0.5rem;
             }
 
             .corner-link {
@@ -452,6 +454,14 @@
             -webkit-user-select: text;
             -ms-user-select: text;
             user-select: text;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .guild-tag:hover {
+            background: rgba(117, 117, 117, 0.15);
+            border-color: rgba(117, 117, 117, 0.1);
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .clan-badge-img {
@@ -489,6 +499,7 @@
             align-items: center;
             gap: 14px;
             pointer-events: none;
+            flex-wrap: wrap;
         }
 
         .corner-link {
