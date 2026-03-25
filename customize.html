@@ -16,8 +16,12 @@
             color: #fff;
             font-family: 'Onest', sans-serif;
             min-height: 100vh;
-            display: flex;
             overflow-x: hidden;
+        }
+
+        .main-layout {
+            display: flex;
+            min-height: 100vh;
         }
 
         .sidebar {
@@ -903,7 +907,7 @@
         }
     </style>
 </head>
-<body>
+<body class="main-layout">
     <!-- Sidebar Navigation -->
     <div class="sidebar">
         <a href="/" class="sidebar-header">
