@@ -880,6 +880,68 @@
             font-size: 11px;
         }
 
+        .file-preview-container {
+            width: 100%;
+            height: 120px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(20, 20, 20, 0.5);
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .file-preview-container.dragover {
+            border-color: rgba(0, 255, 0, 0.4);
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .file-preview-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 15px;
+            color: #888;
+            font-size: 12px;
+        }
+
+        .file-preview-placeholder span:first-child {
+            flex: 1;
+            text-align: center;
+        }
+
+        .remove-btn {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            opacity: 0;
+        }
+
+        .file-preview-container:hover .remove-btn {
+            opacity: 1;
+        }
+
+        .file-preview-media {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
         .file-preview {
             margin-top: 15px;
             max-width: 100%;
@@ -986,12 +1048,15 @@
             <!-- Background Section -->
             <div class="section-title">Arrière-plan</div>
             <div class="form-group">
-                <div class="file-upload-area" id="bgUploadArea" onclick="document.getElementById('bgFile').click()">
-                    <div class="file-upload-text">Glissez-déposez votre fichier ici</div>
-                    <div class="file-upload-subtext">.MP4 / .GIF / .JPG / .PNG</div>
-                    <input type="file" id="bgFile" accept=".mp4,.gif,.jpg,.jpeg,.png" style="display: none;">
+                <div class="file-preview-container" id="bgPreviewContainer" onclick="document.getElementById('bgFile').click()">
+                    <div class="file-preview-placeholder" id="bgPlaceholder">
+                        <span>.MP4 / .GIF / .JPG / .PNG</span>
+                        <span class="remove-btn" onclick="event.stopPropagation(); clearBackground()">×</span>
+                    </div>
+                    <video id="bgPreviewVideo" class="file-preview-media" style="display: none;"></video>
+                    <img id="bgPreviewImg" class="file-preview-media" style="display: none;">
                 </div>
-                <div class="file-preview" id="bgPreview"></div>
+                <input type="file" id="bgFile" accept=".mp4,.gif,.jpg,.jpeg,.png" style="display: none;">
                 <div class="file-info" id="bgInfo"></div>
                 <label>Ou URL directe</label>
                 <input type="text" id="bgUrl" placeholder="https://r2.guns.lol/...">
@@ -1429,6 +1494,32 @@
             document.querySelectorAll('.social-item')[idx]?.remove();
         }
 
+        // Clear background function
+        function clearBackground() {
+            const container = document.getElementById('bgPreviewContainer');
+            const placeholder = document.getElementById('bgPlaceholder');
+            const videoEl = document.getElementById('bgPreviewVideo');
+            const imgEl = document.getElementById('bgPreviewImg');
+            const info = document.getElementById('bgInfo');
+            const fileInput = document.getElementById('bgFile');
+
+            // Reset to placeholder
+            placeholder.style.display = 'flex';
+            videoEl.style.display = 'none';
+            imgEl.style.display = 'none';
+            videoEl.src = '';
+            imgEl.src = '';
+            info.textContent = '';
+
+            // Clear file data
+            fileInput.value = '';
+            delete fileInput.dataset.fileData;
+            delete fileInput.dataset.fileName;
+
+            // Update preview
+            updatePreview();
+        }
+
         // Logout
         function logout() {
             localStorage.removeItem('adminToken');
@@ -1670,43 +1761,41 @@
             reader.onload = function(e) {
                 const result = e.target.result;
 
-                // Clear previous preview
-                preview.innerHTML = '';
-                preview.style.display = 'block';
+                // Handle different file types and containers
+                if (fileInput.id === 'bgFile') {
+                    // Background file handling
+                    const container = document.getElementById('bgPreviewContainer');
+                    const placeholder = document.getElementById('bgPlaceholder');
+                    const videoEl = document.getElementById('bgPreviewVideo');
+                    const imgEl = document.getElementById('bgPreviewImg');
 
-                // Show file info
-                info.textContent = `Fichier: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                    // Hide placeholder, show media
+                    placeholder.style.display = 'none';
 
-                // Handle different file types
-                if (file.type.startsWith('image/')) {
-                    const img = document.createElement('img');
-                    img.src = result;
-                    img.onload = function() {
-                        // For images, show as preview
-                        preview.appendChild(img);
-                    };
-                } else if (file.type.startsWith('video/')) {
-                    const video = document.createElement('video');
-                    video.src = result;
-                    video.controls = false;
-                    video.muted = true;
-                    video.preload = 'metadata';
-                    video.onloadedmetadata = function() {
-                        // Show first frame as image
-                        const canvas = document.createElement('canvas');
-                        canvas.width = video.videoWidth;
-                        canvas.height = video.videoHeight;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(video, 0, 0);
-                        const img = document.createElement('img');
-                        img.src = canvas.toDataURL();
-                        preview.appendChild(img);
-                    };
-                } else if (file.type.startsWith('audio/')) {
-                    const audio = document.createElement('audio');
-                    audio.src = result;
-                    audio.controls = true;
-                    preview.appendChild(audio);
+                    if (file.type.startsWith('video/')) {
+                        videoEl.src = result;
+                        videoEl.style.display = 'block';
+                        imgEl.style.display = 'none';
+                    } else if (file.type.startsWith('image/')) {
+                        imgEl.src = result;
+                        imgEl.style.display = 'block';
+                        videoEl.style.display = 'none';
+                    }
+
+                    // Show file info
+                    info.textContent = `Fichier: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                } else {
+                    // Other file types (audio, cursor) - keep old behavior
+                    preview.innerHTML = '';
+                    preview.style.display = 'block';
+                    info.textContent = `Fichier: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+
+                    if (file.type.startsWith('audio/')) {
+                        const audio = document.createElement('audio');
+                        audio.src = result;
+                        audio.controls = true;
+                        preview.appendChild(audio);
+                    }
                 }
 
                 // Store file data for saving
@@ -1718,7 +1807,7 @@
         }
 
         // Setup drag and drop for all sections
-        setupDragAndDrop('bgUploadArea', 'bgFile', 'bgPreview', 'bgInfo', ['.mp4', '.gif', '.jpg', '.jpeg', '.png']);
+        setupDragAndDrop('bgPreviewContainer', 'bgFile', 'bgPreview', 'bgInfo', ['.mp4', '.gif', '.jpg', '.jpeg', '.png']);
         setupDragAndDrop('audioUploadArea', 'audioFile', 'audioPreview', 'audioInfo', ['.mp3', '.wav', '.ogg']);
         setupDragAndDrop('cursorUploadArea', 'cursorFile', 'cursorPreview', 'cursorInfo', ['.png', '.cur']);
 
