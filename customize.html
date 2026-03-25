@@ -3,162 +3,574 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>goths.lol | Customize</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="attached_assets/favicon.png">
-    <link rel="apple-touch-icon" type="image/png" href="attached_assets/favicon.png">
+    <title>GothSlol - Customize Your Page</title>
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: #141414;
-            color: #fff;
+        * {
             margin: 0;
-            padding: 20px;
-            min-height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            animation: fadeIn 1s ease-in;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        h1 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-        }
-        .section {
-            margin-bottom: 2rem;
-            background: rgba(20,20,20,0.8);
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(255,255,255,0.1);
-        }
-        .section h2 {
-            margin-top: 0;
-            color: #ff0087;
-        }
-        label {
-            display: block;
-            margin: 0.5rem 0 0.2rem;
-            font-weight: 500;
-        }
-        input, select {
-            width: 100%;
-            padding: 0.75rem;
+
+        body {
             background: #0a0a0a;
             color: #fff;
-            border: 1px solid #333;
-            border-radius: 5px;
-            font-size: 1rem;
+            font-family: 'Onest', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
         }
-        button {
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(45deg, #ff0087, #573362);
+
+        .container {
+            width: 100%;
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .settings-panel {
+            flex: 1;
+            min-width: 320px;
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .preview-panel {
+            flex: 1;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .preview-title {
+            color: #999;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .preview-frame {
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1;
+            background: rgba(20, 20, 20, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-frame::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.03) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .logo-preview {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: bold;
             color: #fff;
-            border: none;
-            border-radius: 5px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            text-align: center;
+            z-index: 1;
+        }
+
+        .preview-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #aaa;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 3px;
+            height: 16px;
+            background: #7c3aed;
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: #bbb;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="color"],
+        input[type="url"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="color"]:focus,
+        input[type="url"]:focus,
+        textarea:focus,
+        select:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            outline: none;
+            box-shadow: 0 0 10px rgba(124, 58, 237, 0.2);
+        }
+
+        input[type="color"] {
+            height: 45px;
+            padding: 5px;
             cursor: pointer;
-            font-size: 1rem;
-            margin-top: 1rem;
-            transition: background 0.3s;
         }
-        button:hover {
-            background: linear-gradient(45deg, #e6007a, #4a2a52);
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
         }
-        .logout {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #333;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            text-decoration: none;
+
+        .color-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-input-wrapper input[type="color"] {
+            flex: 1;
+            max-width: 60px;
+        }
+
+        .color-input-wrapper input[type="text"] {
+            flex: 1;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex: 1;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
             color: #fff;
-            transition: background 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .logout:hover {
-            background: #555;
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-preview {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-preview:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .preview-button {
+            background: rgba(124, 58, 237, 0.2);
+            border: 1px solid rgba(124, 58, 237, 0.4);
+            color: #c4b5fd;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .preview-button:hover {
+            background: rgba(124, 58, 237, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .message.success {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #86efac;
+            display: block;
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            display: block;
+        }
+
+        .header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 12px;
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .settings-panel {
+                max-height: none;
+            }
+
+            .preview-frame {
+                max-width: 100%;
+                aspect-ratio: auto;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
 <body>
-    <a href="#" class="logout" onclick="logout()">Logout</a>
     <div class="container">
-        <h1>Customize gothslol</h1>
-        <form id="customizeForm">
-            <div class="section">
-                <h2>Colors</h2>
-                <label>Background Color</label>
-                <input type="color" id="bgColor" value="#000000">
-                <label>Text Color</label>
-                <input type="color" id="textColor" value="#ffffff">
-                <label>Accent Color</label>
-                <input type="color" id="accentColor" value="#573362">
+        <!-- Settings Panel -->
+        <div class="settings-panel">
+            <div class="header">
+                <h1>Customize Your Page</h1>
+                <p>Personalize your gothslol page</p>
             </div>
+
+            <div id="message" class="message"></div>
+
+            <!-- Logo Section -->
             <div class="section">
-                <h2>Background</h2>
-                <label>Background Image URL</label>
-                <input type="text" id="bgImage" placeholder="https://example.com/image.jpg">
-                <label>Background Video URL</label>
-                <input type="text" id="bgVideo" placeholder="https://example.com/video.mp4">
+                <div class="section-title">Logo & Identity</div>
+                <div class="form-group">
+                    <label>Logo Text / Name</label>
+                    <input type="text" id="logoText" placeholder="Enter your logo text" maxlength="20" value="GOTH">
+                </div>
+                <div class="form-group">
+                    <label>Logo Emoji / Icon</label>
+                    <input type="text" id="logoEmoji" placeholder="Paste emoji here" maxlength="5" value="👻">
+                </div>
             </div>
+
+            <!-- Colors Section -->
             <div class="section">
-                <h2>Links</h2>
-                <label>EV Link</label>
-                <input type="text" id="evLink" placeholder="https://example.com">
-                <label>EY Link</label>
-                <input type="text" id="eyLink" placeholder="https://example.com">
+                <div class="section-title">Colors</div>
+                <div class="form-group">
+                    <label>Primary Color</label>
+                    <div class="color-input-wrapper">
+                        <input type="color" id="primaryColor" value="#7c3aed">
+                        <input type="text" id="primaryColorHex" value="#7c3aed" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Accent Color</label>
+                    <div class="color-input-wrapper">
+                        <input type="color" id="accentColor" value="#ec4899">
+                        <input type="text" id="accentColorHex" value="#ec4899" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Frame Border Color</label>
+                    <div class="color-input-wrapper">
+                        <input type="color" id="frameColor" value="#7c3aed">
+                        <input type="text" id="frameColorHex" value="#7c3aed" readonly>
+                    </div>
+                </div>
             </div>
+
+            <!-- Background Section -->
             <div class="section">
-                <h2>Usernames</h2>
-                <label>EV Username</label>
-                <input type="text" id="evUsername" value="ev">
-                <label>EY Username</label>
-                <input type="text" id="eyUsername" value="ey">
+                <div class="section-title">Background</div>
+                <div class="form-group">
+                    <label>Background Image URL</label>
+                    <input type="url" id="backgroundUrl" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Background Opacity (0-100)</label>
+                    <input type="text" id="backgroundOpacity" placeholder="50" value="50">
+                </div>
             </div>
-            <button type="submit">Save Changes</button>
-        </form>
+
+            <!-- Bio Section -->
+            <div class="section">
+                <div class="section-title">Bio</div>
+                <div class="form-group">
+                    <label>Bio Text</label>
+                    <textarea id="bioText" placeholder="Tell us about yourself..."></textarea>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="button-group">
+                <button class="btn btn-save" onclick="saveSettings()">Save Settings</button>
+                <button class="btn btn-preview" onclick="previewPage()">Preview Page</button>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <!-- Preview Panel -->
+        <div class="preview-panel">
+            <div class="preview-title">Live Preview</div>
+            <div class="preview-frame" id="previewFrame">
+                <div class="logo-preview" id="logoPreview">👻</div>
+                <div class="preview-content">
+                    <div style="text-align: center; font-size: 16px; font-weight: 600;">GOTH</div>
+                    <button class="preview-button">View Full Page</button>
+                    <button class="preview-button">Add Links</button>
+                    <button class="preview-button">Share</button>
+                </div>
+            </div>
+        </div>
     </div>
+
     <script>
-        // Check if logged in
-        if (!localStorage.getItem('adminToken')) {
-            window.location.href = '/login';
+        // Check if user is logged in
+        function checkAuth() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
         }
 
-        document.getElementById('customizeForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const settings = {
-                bgColor: document.getElementById('bgColor').value,
-                textColor: document.getElementById('textColor').value,
-                accentColor: document.getElementById('accentColor').value,
-                bgImage: document.getElementById('bgImage').value,
-                bgVideo: document.getElementById('bgVideo').value,
-                evLink: document.getElementById('evLink').value,
-                eyLink: document.getElementById('eyLink').value,
-                evUsername: document.getElementById('evUsername').value,
-                eyUsername: document.getElementById('eyUsername').value
-            };
-            const response = await fetch('/.netlify/functions/save-settings', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(settings)
-            });
-            const result = await response.json();
-            if (result.success) {
-                alert('Settings saved!');
-            } else {
-                alert('Error saving settings');
-            }
-        });
+        checkAuth();
 
+        // Load settings from localStorage and display in form
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem('gothSlolSettings') || '{}');
+            document.getElementById('logoText').value = settings.logoText || 'GOTH';
+            document.getElementById('logoEmoji').value = settings.logoEmoji || '👻';
+            document.getElementById('primaryColor').value = settings.primaryColor || '#7c3aed';
+            document.getElementById('accentColor').value = settings.accentColor || '#ec4899';
+            document.getElementById('frameColor').value = settings.frameColor || '#7c3aed';
+            document.getElementById('backgroundUrl').value = settings.backgroundUrl || '';
+            document.getElementById('backgroundOpacity').value = settings.backgroundOpacity || '50';
+            document.getElementById('bioText').value = settings.bioText || '';
+
+            updateHexInputs();
+            updatePreview();
+        }
+
+        // Update hex display inputs
+        function updateHexInputs() {
+            document.getElementById('primaryColorHex').value = document.getElementById('primaryColor').value;
+            document.getElementById('accentColorHex').value = document.getElementById('accentColor').value;
+            document.getElementById('frameColorHex').value = document.getElementById('frameColor').value;
+        }
+
+        // Update live preview
+        function updatePreview() {
+            const logoText = document.getElementById('logoText').value || 'GOTH';
+            const logoEmoji = document.getElementById('logoEmoji').value || '👻';
+            const primaryColor = document.getElementById('primaryColor').value;
+            const frameColor = document.getElementById('frameColor').value;
+            const bgUrl = document.getElementById('backgroundUrl').value;
+            const bgOpacity = document.getElementById('backgroundOpacity').value;
+
+            // Update logo preview
+            document.getElementById('logoPreview').textContent = logoEmoji;
+
+            // Update frame colors and background
+            const frame = document.getElementById('previewFrame');
+            frame.style.borderColor = frameColor;
+            
+            if (bgUrl) {
+                frame.style.backgroundImage = `url('${bgUrl}')`;
+                frame.style.backgroundSize = 'cover';
+                frame.style.backgroundPosition = 'center';
+            } else {
+                frame.style.backgroundImage = 'none';
+            }
+
+            // Update section title color
+            const titles = document.querySelectorAll('.section-title::before');
+            titles.forEach(el => {
+                el.style.background = primaryColor;
+            });
+        }
+
+        // Save settings
+        async function saveSettings() {
+            const settings = {
+                logoText: document.getElementById('logoText').value,
+                logoEmoji: document.getElementById('logoEmoji').value,
+                primaryColor: document.getElementById('primaryColor').value,
+                accentColor: document.getElementById('accentColor').value,
+                frameColor: document.getElementById('frameColor').value,
+                backgroundUrl: document.getElementById('backgroundUrl').value,
+                backgroundOpacity: document.getElementById('backgroundOpacity').value,
+                bioText: document.getElementById('bioText').value
+            };
+
+            try {
+                const response = await fetch('/.netlify/functions/save-settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('adminToken')
+                    },
+                    body: JSON.stringify(settings)
+                });
+
+                if (response.ok) {
+                    localStorage.setItem('gothSlolSettings', JSON.stringify(settings));
+                    showMessage('Settings saved successfully!', 'success');
+                } else {
+                    showMessage('Failed to save settings', 'error');
+                }
+            } catch (e) {
+                // Save locally if server fails
+                localStorage.setItem('gothSlolSettings', JSON.stringify(settings));
+                showMessage('Settings saved locally!', 'success');
+            }
+        }
+
+        // Preview full page
+        function previewPage() {
+            window.open('/', '_blank');
+        }
+
+        // Logout
         function logout() {
             localStorage.removeItem('adminToken');
-            window.location.href = '/login';
+            localStorage.removeItem('gothSlolSettings');
+            window.location.href = '/login.html';
         }
+
+        // Show message
+        function showMessage(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `message ${type}`;
+            setTimeout(() => {
+                msg.className = 'message';
+            }, 3000);
+        }
+
+        // Event listeners for live preview
+        document.getElementById('logoText').addEventListener('input', updatePreview);
+        document.getElementById('logoEmoji').addEventListener('input', updatePreview);
+        document.getElementById('primaryColor').addEventListener('input', () => {
+            updateHexInputs();
+            updatePreview();
+        });
+        document.getElementById('accentColor').addEventListener('input', () => {
+            updateHexInputs();
+            updatePreview();
+        });
+        document.getElementById('frameColor').addEventListener('input', () => {
+            updateHexInputs();
+            updatePreview();
+        });
+        document.getElementById('backgroundUrl').addEventListener('input', updatePreview);
+        document.getElementById('backgroundOpacity').addEventListener('input', updatePreview);
+
+        // Load settings on page load
+        loadSettings();
     </script>
 </body>
 </html>
