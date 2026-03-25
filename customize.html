@@ -329,6 +329,45 @@
             border-bottom: 1px solid rgba(196, 181, 253, 0.2);
         }
 
+        .profile-item,
+        .social-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .profile-item label,
+        .social-item label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #666;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            display: block;
+            font-weight: 600;
+        }
+
+        .profile-item input,
+        .social-item input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            color: #fff;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .profile-item input:focus,
+        .social-item input:focus {
+            outline: none;
+            border-color: #c4b5fd;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
         /* Scrollbar styling */
         .settings-panel::-webkit-scrollbar,
         .preview-frame::-webkit-scrollbar {
@@ -394,53 +433,41 @@
         <div class="settings-panel">
             <h2 style="margin-bottom: 25px; font-size: 18px;">Personnaliser votre page</h2>
 
-            <!-- Logo Section -->
-            <div class="section-title">Logo & Nom</div>
-            <div class="form-group">
-                <label>Logo (emoji ou texte)</label>
-                <input type="text" id="logoInput" placeholder="🖤" maxlength="5">
-            </div>
-            <div class="form-group">
-                <label>Nom</label>
-                <input type="text" id="nameInput" placeholder="Entrez votre nom">
-            </div>
-
-            <!-- Bio Section -->
-            <div class="section-title">Bio</div>
-            <div class="form-group">
-                <label>Description</label>
-                <textarea id="bioInput" placeholder="Parlez de vous..."></textarea>
-            </div>
-
-            <!-- Colors Section -->
-            <div class="section-title">Couleurs</div>
-            <div class="color-group">
-                <div class="color-input-group">
-                    <label>Couleur primaire</label>
-                    <div class="color-input-wrapper">
-                        <input type="color" id="primaryColor" class="color-picker" value="#7c3aed">
-                        <input type="text" id="primaryHex" class="color-hex" value="#7c3aed" readonly>
-                    </div>
-                </div>
-                <div class="color-input-group">
-                    <label>Couleur accent</label>
-                    <div class="color-input-wrapper">
-                        <input type="color" id="accentColor" class="color-picker" value="#ec4899">
-                        <input type="text" id="accentHex" class="color-hex" value="#ec4899" readonly>
-                    </div>
-                </div>
-            </div>
-
             <!-- Background Section -->
             <div class="section-title">Arrière-plan</div>
             <div class="form-group">
-                <label>URL de l'image</label>
-                <input type="text" id="bgImageUrl" placeholder="https://...">
+                <label>URL de l'image/vidéo</label>
+                <input type="text" id="bgUrl" placeholder="https://r2.guns.lol/...">
             </div>
             <div class="form-group">
-                <label>Opacité de l'image (%)</label>
-                <input type="number" id="bgOpacity" min="0" max="100" value="30">
+                <label>Opacité (%)</label>
+                <input type="number" id="bgOpacity" min="0" max="100" value="35">
             </div>
+
+            <!-- Music Section -->
+            <div class="section-title">Musique de fond</div>
+            <div class="form-group">
+                <label>URL audio (MP3)</label>
+                <input type="text" id="musicUrl" placeholder="attached_assets/music.mp3">
+            </div>
+            <p style="font-size: 12px; color: #888; margin-top: -15px; margin-bottom: 15px;">💡 Cliquez sur l'icône de volume en haut à gauche pour contrôler la musique</p>
+
+            <!-- Cursor Section -->
+            <div class="section-title">Curseur personnalisé</div>
+            <div class="form-group">
+                <label>URL du curseur (PNG)</label>
+                <input type="text" id="cursorUrl" placeholder="attached_assets/cursor.png">
+            </div>
+
+            <!-- Profiles Section -->
+            <div class="section-title">Profils</div>
+            <div id="profilesList"></div>
+            <button class="btn btn-secondary" onclick="addProfile()">+ Ajouter un profil</button>
+
+            <!-- Social Links Section -->
+            <div class="section-title">Liens sociaux</div>
+            <div id="socialLinksList"></div>
+            <button class="btn btn-secondary" onclick="addSocialLink()">+ Ajouter un lien</button>
 
             <!-- Buttons -->
             <div class="button-group">
@@ -455,9 +482,7 @@
             <div class=\"preview-frame\">
                 <div class=\"preview-bg\" id=\"previewBg\"></div>
                 <div class=\"preview-content\">
-                    <div class=\"preview-logo\" id=\"previewLogo\">🖤</div>
-                    <div class=\"preview-name\" id=\"previewName\">Votre nom</div>
-                    <div class=\"preview-bio\" id=\"previewBio\">Description</div>
+                    <div style="color: #aaa; font-size: 12px; text-align: center;">Aperçu du fond</div>
                 </div>
             </div>
         </div>
@@ -469,105 +494,164 @@
             window.location.href = '/login';
         }
 
-        // Load settings from localStorage
+        // Default page settings avec tous les paramètres d'index.html
+        const DEFAULT_SETTINGS = {
+            // Site info
+            siteName: 'goths.lol',
+            
+            // Background
+            bgUrl: 'https://r2.guns.lol/ed920f02-a70f-47a3-a7e9-726df6ca5496.gif',
+            bgOpacity: 35,
+            
+            // Audio/Music
+            musicUrl: 'attached_assets/deadprettygirlee.mp3',
+            
+            // Cursor
+            cursorUrl: 'attached_assets/cursor3.png',
+            
+            // Profiles/Links
+            profiles: [
+                { name: 'ev', url: 'ev.html', avatar: 'attached_assets/985e453463ba0af44c2e2df2bcca2fe9.jpg', role: 'socials' },
+                { name: 'ey', url: 'ey.html', avatar: 'attached_assets/cce169f5e720f9a062dcf82f3934cd12.jpg', role: 'socials' }
+            ],
+            
+            // Social links
+            socialLinks: [
+                { name: 'Discord', url: 'https://discord.gg/gothtag', icon: 'attached_assets/discordlogo.png' },
+                { name: 'GOTHTAG', url: '/goth', icon: 'attached_assets/gothslink.png' },
+                { name: 'Website', url: 'https://gothtag.com', icon: 'attached_assets/tag.png' }
+            ]
+        };
+
+        // Load settings
         function loadSettings() {
-            const settings = JSON.parse(localStorage.getItem('pageSettings')) || {
-                logo: '🖤',
-                name: 'Votre site',
-                bio: 'Bienvenue sur ma page',
-                primaryColor: '#7c3aed',
-                accentColor: '#ec4899',
-                bgImage: '',
-                bgOpacity: 30
-            };
-
-            document.getElementById('logoInput').value = settings.logo;
-            document.getElementById('nameInput').value = settings.name;
-            document.getElementById('bioInput').value = settings.bio;
-            document.getElementById('primaryColor').value = settings.primaryColor;
-            document.getElementById('primaryHex').value = settings.primaryColor;
-            document.getElementById('accentColor').value = settings.accentColor;
-            document.getElementById('accentHex').value = settings.accentColor;
-            document.getElementById('bgImageUrl').value = settings.bgImage || '';
-            document.getElementById('bgOpacity').value = settings.bgOpacity || 30;
-
+            const saved = localStorage.getItem('pageSettings');
+            const settings = saved ? JSON.parse(saved) : DEFAULT_SETTINGS;
+            
+            // Merge with defaults
+            const merged = { ...DEFAULT_SETTINGS, ...settings };
+            
+            // Load basic settings
+            document.getElementById('bgUrl').value = merged.bgUrl;
+            document.getElementById('bgOpacity').value = merged.bgOpacity;
+            document.getElementById('musicUrl').value = merged.musicUrl;
+            document.getElementById('cursorUrl').value = merged.cursorUrl;
+            
+            // Load profiles
+            const profilesContainer = document.getElementById('profilesList');
+            profilesContainer.innerHTML = '';
+            merged.profiles.forEach((profile, idx) => {
+                profilesContainer.insertAdjacentHTML('beforeend', `
+                    <div class="form-group profile-item" data-index="${idx}">
+                        <label>Profil ${idx + 1}</label>
+                        <input type="text" class="profile-name" value="${profile.name}" placeholder="Nom">
+                        <input type="text" class="profile-url" value="${profile.url}" placeholder="URL">
+                        <input type="text" class="profile-avatar" value="${profile.avatar}" placeholder="Avatar URL">
+                        <input type="text" class="profile-role" value="${profile.role}" placeholder="Rôle">
+                        <button type="button" class="btn btn-secondary" onclick="removeProfile(${idx})">Supprimer</button>
+                    </div>
+                `);
+            });
+            
+            // Load social links
+            const socialContainer = document.getElementById('socialLinksList');
+            socialContainer.innerHTML = '';
+            merged.socialLinks.forEach((link, idx) => {
+                socialContainer.insertAdjacentHTML('beforeend', `
+                    <div class="form-group social-item" data-index="${idx}">
+                        <label>Lien social ${idx + 1}</label>
+                        <input type="text" class="social-name" value="${link.name}" placeholder="Nom">
+                        <input type="text" class="social-url" value="${link.url}" placeholder="URL">
+                        <input type="text" class="social-icon" value="${link.icon}" placeholder="Icon URL">
+                        <button type="button" class="btn btn-secondary" onclick="removeSocialLink(${idx})">Supprimer</button>
+                    </div>
+                `);
+            });
+            
             updatePreview();
         }
 
-        // Update preview in real-time
+        // Update preview
         function updatePreview() {
-            const logo = document.getElementById('logoInput').value || '🖤';
-            const name = document.getElementById('nameInput').value || 'Votre nom';
-            const bio = document.getElementById('bioInput').value || 'Description';
-            const bgImage = document.getElementById('bgImageUrl').value;
+            const bgUrl = document.getElementById('bgUrl').value;
             const bgOpacity = document.getElementById('bgOpacity').value;
-
-            document.getElementById('previewLogo').textContent = logo;
-            document.getElementById('previewName').textContent = name;
-            document.getElementById('previewBio').textContent = bio;
-
+            
             const bgEl = document.getElementById('previewBg');
-            if (bgImage) {
-                bgEl.style.backgroundImage = `url('${bgImage}')`;
+            if (bgUrl) {
+                bgEl.style.backgroundImage = `url('${bgUrl}')`;
                 bgEl.style.opacity = bgOpacity / 100;
-            } else {
-                bgEl.style.backgroundImage = 'none';
-                bgEl.style.opacity = '0';
             }
         }
 
-        // Color picker handlers
-        document.getElementById('primaryColor').addEventListener('input', (e) => {
-            document.getElementById('primaryHex').value = e.target.value;
-            updatePreview();
-        });
-
-        document.getElementById('accentColor').addEventListener('input', (e) => {
-            document.getElementById('accentHex').value = e.target.value;
-            updatePreview();
-        });
-
-        // Real-time preview updates
-        document.getElementById('logoInput').addEventListener('input', updatePreview);
-        document.getElementById('nameInput').addEventListener('input', updatePreview);
-        document.getElementById('bioInput').addEventListener('input', updatePreview);
-        document.getElementById('bgImageUrl').addEventListener('input', updatePreview);
-        document.getElementById('bgOpacity').addEventListener('input', updatePreview);
-
-        // Save settings
+        // Save all settings
         async function saveSettings() {
             const settings = {
-                logo: document.getElementById('logoInput').value,
-                name: document.getElementById('nameInput').value,
-                bio: document.getElementById('bioInput').value,
-                primaryColor: document.getElementById('primaryColor').value,
-                accentColor: document.getElementById('accentColor').value,
-                bgImage: document.getElementById('bgImageUrl').value,
-                bgOpacity: document.getElementById('bgOpacity').value
+                bgUrl: document.getElementById('bgUrl').value,
+                bgOpacity: document.getElementById('bgOpacity').value,
+                musicUrl: document.getElementById('musicUrl').value,
+                cursorUrl: document.getElementById('cursorUrl').value,
+                profiles: [],
+                socialLinks: []
             };
 
-            localStorage.setItem('pageSettings', JSON.stringify(settings));
-
-            // Try to save to GitHub via Netlify Function
-            try {
-                const response = await fetch('/.netlify/functions/save-settings', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(settings)
+            // Collect profiles
+            document.querySelectorAll('.profile-item').forEach(item => {
+                settings.profiles.push({
+                    name: item.querySelector('.profile-name').value,
+                    url: item.querySelector('.profile-url').value,
+                    avatar: item.querySelector('.profile-avatar').value,
+                    role: item.querySelector('.profile-role').value
                 });
+            });
 
-                if (response.ok) {
-                    alert('Paramètres enregistrés avec succès!');
-                } else {
-                    alert('Paramètres enregistrés localement (serveur indisponible)');
-                }
-            } catch (error) {
-                console.log('Sauvegarde serveur échouée, paramètres en localStorage:', settings);
-                alert('Paramètres enregistrés localement');
-            }
+            // Collect social links
+            document.querySelectorAll('.social-item').forEach(item => {
+                settings.socialLinks.push({
+                    name: item.querySelector('.social-name').value,
+                    url: item.querySelector('.social-url').value,
+                    icon: item.querySelector('.social-icon').value
+                });
+            });
+
+            localStorage.setItem('pageSettings', JSON.stringify(settings));
+            alert('Paramètres enregistrés!');
+        }
+
+        function addProfile() {
+            const container = document.getElementById('profilesList');
+            const idx = container.children.length;
+            container.insertAdjacentHTML('beforeend', `
+                <div class="form-group profile-item" data-index="${idx}">
+                    <label>Profil ${idx + 1}</label>
+                    <input type="text" class="profile-name" placeholder="Nom">
+                    <input type="text" class="profile-url" placeholder="URL">
+                    <input type="text" class="profile-avatar" placeholder="Avatar URL">
+                    <input type="text" class="profile-role" placeholder="Rôle">
+                    <button type="button" class="btn btn-secondary" onclick="removeProfile(${idx})">Supprimer</button>
+                </div>
+            `);
+        }
+
+        function removeProfile(idx) {
+            document.querySelectorAll('.profile-item')[idx]?.remove();
+        }
+
+        function addSocialLink() {
+            const container = document.getElementById('socialLinksList');
+            const idx = container.children.length;
+            container.insertAdjacentHTML('beforeend', `
+                <div class="form-group social-item" data-index="${idx}">
+                    <label>Lien social ${idx + 1}</label>
+                    <input type="text" class="social-name" placeholder="Nom">
+                    <input type="text" class="social-url" placeholder="URL">
+                    <input type="text" class="social-icon" placeholder="Icon URL">
+                    <button type="button" class="btn btn-secondary" onclick="removeSocialLink(${idx})">Supprimer</button>
+                </div>
+            `);
+        }
+
+        function removeSocialLink(idx) {
+            document.querySelectorAll('.social-item')[idx]?.remove();
         }
 
         // Logout
@@ -577,7 +661,11 @@
             window.location.href = '/login';
         }
 
-        // Load settings on page load
+        // Event listeners
+        document.getElementById('bgUrl').addEventListener('input', updatePreview);
+        document.getElementById('bgOpacity').addEventListener('input', updatePreview);
+
+        // Load on start
         loadSettings();
     </script>
 </body>
