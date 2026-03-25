@@ -1,0 +1,16 @@
+{
+  "name": "gothslol",
+  "version": "1.0.0",
+  "description": "GothTag GothSlol Site",
+  "main": "index.js",
+  "dependencies": {
+    "node-fetch": "^2.6.11"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
