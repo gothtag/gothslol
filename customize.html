@@ -30,10 +30,7 @@
             border-right: 1px solid rgba(255, 255, 255, 0.1);
             padding: 20px;
             overflow-y: auto;
-            position: fixed;
-            height: 100vh;
-            left: 0;
-            top: 0;
+            flex-shrink: 0;
         }
 
         .sidebar-header {
@@ -122,9 +119,10 @@
         }
 
         .main-content {
-            margin-left: 280px;
-            width: calc(100% - 280px);
+            flex: 1;
             display: flex;
+            justify-content: center;
+            align-items: flex-start;
             gap: 20px;
             padding: 20px;
         }
