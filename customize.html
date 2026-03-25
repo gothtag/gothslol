@@ -20,7 +20,6 @@
             overflow-x: hidden;
         }
 
-        /* SIDEBAR NAVIGATION - GUNS.LOL STYLE */
         .sidebar {
             width: 280px;
             background: rgba(20, 20, 20, 0.9);
@@ -51,6 +50,9 @@
             align-items: center;
             justify-content: center;
             font-size: 20px;
+            background-image: url('https://assets.guns.lol/guns_logo_no_background_cropped.png');
+            background-size: cover;
+            background-position: center;
         }
 
         .sidebar-title {
@@ -97,7 +99,22 @@
         .nav-icon {
             font-size: 16px;
             width: 20px;
-            text-align: center;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .nav-icon svg {
+            width: 100%;
+            height: 100%;
+        }
         }
 
         .main-content {
@@ -122,11 +139,15 @@
 
         .preview-panel {
             flex: 1;
-            min-width: 300px;
+            min-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
+            background: #000000;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
         }
 
         .preview-title {
@@ -136,63 +157,201 @@
             letter-spacing: 1px;
             margin-bottom: 15px;
             font-weight: 500;
+            z-index: 10;
+            position: relative;
         }
 
-        .preview-frame {
+        .preview-iframe-container {
             width: 100%;
-            background: rgba(20, 20, 20, 0.6);
-            border: 2px solid rgba(255, 255, 255, 0.15);
+            height: 100%;
+            position: relative;
             border-radius: 20px;
-            padding: 30px;
-            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000000;
+        }
+
+        /* Preview content styles (simulating index.html) */
+        .preview-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            color: white;
+            font-family: 'Roboto', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
-            position: relative;
+            justify-content: center;
             overflow: hidden;
-            max-height: 80vh;
-            overflow-y: auto;
         }
 
-        .preview-bg {
+        .preview-background-layer {
             position: absolute;
+            inset: 0;
             width: 100%;
             height: 100%;
-            top: 0;
-            left: 0;
             background-size: cover;
             background-position: center;
-            opacity: 0.3;
+            opacity: 0.35;
             z-index: 0;
         }
 
-        .preview-content {
-            position: relative;
+        .preview-gradient-layer {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
             z-index: 1;
+            opacity: 0.35;
+            background: linear-gradient(120deg, #0a0a0a 0%, #141414 45%, #050505 100%);
+        }
+
+        .preview-content-container {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+            width: 100%;
+            padding: 0 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        .preview-content-frame {
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+            padding: 3rem;
+            border-radius: 65px;
+            backdrop-filter: blur(10px);
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 2rem;
         }
 
         .preview-logo {
-            font-size: 48px;
-            opacity: 0.9;
+            font-size: 4rem;
+            font-weight: 700;
+            color: #000000;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(180deg, #000000 0%, #3a3a3a 50%, #000000 100%);
+            background-size: 100% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: lowercase;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 2rem;
         }
 
-        .preview-name {
-            font-size: 20px;
-            font-weight: 600;
-            text-align: center;
+        .preview-links {
+            display: flex;
+            flex-direction: row;
+            gap: 2rem;
+            align-items: center;
+            justify-content: center;
         }
 
-        .preview-bio {
-            font-size: 12px;
-            color: #aaa;
+        .preview-profile-card {
             text-align: center;
-            line-height: 1.4;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .preview-avatar-container {
+            position: relative;
+            width: 124px;
+            height: 124px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #1a1a1a;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-avatar.placeholder {
+            background: rgba(124, 58, 237, 0.2);
+            color: #c4b5fd;
+            font-size: 2rem;
+        }
+
+        .preview-profile-name {
+            color: rgba(255, 255, 255, 0.6);
+            font-family: 'Chillax', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-transform: lowercase;
+            letter-spacing: 1px;
+        }
+
+        .preview-profile-role {
+            color: rgba(255, 255, 255, 0.6);
+            font-family: 'Chillax', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .preview-corner-badges {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            width: 100%;
+            padding: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 1.5rem;
+        }
+
+        .preview-corner-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #757575;
+            font-family: 'Chillax', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 450;
+            text-decoration: none;
+        }
+
+        .preview-corner-link img {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+            filter: grayscale(1) brightness(0.55);
         }
 
         .form-group {
@@ -319,6 +478,263 @@
             background: rgba(255, 255, 255, 0.15);
         }
 
+        /* Audio Manager Modal */
+        .audio-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .audio-modal.show {
+            display: flex;
+        }
+
+        .audio-modal-content {
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            backdrop-filter: blur(20px);
+        }
+
+        .audio-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .audio-modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .audio-modal-close {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .audio-modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .audio-modal-body {
+            padding: 20px;
+        }
+
+        .audio-instruction {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .audio-count {
+            color: #c4b5fd;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .audio-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .audio-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .audio-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(196, 181, 253, 0.3);
+        }
+
+        .audio-item.active {
+            background: rgba(196, 181, 253, 0.1);
+            border-color: #c4b5fd;
+        }
+
+        .audio-icon {
+            width: 24px;
+            height: 24px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .audio-info {
+            flex: 1;
+        }
+
+        .audio-name {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .audio-duration {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .audio-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .audio-action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .audio-action-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .audio-active-badge {
+            background: #c4b5fd;
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .audio-options {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .audio-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .audio-option-info h4 {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 0 0 2px 0;
+        }
+
+        .audio-option-info p {
+            color: #888;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .audio-toggle {
+            position: relative;
+            width: 40px;
+            height: 20px;
+        }
+
+        .audio-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .audio-toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        .audio-toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .audio-toggle input:checked + .audio-toggle-slider {
+            background: #c4b5fd;
+        }
+
+        .audio-toggle input:checked + .audio-toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        .audio-add-btn {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .audio-add-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(196, 181, 253, 0.3);
+        }
+
+        .audio-add-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
         .section-title {
             font-size: 14px;
             font-weight: 600;
@@ -369,25 +785,121 @@
         }
 
         /* Scrollbar styling */
-        .settings-panel::-webkit-scrollbar,
-        .preview-frame::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .settings-panel::-webkit-scrollbar-track,
-        .preview-frame::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .settings-panel::-webkit-scrollbar-thumb,
-        .preview-frame::-webkit-scrollbar-thumb {
-            background: rgba(196, 181, 253, 0.2);
-            border-radius: 3px;
-        }
-
         .settings-panel::-webkit-scrollbar-thumb:hover,
         .preview-frame::-webkit-scrollbar-thumb:hover {
             background: rgba(196, 181, 253, 0.4);
+        }
+
+        /* Profile Section */
+        .profile-section {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-details {
+            flex: 1;
+        }
+
+        .profile-name {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .profile-uid {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .profile-menu {
+            display: flex;
+            gap: 8px;
+        }
+
+        .profile-menu-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .profile-menu-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Drag and Drop */
+        .file-upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .file-upload-area:hover,
+        .file-upload-area.dragover {
+            border-color: #c4b5fd;
+            background: rgba(196, 181, 253, 0.05);
+        }
+
+        .file-upload-text {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .file-upload-subtext {
+            color: #888;
+            font-size: 11px;
+        }
+
+        .file-preview {
+            margin-top: 15px;
+            max-width: 100%;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .file-preview img,
+        .file-preview video {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .file-preview audio {
+            width: 100%;
+            max-height: 40px;
+        }
+
+        .file-info {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #888;
         }
     </style>
 </head>
@@ -395,18 +907,26 @@
     <!-- Sidebar Navigation -->
     <div class="sidebar">
         <a href="/" class="sidebar-header">
-            <div class="sidebar-logo">🖤</div>
+            <div class="sidebar-logo"></div>
             <div class="sidebar-title">GothSlol</div>
         </a>
 
         <div class="nav-section">
             <div class="nav-section-title">Compte</div>
             <a href="/customize" class="nav-item active">
-                <span class="nav-icon">⚙️</span>
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M5 19h1.425L16.2 9.225L14.775 7.8L5 17.575zm-2 2v-4.25L16.2 3.575q.3-.275.663-.425t.762-.15q.4 0 .775.15t.65.45L20.425 5q.3.275.438.65T21 6.4q0 .4-.137.763t-.438.662L7.25 21zM19 6.4L17.6 5zm-3.525 2.125l-.7-.725L16.2 9.225z"/>
+                    </svg>
+                </span>
                 Personnaliser
             </a>
             <a href="/links" class="nav-item">
-                <span class="nav-icon">🔗</span>
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256">
+                        <path fill="currentColor" d="M136.37 187.53a12 12 0 0 1 0 17l-5.94 5.94a60 60 0 0 1-84.88-84.88l24.12-24.11A60 60 0 0 1 152 99a12 12 0 1 1-16 18a36 36 0 0 0-49.37 1.47l-24.1 24.08a36 36 0 0 0 50.92 50.92l5.94-5.94a12 12 0 0 1 16.98 0m74.08-142a60.09 60.09 0 0 0-84.88 0l-5.94 5.94a12 12 0 0 0 17 17l5.94-5.94a36 36 0 0 1 50.92 50.92l-24.11 24.12A36 36 0 0 1 120 139a12 12 0 0 0-16 18a60 60 0 0 0 82.3-2.43l24.12-24.11a60.09 60.09 0 0 0 .03-84.91Z"/>
+                    </svg>
+                </span>
                 Liens
             </a>
         </div>
@@ -414,7 +934,11 @@
         <div class="nav-section">
             <div class="nav-section-title">Pages</div>
             <a href="/" class="nav-item">
-                <span class="nav-icon">👁️</span>
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M11 6a1 1 0 1 1 0 2H5v11h11v-6a1 1 0 1 1 2 0v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm9-3a1 1 0 0 1 1 1v5a1 1 0 1 1-2 0V6.414l-8.293 8.293a1 1 0 0 1-1.414-1.414L17.586 5H15a1 1 0 1 1 0-2Z"/>
+                    </svg>
+                </span>
                 Voir ma page
             </a>
         </div>
@@ -422,9 +946,31 @@
         <div class="nav-section">
             <div class="nav-section-title">Actions</div>
             <a class="nav-item" onclick="logout()" style="cursor: pointer;">
-                <span class="nav-icon">🚪</span>
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                    </svg>
+                </span>
                 Déconnexion
             </a>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <div class="profile-info">
+                <img src="https://cdn.discordapp.com/avatars/469780875584733195/41eba6554858ac14cbbd4cac9e984c08.webp" alt="Admin Avatar" class="profile-avatar">
+                <div class="profile-details">
+                    <div class="profile-name">ev & ey</div>
+                    <div class="profile-uid">UID 1</div>
+                </div>
+            </div>
+            <div class="profile-menu">
+                <button class="profile-menu-btn" title="Menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M6 10.5a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0-3m4.5 1.5a1.5 1.5 0 1 1 3 0a1.5 1.5 0 0 1-3 0m6 0a1.5 1.5 0 1 1 3 0a1.5 1.5 0 0 1-3 0"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -436,7 +982,14 @@
             <!-- Background Section -->
             <div class="section-title">Arrière-plan</div>
             <div class="form-group">
-                <label>URL de l'image/vidéo</label>
+                <div class="file-upload-area" id="bgUploadArea" onclick="document.getElementById('bgFile').click()">
+                    <div class="file-upload-text">Glissez-déposez votre fichier ici</div>
+                    <div class="file-upload-subtext">.MP4 / .GIF / .JPG / .PNG</div>
+                    <input type="file" id="bgFile" accept=".mp4,.gif,.jpg,.jpeg,.png" style="display: none;">
+                </div>
+                <div class="file-preview" id="bgPreview"></div>
+                <div class="file-info" id="bgInfo"></div>
+                <label>Ou URL directe</label>
                 <input type="text" id="bgUrl" placeholder="https://r2.guns.lol/...">
             </div>
             <div class="form-group">
@@ -447,15 +1000,28 @@
             <!-- Music Section -->
             <div class="section-title">Musique de fond</div>
             <div class="form-group">
-                <label>URL audio (MP3)</label>
-                <input type="text" id="musicUrl" placeholder="attached_assets/music.mp3">
+                <div class="file-upload-area" id="audioUploadArea" onclick="document.getElementById('audioFile').click()">
+                    <div class="file-upload-text">Glissez-déposez votre fichier audio ici</div>
+                    <div class="file-upload-subtext">.MP3 / .WAV / .OGG</div>
+                    <input type="file" id="audioFile" accept=".mp3,.wav,.ogg" style="display: none;">
+                </div>
+                <div class="file-preview" id="audioPreview"></div>
+                <div class="file-info" id="audioInfo"></div>
+                <p style="font-size: 12px; color: #888; margin-top: -15px; margin-bottom: 15px;">Cliquez pour gérer vos audios (maximum 4)</p>
+                <button type="button" class="btn btn-secondary" onclick="openAudioManager()">Ouvrir le gestionnaire audio</button>
             </div>
-            <p style="font-size: 12px; color: #888; margin-top: -15px; margin-bottom: 15px;">💡 Cliquez sur l'icône de volume en haut à gauche pour contrôler la musique</p>
 
             <!-- Cursor Section -->
             <div class="section-title">Curseur personnalisé</div>
             <div class="form-group">
-                <label>URL du curseur (PNG)</label>
+                <div class="file-upload-area" id="cursorUploadArea" onclick="document.getElementById('cursorFile').click()">
+                    <div class="file-upload-text">Glissez-déposez votre curseur ici</div>
+                    <div class="file-upload-subtext">.PNG / .CUR</div>
+                    <input type="file" id="cursorFile" accept=".png,.cur" style="display: none;">
+                </div>
+                <div class="file-preview" id="cursorPreview"></div>
+                <div class="file-info" id="cursorInfo"></div>
+                <label>Ou URL directe</label>
                 <input type="text" id="cursorUrl" placeholder="attached_assets/cursor.png">
             </div>
 
@@ -478,12 +1044,66 @@
 
         <!-- Preview Panel -->
         <div class="preview-panel">
-            <div class=\"preview-title\">Aperçu en temps réel</div>
-            <div class=\"preview-frame\">
-                <div class=\"preview-bg\" id=\"previewBg\"></div>
-                <div class=\"preview-content\">
-                    <div style="color: #aaa; font-size: 12px; text-align: center;">Aperçu du fond</div>
+            <div class="preview-title">Aperçu en temps réel</div>
+            <div class="preview-content">
+                <div class="preview-background-layer" id="previewBg"></div>
+                <div class="preview-gradient-layer"></div>
+                <div class="preview-content-container">
+                    <div class="preview-logo" id="previewSiteName">goths<span>.</span>lol</div>
+                    <div class="preview-content-frame">
+                        <div class="preview-links" id="previewProfiles">
+                            <!-- Profiles will be populated dynamically -->
+                        </div>
+                        <div class="preview-corner-badges" id="previewSocialLinks">
+                            <!-- Social links will be populated dynamically -->
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Manager Modal -->
+    <div class="audio-modal" id="audioModal">
+        <div class="audio-modal-content">
+            <div class="audio-modal-header">
+                <h2 class="audio-modal-title">Gestionnaire audio</h2>
+                <button class="audio-modal-close" onclick="closeAudioManager()">&times;</button>
+            </div>
+            <div class="audio-modal-body">
+                <p class="audio-instruction">Pour définir un audio actif, sélectionnez-le en cliquant dessus.</p>
+                <div class="audio-count" id="audioCount">Audios (1/4)</div>
+                <div class="audio-list" id="audioList">
+                    <!-- Audio items will be populated by JavaScript -->
+                </div>
+                <div class="audio-options">
+                    <div class="audio-option">
+                        <div class="audio-option-info">
+                            <h4>Lecture aléatoire des audios</h4>
+                            <p>Joue un audio aléatoire de votre liste à chaque visite de votre page</p>
+                        </div>
+                        <label class="audio-toggle">
+                            <input type="checkbox" id="randomPlayback">
+                            <span class="audio-toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="audio-option">
+                        <div class="audio-option-info">
+                            <h4>Lecteur audio</h4>
+                            <p>Ajoute un widget lecteur audio à votre profil</p>
+                        </div>
+                        <label class="audio-toggle">
+                            <input type="checkbox" id="audioWidget">
+                            <span class="audio-toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <button class="audio-add-btn" onclick="addAudio()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512">
+                        <path fill="currentColor" d="M406.3 48.2c-4.7.9-202 39.2-206.2 40-4.2.8-8.1 3.6-8.1 8v240.1c0 1.6-.1 7.2-2.4 11.7-3.1 5.9-8.5 10.2-16.1 12.7-3.3 1.1-7.8 2.1-13.1 3.3-24.1 5.4-64.4 14.6-64.4 51.8 0 31.1 22.4 45.1 41.7 47.5 2.1.3 4.5.7 7.1.7 6.7 0 36-3.3 51.2-13.2 11-7.2 24.1-21.4 24.1-47.8V190.5c0-3.8 2.7-7.1 6.4-7.8l152-30.7c5-1 9.6 2.8 9.6 7.8v130.9c0 4.1-.2 8.9-2.5 13.4-3.1 5.9-8.5 10.2-16.2 12.7-3.3 1.1-8.8 2.1-14.1 3.3-24.1 5.4-64.4 14.5-64.4 51.7 0 33.7 25.4 47.2 41.8 48.3 6.5.4 11.2.3 19.4-.9s23.5-5.5 36.5-13c17.9-10.3 27.5-26.8 27.5-48.2V55.9c-.1-4.4-3.8-8.9-9.8-7.7z" fill="currentColor"></path>
+                    </svg>
+                    Ajouter un audio
+                </button>
             </div>
         </div>
     </div>
@@ -503,8 +1123,13 @@
             bgUrl: 'https://r2.guns.lol/ed920f02-a70f-47a3-a7e9-726df6ca5496.gif',
             bgOpacity: 35,
             
-            // Audio/Music
-            musicUrl: 'attached_assets/deadprettygirlee.mp3',
+            // Audio settings
+            audioList: [
+                { name: 'deadprettygirlee', url: 'attached_assets/deadprettygirlee.mp3', duration: '2:01', active: true }
+            ],
+            activeAudio: 'attached_assets/deadprettygirlee.mp3',
+            randomPlayback: false,
+            audioWidget: false,
             
             // Cursor
             cursorUrl: 'attached_assets/cursor3.png',
@@ -523,75 +1148,202 @@
             ]
         };
 
-        // Load settings
-        function loadSettings() {
-            const saved = localStorage.getItem('pageSettings');
-            const settings = saved ? JSON.parse(saved) : DEFAULT_SETTINGS;
-            
-            // Merge with defaults
-            const merged = { ...DEFAULT_SETTINGS, ...settings };
-            
-            // Load basic settings
-            document.getElementById('bgUrl').value = merged.bgUrl;
-            document.getElementById('bgOpacity').value = merged.bgOpacity;
-            document.getElementById('musicUrl').value = merged.musicUrl;
-            document.getElementById('cursorUrl').value = merged.cursorUrl;
-            
-            // Load profiles
-            const profilesContainer = document.getElementById('profilesList');
-            profilesContainer.innerHTML = '';
-            merged.profiles.forEach((profile, idx) => {
-                profilesContainer.insertAdjacentHTML('beforeend', `
-                    <div class="form-group profile-item" data-index="${idx}">
-                        <label>Profil ${idx + 1}</label>
-                        <input type="text" class="profile-name" value="${profile.name}" placeholder="Nom">
-                        <input type="text" class="profile-url" value="${profile.url}" placeholder="URL">
-                        <input type="text" class="profile-avatar" value="${profile.avatar}" placeholder="Avatar URL">
-                        <input type="text" class="profile-role" value="${profile.role}" placeholder="Rôle">
-                        <button type="button" class="btn btn-secondary" onclick="removeProfile(${idx})">Supprimer</button>
-                    </div>
-                `);
-            });
-            
-            // Load social links
-            const socialContainer = document.getElementById('socialLinksList');
-            socialContainer.innerHTML = '';
-            merged.socialLinks.forEach((link, idx) => {
-                socialContainer.insertAdjacentHTML('beforeend', `
-                    <div class="form-group social-item" data-index="${idx}">
-                        <label>Lien social ${idx + 1}</label>
-                        <input type="text" class="social-name" value="${link.name}" placeholder="Nom">
-                        <input type="text" class="social-url" value="${link.url}" placeholder="URL">
-                        <input type="text" class="social-icon" value="${link.icon}" placeholder="Icon URL">
-                        <button type="button" class="btn btn-secondary" onclick="removeSocialLink(${idx})">Supprimer</button>
-                    </div>
-                `);
-            });
-            
-            updatePreview();
+        // Load settings from API
+        async function loadSettings() {
+            try {
+                const response = await fetch('/.netlify/functions/get-settings');
+                const settings = await response.json();
+                
+                // Merge with defaults
+                const merged = { ...DEFAULT_SETTINGS, ...settings };
+                
+                // Load basic settings
+                document.getElementById('bgUrl').value = merged.bgUrl || '';
+                document.getElementById('bgOpacity').value = merged.bgOpacity || 35;
+                document.getElementById('cursorUrl').value = merged.cursorUrl || '';
+                
+                // Load file previews if available
+                if (merged.bgFileData) {
+                    showFilePreview('bgPreview', 'bgInfo', merged.bgFileData, merged.bgFileName, merged.bgFileType);
+                }
+                if (merged.cursorFileData) {
+                    showFilePreview('cursorPreview', 'cursorInfo', merged.cursorFileData, merged.cursorFileName, merged.cursorFileType);
+                }
+                
+                // Load profiles
+                const profilesContainer = document.getElementById('profilesList');
+                profilesContainer.innerHTML = '';
+                (merged.profiles || []).forEach((profile, idx) => {
+                    profilesContainer.insertAdjacentHTML('beforeend', `
+                        <div class="form-group profile-item" data-index="${idx}">
+                            <label>Profil ${idx + 1}</label>
+                            <input type="text" class="profile-name" value="${profile.name || ''}" placeholder="Nom">
+                            <input type="text" class="profile-url" value="${profile.url || ''}" placeholder="URL">
+                            <input type="text" class="profile-avatar" value="${profile.avatar || ''}" placeholder="Avatar URL">
+                            <input type="text" class="profile-role" value="${profile.role || ''}" placeholder="Rôle">
+                            <button type="button" class="btn btn-secondary" onclick="removeProfile(${idx})">Supprimer</button>
+                        </div>
+                    `);
+                });
+                
+                // Load social links
+                const socialContainer = document.getElementById('socialLinksList');
+                socialContainer.innerHTML = '';
+                (merged.socialLinks || []).forEach((link, idx) => {
+                    socialContainer.insertAdjacentHTML('beforeend', `
+                        <div class="form-group social-item" data-index="${idx}">
+                            <label>Lien social ${idx + 1}</label>
+                            <input type="text" class="social-name" value="${link.name || ''}" placeholder="Nom">
+                            <input type="text" class="social-url" value="${link.url || ''}" placeholder="URL">
+                            <input type="text" class="social-icon" value="${link.icon || ''}" placeholder="Icon URL">
+                            <button type="button" class="btn btn-secondary" onclick="removeSocialLink(${idx})">Supprimer</button>
+                        </div>
+                    `);
+                });
+                
+                // Load audio settings
+                loadAudioSettings(merged);
+                
+                // Update localStorage with loaded settings
+                localStorage.setItem('pageSettings', JSON.stringify(merged));
+                
+                updatePreview();
+                updatePreviewProfiles();
+                updatePreviewSocialLinks();
+            } catch (error) {
+                console.error('Error loading settings:', error);
+                // Fallback to defaults
+                const merged = DEFAULT_SETTINGS;
+                document.getElementById('bgUrl').value = merged.bgUrl;
+                document.getElementById('bgOpacity').value = merged.bgOpacity;
+                loadAudioSettings(merged);
+                // Update localStorage with defaults
+                localStorage.setItem('pageSettings', JSON.stringify(merged));
+                updatePreview();
+                updatePreviewProfiles();
+                updatePreviewSocialLinks();
+            }
         }
 
         // Update preview
         function updatePreview() {
             const bgUrl = document.getElementById('bgUrl').value;
             const bgOpacity = document.getElementById('bgOpacity').value;
-            
+            const bgFileData = document.getElementById('bgFile').dataset.fileData;
+
             const bgEl = document.getElementById('previewBg');
-            if (bgUrl) {
+
+            if (bgFileData) {
+                bgEl.style.backgroundImage = `url('${bgFileData}')`;
+                bgEl.style.opacity = bgOpacity / 100;
+            } else if (bgUrl) {
                 bgEl.style.backgroundImage = `url('${bgUrl}')`;
                 bgEl.style.opacity = bgOpacity / 100;
             }
+
+            // Update site name
+            const siteName = 'goths.lol'; // Could be made dynamic if needed
+            document.getElementById('previewSiteName').innerHTML = `goths<span>.</span>lol`;
+
+            // Update profiles
+            updatePreviewProfiles();
+
+            // Update social links
+            updatePreviewSocialLinks();
+        }
+
+        function updatePreviewProfiles() {
+            const profilesContainer = document.getElementById('previewProfiles');
+            const profiles = [];
+
+            // Collect profiles from form
+            document.querySelectorAll('.profile-item').forEach(item => {
+                const name = item.querySelector('.profile-name').value;
+                const url = item.querySelector('.profile-url').value;
+                const avatar = item.querySelector('.profile-avatar').value;
+                const role = item.querySelector('.profile-role').value;
+
+                if (name) {
+                    profiles.push({ name, url, avatar, role });
+                }
+            });
+
+            // If no profiles, use defaults
+            if (profiles.length === 0) {
+                profiles.push(
+                    { name: 'ev', url: 'ev.html', avatar: 'attached_assets/985e453463ba0af44c2e2df2bcca2fe9.jpg', role: 'socials' },
+                    { name: 'ey', url: 'ey.html', avatar: 'attached_assets/cce169f5e720f9a062dcf82f3934cd12.jpg', role: 'socials' }
+                );
+            }
+
+            profilesContainer.innerHTML = profiles.map(profile => `
+                <div class="preview-profile-card">
+                    <div class="preview-avatar-container">
+                        <div class="preview-avatar">
+                            ${profile.avatar ? `<img src="${profile.avatar}" alt="${profile.name}">` : `<div class="preview-avatar placeholder">${profile.name.charAt(0).toUpperCase()}</div>`}
+                        </div>
+                    </div>
+                    <div class="preview-profile-name">${profile.name}</div>
+                    <div class="preview-profile-role">${profile.role || 'profile'}</div>
+                </div>
+            `).join('');
+        }
+
+        function updatePreviewSocialLinks() {
+            const socialContainer = document.getElementById('previewSocialLinks');
+            const socialLinks = [];
+
+            // Collect social links from form
+            document.querySelectorAll('.social-item').forEach(item => {
+                const name = item.querySelector('.social-name').value;
+                const url = item.querySelector('.social-url').value;
+                const icon = item.querySelector('.social-icon').value;
+
+                if (name && url) {
+                    socialLinks.push({ name, url, icon });
+                }
+            });
+
+            // If no social links, use defaults
+            if (socialLinks.length === 0) {
+                socialLinks.push(
+                    { name: 'Discord', url: 'https://discord.gg/gothtag', icon: 'attached_assets/discordlogo.png' },
+                    { name: 'GOTHTAG', url: '/goth', icon: 'attached_assets/gothslink.png' },
+                    { name: 'Website', url: 'https://gothtag.com', icon: 'attached_assets/tag.png' }
+                );
+            }
+
+            socialContainer.innerHTML = socialLinks.map(link => `
+                <a href="${link.url}" class="preview-corner-link" target="_blank">
+                    ${link.icon ? `<img src="${link.icon}" alt="${link.name}">` : '🔗'}
+                    ${link.name}
+                </a>
+            `).join('');
         }
 
         // Save all settings
         async function saveSettings() {
+            const bgFileInput = document.getElementById('bgFile');
+            const cursorFileInput = document.getElementById('cursorFile');
+
             const settings = {
                 bgUrl: document.getElementById('bgUrl').value,
                 bgOpacity: document.getElementById('bgOpacity').value,
-                musicUrl: document.getElementById('musicUrl').value,
                 cursorUrl: document.getElementById('cursorUrl').value,
+                // File data
+                bgFileData: bgFileInput.dataset.fileData || null,
+                bgFileName: bgFileInput.dataset.fileName || null,
+                bgFileType: bgFileInput.files[0]?.type || null,
+                cursorFileData: cursorFileInput.dataset.fileData || null,
+                cursorFileName: cursorFileInput.dataset.fileName || null,
+                cursorFileType: cursorFileInput.files[0]?.type || null,
                 profiles: [],
-                socialLinks: []
+                socialLinks: [],
+                // Audio settings
+                audioList: getAudioList(),
+                activeAudio: getActiveAudio(),
+                randomPlayback: document.getElementById('randomPlayback').checked,
+                audioWidget: document.getElementById('audioWidget').checked
             };
 
             // Collect profiles
@@ -613,8 +1365,27 @@
                 });
             });
 
-            localStorage.setItem('pageSettings', JSON.stringify(settings));
-            alert('Paramètres enregistrés!');
+            try {
+                const response = await fetch('/.netlify/functions/save-settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(settings)
+                });
+
+                if (response.ok) {
+                    // Update localStorage
+                    localStorage.setItem('pageSettings', JSON.stringify(settings));
+                    alert('Paramètres enregistrés avec succès!');
+                } else {
+                    alert('Erreur lors de la sauvegarde');
+                }
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                alert('Erreur lors de la sauvegarde');
+            }
         }
 
         function addProfile() {
@@ -661,12 +1432,326 @@
             window.location.href = '/login';
         }
 
+        // Audio Manager Functions
+        function openAudioManager() {
+            document.getElementById('audioModal').classList.add('show');
+            loadAudioList();
+        }
+
+        function closeAudioManager() {
+            document.getElementById('audioModal').classList.remove('show');
+        }
+
+        function loadAudioSettings(settings) {
+            // Load audio options
+            document.getElementById('randomPlayback').checked = settings.randomPlayback || false;
+            document.getElementById('audioWidget').checked = settings.audioWidget || false;
+            
+            // Load audio list
+            loadAudioList();
+        }
+
+        function loadAudioList() {
+            const audioList = getAudioList();
+            const audioListEl = document.getElementById('audioList');
+            const activeAudio = getActiveAudio();
+            
+            audioListEl.innerHTML = '';
+            
+            audioList.forEach((audio, index) => {
+                const isActive = audio.url === activeAudio;
+                const itemEl = document.createElement('div');
+                itemEl.className = `audio-item ${isActive ? 'active' : ''}`;
+                itemEl.onclick = () => selectActiveAudio(audio.url);
+                
+                itemEl.innerHTML = `
+                    <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                        <path fill="currentColor" d="M406.3 48.2c-4.7.9-202 39.2-206.2 40-4.2.8-8.1 3.6-8.1 8v240.1c0 1.6-.1 7.2-2.4 11.7-3.1 5.9-8.5 10.2-16.1 12.7-3.3 1.1-7.8 2.1-13.1 3.3-24.1 5.4-64.4 14.6-64.4 51.8 0 31.1 22.4 45.1 41.7 47.5 2.1.3 4.5.7 7.1.7 6.7 0 36-3.3 51.2-13.2 11-7.2 24.1-21.4 24.1-47.8V190.5c0-3.8 2.7-7.1 6.4-7.8l152-30.7c5-1 9.6 2.8 9.6 7.8v130.9c0 4.1-.2 8.9-2.5 13.4-3.1 5.9-8.5 10.2-16.2 12.7-3.3 1.1-8.8 2.1-14.1 3.3-24.1 5.4-64.4 14.5-64.4 51.7 0 33.7 25.4 47.2 41.8 48.3 6.5.4 11.2.3 19.4-.9s23.5-5.5 36.5-13c17.9-10.3 27.5-26.8 27.5-48.2V55.9c-.1-4.4-3.8-8.9-9.8-7.7z"/>
+                    </svg>
+                    <div class="audio-info">
+                        <div class="audio-name">${audio.name}</div>
+                        <div class="audio-duration">${audio.duration}</div>
+                    </div>
+                    <div class="audio-actions">
+                        ${isActive ? '<span class="audio-active-badge">Actif</span>' : ''}
+                        <button class="audio-action-btn" onclick="event.stopPropagation(); editAudio(${index})">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M5 19h1.425L16.2 9.225L14.775 7.8L5 17.575zm-2 2v-4.25L16.2 3.575q.3-.275.663-.425t.762-.15q.4 0 .775.15t.65.45L20.425 5q.3.275.438.65T21 6.4q0 .4-.137.763t-.438.662L7.25 21zM19 6.4L17.6 5zm-3.525 2.125l-.7-.725L16.2 9.225z"/>
+                            </svg>
+                        </button>
+                        <button class="audio-action-btn" onclick="event.stopPropagation(); removeAudio(${index})">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6q-.425 0-.712-.288T4 5q0-.425.288-.712T5 4h4q0-.425.288-.712T10 3h4q.425 0 .713.288T15 4h4q.425 0 .713.288T20 5q0 .425-.288.713T19 6v13q0 .825-.587 1.413T17 21zm3-4q.425 0 .713-.288T11 16V9q0-.425-.288-.712T10 8q-.425 0-.712.288T9 9v7q0 .425.288.713T10 17m4 0q.425 0 .713-.288T15 16V9q0-.425-.288-.712T14 8q-.425 0-.712.288T13 9v7q0 .425.288.713T14 17"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                
+                audioListEl.appendChild(itemEl);
+            });
+            
+            updateAudioCount();
+        }
+
+        function getAudioList() {
+            // Get from localStorage or use default
+            const saved = localStorage.getItem('pageSettings');
+            const settings = saved ? JSON.parse(saved) : DEFAULT_SETTINGS;
+            return settings.audioList || DEFAULT_SETTINGS.audioList;
+        }
+
+        function getActiveAudio() {
+            const saved = localStorage.getItem('pageSettings');
+            const settings = saved ? JSON.parse(saved) : DEFAULT_SETTINGS;
+            return settings.activeAudio || DEFAULT_SETTINGS.activeAudio;
+        }
+
+        function selectActiveAudio(audioUrl) {
+            const saved = localStorage.getItem('pageSettings');
+            const settings = saved ? JSON.parse(saved) : DEFAULT_SETTINGS;
+            settings.activeAudio = audioUrl;
+            localStorage.setItem('pageSettings', JSON.stringify(settings));
+            loadAudioList();
+        }
+
+        function addAudio() {
+            if (getAudioList().length >= 4) {
+                alert('Maximum 4 audios autorisés');
+                return;
+            }
+            
+            const audioName = prompt('Nom de l\'audio:');
+            if (!audioName) return;
+            
+            const audioUrl = prompt('URL de l\'audio (.mp3, .wav, .ogg):');
+            if (!audioUrl) return;
+            
+            const saved = localStorage.getItem('pageSettings');
+            const settings = saved ? JSON.parse(saved) : DEFAULT_SETTINGS;
+            
+            if (!settings.audioList) settings.audioList = [];
+            
+            settings.audioList.push({
+                name: audioName,
+                url: audioUrl,
+                duration: '0:00', // Will be updated when loaded
+                active: settings.audioList.length === 0 // First audio is active by default
+            });
+            
+            if (settings.audioList.length === 1) {
+                settings.activeAudio = audioUrl;
+            }
+            
+            localStorage.setItem('pageSettings', JSON.stringify(settings));
+            loadAudioList();
+        }
+
+        function removeAudio(index) {
+            const saved = localStorage.getItem('pageSettings');
+            const settings = saved ? JSON.parse(saved) : DEFAULT_SETTINGS;
+            
+            if (settings.audioList[index].url === settings.activeAudio) {
+                // If removing active audio, set first remaining as active
+                settings.activeAudio = settings.audioList.find((_, i) => i !== index)?.url || '';
+            }
+            
+            settings.audioList.splice(index, 1);
+            localStorage.setItem('pageSettings', JSON.stringify(settings));
+            loadAudioList();
+        }
+
+        function editAudio(index) {
+            const saved = localStorage.getItem('pageSettings');
+            const settings = saved ? JSON.parse(saved) : DEFAULT_SETTINGS;
+            const audio = settings.audioList[index];
+            
+            const newName = prompt('Nouveau nom:', audio.name);
+            if (newName !== null) audio.name = newName;
+            
+            const newUrl = prompt('Nouvelle URL:', audio.url);
+            if (newUrl !== null) audio.url = newUrl;
+            
+            localStorage.setItem('pageSettings', JSON.stringify(settings));
+            loadAudioList();
+        }
+
+        function updateAudioCount() {
+            const count = getAudioList().length;
+            document.getElementById('audioCount').textContent = `Audios (${count}/4)`;
+        }
+
         // Event listeners
         document.getElementById('bgUrl').addEventListener('input', updatePreview);
         document.getElementById('bgOpacity').addEventListener('input', updatePreview);
+        document.getElementById('bgFile').addEventListener('change', updatePreview);
+
+        // Real-time preview updates for profiles and social links
+        document.addEventListener('input', function(e) {
+            if (e.target.classList.contains('profile-name') ||
+                e.target.classList.contains('profile-url') ||
+                e.target.classList.contains('profile-avatar') ||
+                e.target.classList.contains('profile-role') ||
+                e.target.classList.contains('social-name') ||
+                e.target.classList.contains('social-url') ||
+                e.target.classList.contains('social-icon')) {
+                updatePreview();
+            }
+        });
+
+        // Update preview when profiles/social links are added or removed
+        document.addEventListener('click', function(e) {
+            if (e.target.textContent.includes('Supprimer') ||
+                e.target.textContent.includes('+ Ajouter')) {
+                setTimeout(updatePreview, 100); // Small delay to allow DOM updates
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('audioModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAudioManager();
+            }
+        });
 
         // Load on start
         loadSettings();
+
+        // Drag and Drop Functions
+        function setupDragAndDrop(areaId, fileInputId, previewId, infoId, acceptTypes) {
+            const area = document.getElementById(areaId);
+            const fileInput = document.getElementById(fileInputId);
+            const preview = document.getElementById(previewId);
+            const info = document.getElementById(infoId);
+
+            // Drag over
+            area.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                area.classList.add('dragover');
+            });
+
+            // Drag leave
+            area.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                area.classList.remove('dragover');
+            });
+
+            // Drop
+            area.addEventListener('drop', (e) => {
+                e.preventDefault();
+                area.classList.remove('dragover');
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    if (acceptTypes.some(type => file.name.toLowerCase().endsWith(type))) {
+                        handleFileUpload(file, fileInput, preview, info);
+                    } else {
+                        alert(`Type de fichier non supporté. Types acceptés: ${acceptTypes.join(', ')}`);
+                    }
+                }
+            });
+
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    handleFileUpload(file, fileInput, preview, info);
+                }
+            });
+        }
+
+        function handleFileUpload(file, fileInput, preview, info) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const result = e.target.result;
+
+                // Clear previous preview
+                preview.innerHTML = '';
+                preview.style.display = 'block';
+
+                // Show file info
+                info.textContent = `Fichier: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+
+                // Handle different file types
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = result;
+                    img.onload = function() {
+                        // For images, show as preview
+                        preview.appendChild(img);
+                    };
+                } else if (file.type.startsWith('video/')) {
+                    const video = document.createElement('video');
+                    video.src = result;
+                    video.controls = false;
+                    video.muted = true;
+                    video.preload = 'metadata';
+                    video.onloadedmetadata = function() {
+                        // Show first frame as image
+                        const canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(video, 0, 0);
+                        const img = document.createElement('img');
+                        img.src = canvas.toDataURL();
+                        preview.appendChild(img);
+                    };
+                } else if (file.type.startsWith('audio/')) {
+                    const audio = document.createElement('audio');
+                    audio.src = result;
+                    audio.controls = true;
+                    preview.appendChild(audio);
+                }
+
+                // Store file data for saving
+                fileInput.dataset.fileData = result;
+                fileInput.dataset.fileName = file.name;
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        // Setup drag and drop for all sections
+        setupDragAndDrop('bgUploadArea', 'bgFile', 'bgPreview', 'bgInfo', ['.mp4', '.gif', '.jpg', '.jpeg', '.png']);
+        setupDragAndDrop('audioUploadArea', 'audioFile', 'audioPreview', 'audioInfo', ['.mp3', '.wav', '.ogg']);
+        setupDragAndDrop('cursorUploadArea', 'cursorFile', 'cursorPreview', 'cursorInfo', ['.png', '.cur']);
+
+        function showFilePreview(previewId, infoId, fileData, fileName, fileType) {
+            const preview = document.getElementById(previewId);
+            const info = document.getElementById(infoId);
+
+            preview.innerHTML = '';
+            preview.style.display = 'block';
+            info.textContent = `Fichier: ${fileName}`;
+
+            if (fileType.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.src = fileData;
+                preview.appendChild(img);
+            } else if (fileType.startsWith('video/')) {
+                // Show first frame as image
+                const video = document.createElement('video');
+                video.src = fileData;
+                video.preload = 'metadata';
+                video.onloadedmetadata = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(video, 0, 0);
+                    const img = document.createElement('img');
+                    img.src = canvas.toDataURL();
+                    preview.appendChild(img);
+                };
+            } else if (fileType.startsWith('audio/')) {
+                const audio = document.createElement('audio');
+                audio.src = fileData;
+                audio.controls = true;
+                preview.appendChild(audio);
+            }
+        }
     </script>
 </body>
 </html>

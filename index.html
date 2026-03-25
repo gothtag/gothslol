@@ -827,7 +827,6 @@
     </div>
 
     <audio id="background-music" loop>
-        <source src="attached_assets/deadprettygirlee.mp3" type="audio/mpeg">
     </audio>
 
     <div class="volume-control">
@@ -1596,11 +1595,21 @@
             if (settings.accentColor) {
                 // Apply to accents
             }
-            if (settings.bgImage) {
-                document.querySelector('.background-layer').style.backgroundImage = `url(${settings.bgImage})`;
+            if (settings.bgUrl) {
+                document.querySelector('.background-layer').style.backgroundImage = `url(${settings.bgUrl})`;
             }
-            if (settings.bgVideo) {
-                // Add video background
+            if (settings.bgOpacity !== undefined) {
+                document.querySelector('.gradient-layer').style.opacity = settings.bgOpacity / 100;
+            }
+            if (settings.cursorUrl) {
+                document.body.style.cursor = `url('${settings.cursorUrl}') 8 8, auto`;
+            }
+            if (settings.activeAudio) {
+                const audio = document.getElementById('background-music');
+                if (audio) {
+                    audio.src = settings.activeAudio;
+                    audio.load(); // Reload the audio
+                }
             }
             // Update links and usernames
             if (settings.evLink) {
