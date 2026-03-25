@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GothSlol - Customize Your Page</title>
+    <title>GothSlol - Personnaliser</title>
     <style>
         * {
             margin: 0;
@@ -20,18 +20,97 @@
             overflow-x: hidden;
         }
 
-        .container {
-            width: 100%;
+        /* SIDEBAR NAVIGATION - GUNS.LOL STYLE */
+        .sidebar {
+            width: 280px;
+            background: rgba(20, 20, 20, 0.9);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            overflow-y: auto;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            background: rgba(124, 58, 237, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .nav-section {
+            margin-bottom: 25px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #666;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            background: rgba(124, 58, 237, 0.2);
+            color: #c4b5fd;
+        }
+
+        .nav-icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            width: calc(100% - 280px);
             display: flex;
             gap: 20px;
             padding: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
         }
 
         .settings-panel {
             flex: 1;
-            min-width: 320px;
+            min-width: 280px;
             background: rgba(20, 20, 20, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
@@ -43,7 +122,7 @@
 
         .preview-panel {
             flex: 1;
-            min-width: 320px;
+            min-width: 300px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -61,8 +140,6 @@
 
         .preview-frame {
             width: 100%;
-            max-width: 400px;
-            aspect-ratio: 1;
             background: rgba(20, 20, 20, 0.6);
             border: 2px solid rgba(255, 255, 255, 0.15);
             border-radius: 20px;
@@ -74,137 +151,144 @@
             gap: 20px;
             position: relative;
             overflow: hidden;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
-        .preview-frame::before {
-            content: '';
+        .preview-bg {
             position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at center, rgba(255,255,255,0.03) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .logo-preview {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            font-weight: bold;
-            color: #fff;
-            border: 2px dashed rgba(255, 255, 255, 0.3);
-            text-align: center;
-            z-index: 1;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: 0;
         }
 
         .preview-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            width: 100%;
-            z-index: 1;
-        }
-
-        .section {
-            margin-bottom: 30px;
-        }
-
-        .section-title {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #aaa;
-            margin-bottom: 15px;
-            display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 15px;
         }
 
-        .section-title::before {
-            content: '';
-            width: 3px;
-            height: 16px;
-            background: #7c3aed;
-            border-radius: 2px;
+        .preview-logo {
+            font-size: 48px;
+            opacity: 0.9;
+        }
+
+        .preview-name {
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .preview-bio {
+            font-size: 12px;
+            color: #aaa;
+            text-align: center;
+            line-height: 1.4;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
-        label {
+        .form-group label {
             display: block;
-            font-size: 13px;
-            color: #bbb;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #666;
+            letter-spacing: 0.5px;
             margin-bottom: 8px;
-            font-weight: 500;
+            font-weight: 600;
         }
 
-        input[type="text"],
-        input[type="color"],
-        input[type="url"],
-        textarea,
-        select {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
             padding: 10px 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
             color: #fff;
             font-family: inherit;
             font-size: 13px;
             transition: all 0.3s ease;
         }
 
-        input[type="text"]:focus,
-        input[type="color"]:focus,
-        input[type="url"]:focus,
-        textarea:focus,
-        select:focus {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
+        .form-group input:focus,
+        .form-group textarea:focus {
             outline: none;
-            box-shadow: 0 0 10px rgba(124, 58, 237, 0.2);
+            border-color: #c4b5fd;
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        input[type="color"] {
-            height: 45px;
-            padding: 5px;
-            cursor: pointer;
-        }
-
-        textarea {
+        .form-group textarea {
             resize: vertical;
             min-height: 80px;
         }
 
+        .color-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .color-input-group {
+            flex: 1;
+        }
+
+        .color-input-group label {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #666;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
         .color-input-wrapper {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
         }
 
-        .color-input-wrapper input[type="color"] {
-            flex: 1;
-            max-width: 60px;
+        .color-picker {
+            width: 50px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
         }
 
-        .color-input-wrapper input[type="text"] {
+        .color-hex {
             flex: 1;
+            padding: 8px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
         }
 
         .button-group {
             display: flex;
             gap: 10px;
-            margin-top: 20px;
+            margin-top: 30px;
         }
 
         .btn {
-            padding: 12px 20px;
+            flex: 1;
+            padding: 12px 16px;
             border: none;
             border-radius: 8px;
             font-size: 13px;
@@ -213,361 +297,285 @@
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            flex: 1;
         }
 
-        .btn-save {
-            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        .btn-primary {
+            background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
             color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .btn-save:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
         }
 
-        .btn-preview {
+        .btn-secondary {
             background: rgba(255, 255, 255, 0.1);
             color: #fff;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .btn-preview:hover {
+        .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.15);
         }
 
-        .btn-logout {
-            background: rgba(239, 68, 68, 0.2);
-            color: #fca5a5;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-logout:hover {
-            background: rgba(239, 68, 68, 0.3);
-        }
-
-        .preview-button {
-            background: rgba(124, 58, 237, 0.2);
-            border: 1px solid rgba(124, 58, 237, 0.4);
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
             color: #c4b5fd;
-            padding: 10px 16px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .preview-button:hover {
-            background: rgba(124, 58, 237, 0.3);
-            transform: translateY(-1px);
-        }
-
-        .message {
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 13px;
             margin-bottom: 15px;
-            display: none;
+            margin-top: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(196, 181, 253, 0.2);
         }
 
-        .message.success {
-            background: rgba(34, 197, 94, 0.2);
-            border: 1px solid rgba(34, 197, 94, 0.4);
-            color: #86efac;
-            display: block;
-        }
-
-        .message.error {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            color: #fca5a5;
-            display: block;
-        }
-
-        .header {
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .header h1 {
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-
-        .header p {
-            font-size: 12px;
-            color: #888;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            .settings-panel {
-                max-height: none;
-            }
-
-            .preview-frame {
-                max-width: 100%;
-                aspect-ratio: auto;
-            }
-        }
-
-        ::-webkit-scrollbar {
+        /* Scrollbar styling */
+        .settings-panel::-webkit-scrollbar,
+        .preview-frame::-webkit-scrollbar {
             width: 6px;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
+        .settings-panel::-webkit-scrollbar-track,
+        .preview-frame::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .settings-panel::-webkit-scrollbar-thumb,
+        .preview-frame::-webkit-scrollbar-thumb {
+            background: rgba(196, 181, 253, 0.2);
             border-radius: 3px;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.3);
+        .settings-panel::-webkit-scrollbar-thumb:hover,
+        .preview-frame::-webkit-scrollbar-thumb:hover {
+            background: rgba(196, 181, 253, 0.4);
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <a href="/" class="sidebar-header">
+            <div class="sidebar-logo">🖤</div>
+            <div class="sidebar-title">GothSlol</div>
+        </a>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Compte</div>
+            <a href="/customize" class="nav-item active">
+                <span class="nav-icon">⚙️</span>
+                Personnaliser
+            </a>
+            <a href="/links" class="nav-item">
+                <span class="nav-icon">🔗</span>
+                Liens
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Pages</div>
+            <a href="/" class="nav-item">
+                <span class="nav-icon">👁️</span>
+                Voir ma page
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Actions</div>
+            <a class="nav-item" onclick="logout()" style="cursor: pointer;">
+                <span class="nav-icon">🚪</span>
+                Déconnexion
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
         <!-- Settings Panel -->
         <div class="settings-panel">
-            <div class="header">
-                <h1>Customize Your Page</h1>
-                <p>Personalize your gothslol page</p>
-            </div>
-
-            <div id="message" class="message"></div>
+            <h2 style="margin-bottom: 25px; font-size: 18px;">Personnaliser votre page</h2>
 
             <!-- Logo Section -->
-            <div class="section">
-                <div class="section-title">Logo & Identity</div>
-                <div class="form-group">
-                    <label>Logo Text / Name</label>
-                    <input type="text" id="logoText" placeholder="Enter your logo text" maxlength="20" value="GOTH">
-                </div>
-                <div class="form-group">
-                    <label>Logo Emoji / Icon</label>
-                    <input type="text" id="logoEmoji" placeholder="Paste emoji here" maxlength="5" value="👻">
-                </div>
+            <div class="section-title">Logo & Nom</div>
+            <div class="form-group">
+                <label>Logo (emoji ou texte)</label>
+                <input type="text" id="logoInput" placeholder="🖤" maxlength="5">
+            </div>
+            <div class="form-group">
+                <label>Nom</label>
+                <input type="text" id="nameInput" placeholder="Entrez votre nom">
+            </div>
+
+            <!-- Bio Section -->
+            <div class="section-title">Bio</div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="bioInput" placeholder="Parlez de vous..."></textarea>
             </div>
 
             <!-- Colors Section -->
-            <div class="section">
-                <div class="section-title">Colors</div>
-                <div class="form-group">
-                    <label>Primary Color</label>
+            <div class="section-title">Couleurs</div>
+            <div class="color-group">
+                <div class="color-input-group">
+                    <label>Couleur primaire</label>
                     <div class="color-input-wrapper">
-                        <input type="color" id="primaryColor" value="#7c3aed">
-                        <input type="text" id="primaryColorHex" value="#7c3aed" readonly>
+                        <input type="color" id="primaryColor" class="color-picker" value="#7c3aed">
+                        <input type="text" id="primaryHex" class="color-hex" value="#7c3aed" readonly>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Accent Color</label>
+                <div class="color-input-group">
+                    <label>Couleur accent</label>
                     <div class="color-input-wrapper">
-                        <input type="color" id="accentColor" value="#ec4899">
-                        <input type="text" id="accentColorHex" value="#ec4899" readonly>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Frame Border Color</label>
-                    <div class="color-input-wrapper">
-                        <input type="color" id="frameColor" value="#7c3aed">
-                        <input type="text" id="frameColorHex" value="#7c3aed" readonly>
+                        <input type="color" id="accentColor" class="color-picker" value="#ec4899">
+                        <input type="text" id="accentHex" class="color-hex" value="#ec4899" readonly>
                     </div>
                 </div>
             </div>
 
             <!-- Background Section -->
-            <div class="section">
-                <div class="section-title">Background</div>
-                <div class="form-group">
-                    <label>Background Image URL</label>
-                    <input type="url" id="backgroundUrl" placeholder="https://...">
-                </div>
-                <div class="form-group">
-                    <label>Background Opacity (0-100)</label>
-                    <input type="text" id="backgroundOpacity" placeholder="50" value="50">
-                </div>
+            <div class="section-title">Arrière-plan</div>
+            <div class="form-group">
+                <label>URL de l'image</label>
+                <input type="text" id="bgImageUrl" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Opacité de l'image (%)</label>
+                <input type="number" id="bgOpacity" min="0" max="100" value="30">
             </div>
 
-            <!-- Bio Section -->
-            <div class="section">
-                <div class="section-title">Bio</div>
-                <div class="form-group">
-                    <label>Bio Text</label>
-                    <textarea id="bioText" placeholder="Tell us about yourself..."></textarea>
-                </div>
-            </div>
-
-            <!-- Actions -->
+            <!-- Buttons -->
             <div class="button-group">
-                <button class="btn btn-save" onclick="saveSettings()">Save Settings</button>
-                <button class="btn btn-preview" onclick="previewPage()">Preview Page</button>
-            </div>
-            <div class="button-group">
-                <button class="btn btn-logout" onclick="logout()">Logout</button>
+                <button class="btn btn-primary" onclick="saveSettings()">Enregistrer</button>
+                <button class="btn btn-secondary" onclick="logout()">Déconnexion</button>
             </div>
         </div>
 
         <!-- Preview Panel -->
         <div class="preview-panel">
-            <div class="preview-title">Live Preview</div>
-            <div class="preview-frame" id="previewFrame">
-                <div class="logo-preview" id="logoPreview">👻</div>
-                <div class="preview-content">
-                    <div style="text-align: center; font-size: 16px; font-weight: 600;">GOTH</div>
-                    <button class="preview-button">View Full Page</button>
-                    <button class="preview-button">Add Links</button>
-                    <button class="preview-button">Share</button>
+            <div class=\"preview-title\">Aperçu en temps réel</div>
+            <div class=\"preview-frame\">
+                <div class=\"preview-bg\" id=\"previewBg\"></div>
+                <div class=\"preview-content\">
+                    <div class=\"preview-logo\" id=\"previewLogo\">🖤</div>
+                    <div class=\"preview-name\" id=\"previewName\">Votre nom</div>
+                    <div class=\"preview-bio\" id=\"previewBio\">Description</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Check if user is logged in
-        function checkAuth() {
-            const token = localStorage.getItem('adminToken');
-            if (!token) {
-                window.location.href = '/login.html';
-                return;
-            }
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+            window.location.href = '/login';
         }
 
-        checkAuth();
-
-        // Load settings from localStorage and display in form
+        // Load settings from localStorage
         function loadSettings() {
-            const settings = JSON.parse(localStorage.getItem('gothSlolSettings') || '{}');
-            document.getElementById('logoText').value = settings.logoText || 'GOTH';
-            document.getElementById('logoEmoji').value = settings.logoEmoji || '👻';
-            document.getElementById('primaryColor').value = settings.primaryColor || '#7c3aed';
-            document.getElementById('accentColor').value = settings.accentColor || '#ec4899';
-            document.getElementById('frameColor').value = settings.frameColor || '#7c3aed';
-            document.getElementById('backgroundUrl').value = settings.backgroundUrl || '';
-            document.getElementById('backgroundOpacity').value = settings.backgroundOpacity || '50';
-            document.getElementById('bioText').value = settings.bioText || '';
+            const settings = JSON.parse(localStorage.getItem('pageSettings')) || {
+                logo: '🖤',
+                name: 'Votre site',
+                bio: 'Bienvenue sur ma page',
+                primaryColor: '#7c3aed',
+                accentColor: '#ec4899',
+                bgImage: '',
+                bgOpacity: 30
+            };
 
-            updateHexInputs();
+            document.getElementById('logoInput').value = settings.logo;
+            document.getElementById('nameInput').value = settings.name;
+            document.getElementById('bioInput').value = settings.bio;
+            document.getElementById('primaryColor').value = settings.primaryColor;
+            document.getElementById('primaryHex').value = settings.primaryColor;
+            document.getElementById('accentColor').value = settings.accentColor;
+            document.getElementById('accentHex').value = settings.accentColor;
+            document.getElementById('bgImageUrl').value = settings.bgImage || '';
+            document.getElementById('bgOpacity').value = settings.bgOpacity || 30;
+
             updatePreview();
         }
 
-        // Update hex display inputs
-        function updateHexInputs() {
-            document.getElementById('primaryColorHex').value = document.getElementById('primaryColor').value;
-            document.getElementById('accentColorHex').value = document.getElementById('accentColor').value;
-            document.getElementById('frameColorHex').value = document.getElementById('frameColor').value;
-        }
-
-        // Update live preview
+        // Update preview in real-time
         function updatePreview() {
-            const logoText = document.getElementById('logoText').value || 'GOTH';
-            const logoEmoji = document.getElementById('logoEmoji').value || '👻';
-            const primaryColor = document.getElementById('primaryColor').value;
-            const frameColor = document.getElementById('frameColor').value;
-            const bgUrl = document.getElementById('backgroundUrl').value;
-            const bgOpacity = document.getElementById('backgroundOpacity').value;
+            const logo = document.getElementById('logoInput').value || '🖤';
+            const name = document.getElementById('nameInput').value || 'Votre nom';
+            const bio = document.getElementById('bioInput').value || 'Description';
+            const bgImage = document.getElementById('bgImageUrl').value;
+            const bgOpacity = document.getElementById('bgOpacity').value;
 
-            // Update logo preview
-            document.getElementById('logoPreview').textContent = logoEmoji;
+            document.getElementById('previewLogo').textContent = logo;
+            document.getElementById('previewName').textContent = name;
+            document.getElementById('previewBio').textContent = bio;
 
-            // Update frame colors and background
-            const frame = document.getElementById('previewFrame');
-            frame.style.borderColor = frameColor;
-            
-            if (bgUrl) {
-                frame.style.backgroundImage = `url('${bgUrl}')`;
-                frame.style.backgroundSize = 'cover';
-                frame.style.backgroundPosition = 'center';
+            const bgEl = document.getElementById('previewBg');
+            if (bgImage) {
+                bgEl.style.backgroundImage = `url('${bgImage}')`;
+                bgEl.style.opacity = bgOpacity / 100;
             } else {
-                frame.style.backgroundImage = 'none';
+                bgEl.style.backgroundImage = 'none';
+                bgEl.style.opacity = '0';
             }
-
-            // Update section title color
-            const titles = document.querySelectorAll('.section-title::before');
-            titles.forEach(el => {
-                el.style.background = primaryColor;
-            });
         }
+
+        // Color picker handlers
+        document.getElementById('primaryColor').addEventListener('input', (e) => {
+            document.getElementById('primaryHex').value = e.target.value;
+            updatePreview();
+        });
+
+        document.getElementById('accentColor').addEventListener('input', (e) => {
+            document.getElementById('accentHex').value = e.target.value;
+            updatePreview();
+        });
+
+        // Real-time preview updates
+        document.getElementById('logoInput').addEventListener('input', updatePreview);
+        document.getElementById('nameInput').addEventListener('input', updatePreview);
+        document.getElementById('bioInput').addEventListener('input', updatePreview);
+        document.getElementById('bgImageUrl').addEventListener('input', updatePreview);
+        document.getElementById('bgOpacity').addEventListener('input', updatePreview);
 
         // Save settings
         async function saveSettings() {
             const settings = {
-                logoText: document.getElementById('logoText').value,
-                logoEmoji: document.getElementById('logoEmoji').value,
+                logo: document.getElementById('logoInput').value,
+                name: document.getElementById('nameInput').value,
+                bio: document.getElementById('bioInput').value,
                 primaryColor: document.getElementById('primaryColor').value,
                 accentColor: document.getElementById('accentColor').value,
-                frameColor: document.getElementById('frameColor').value,
-                backgroundUrl: document.getElementById('backgroundUrl').value,
-                backgroundOpacity: document.getElementById('backgroundOpacity').value,
-                bioText: document.getElementById('bioText').value
+                bgImage: document.getElementById('bgImageUrl').value,
+                bgOpacity: document.getElementById('bgOpacity').value
             };
 
+            localStorage.setItem('pageSettings', JSON.stringify(settings));
+
+            // Try to save to GitHub via Netlify Function
             try {
                 const response = await fetch('/.netlify/functions/save-settings', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('adminToken')
+                        'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify(settings)
                 });
 
                 if (response.ok) {
-                    localStorage.setItem('gothSlolSettings', JSON.stringify(settings));
-                    showMessage('Settings saved successfully!', 'success');
+                    alert('Paramètres enregistrés avec succès!');
                 } else {
-                    showMessage('Failed to save settings', 'error');
+                    alert('Paramètres enregistrés localement (serveur indisponible)');
                 }
-            } catch (e) {
-                // Save locally if server fails
-                localStorage.setItem('gothSlolSettings', JSON.stringify(settings));
-                showMessage('Settings saved locally!', 'success');
+            } catch (error) {
+                console.log('Sauvegarde serveur échouée, paramètres en localStorage:', settings);
+                alert('Paramètres enregistrés localement');
             }
-        }
-
-        // Preview full page
-        function previewPage() {
-            window.open('/', '_blank');
         }
 
         // Logout
         function logout() {
             localStorage.removeItem('adminToken');
-            localStorage.removeItem('gothSlolSettings');
-            window.location.href = '/login.html';
+            localStorage.removeItem('pageSettings');
+            window.location.href = '/login';
         }
-
-        // Show message
-        function showMessage(text, type) {
-            const msg = document.getElementById('message');
-            msg.textContent = text;
-            msg.className = `message ${type}`;
-            setTimeout(() => {
-                msg.className = 'message';
-            }, 3000);
-        }
-
-        // Event listeners for live preview
-        document.getElementById('logoText').addEventListener('input', updatePreview);
-        document.getElementById('logoEmoji').addEventListener('input', updatePreview);
-        document.getElementById('primaryColor').addEventListener('input', () => {
-            updateHexInputs();
-            updatePreview();
-        });
-        document.getElementById('accentColor').addEventListener('input', () => {
-            updateHexInputs();
-            updatePreview();
-        });
-        document.getElementById('frameColor').addEventListener('input', () => {
-            updateHexInputs();
-            updatePreview();
-        });
-        document.getElementById('backgroundUrl').addEventListener('input', updatePreview);
-        document.getElementById('backgroundOpacity').addEventListener('input', updatePreview);
 
         // Load settings on page load
         loadSettings();

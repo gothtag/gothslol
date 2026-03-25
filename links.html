@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GothSlol - Your Links</title>
+    <title>GothSlol - Liens</title>
     <style>
         * {
             margin: 0;
@@ -16,12 +16,104 @@
             color: #fff;
             font-family: 'Onest', sans-serif;
             min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR - GUNS.LOL STYLE */
+        .sidebar {
+            width: 280px;
+            background: rgba(20, 20, 20, 0.9);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
             padding: 20px;
+            overflow-y: auto;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            background: rgba(124, 58, 237, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .nav-section {
+            margin-bottom: 25px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #666;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            background: rgba(124, 58, 237, 0.2);
+            color: #c4b5fd;
+        }
+
+        .nav-icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
         }
 
         .container {
             max-width: 600px;
-            margin: 0 auto;
+            width: 100%;
         }
 
         .header {
@@ -30,18 +122,19 @@
         }
 
         .logo {
-            font-size: 48px;
-            margin-bottom: 10px;
+            font-size: 56px;
+            margin-bottom: 12px;
         }
 
         .title {
-            font-size: 28px;
+            font-size: 32px;
             margin-bottom: 8px;
+            font-weight: 700;
         }
 
         .bio {
             font-size: 14px;
-            color: #aaa;
+            color: #999;
             margin-bottom: 5px;
         }
 
@@ -53,7 +146,7 @@
         }
 
         .link-card {
-            background: rgba(20, 20, 20, 0.8);
+            background: rgba(20, 20, 20, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             padding: 16px;
@@ -67,10 +160,10 @@
         }
 
         .link-card:hover {
-            background: rgba(20, 20, 20, 1);
-            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(20, 20, 20, 0.9);
+            border-color: rgba(124, 58, 237, 0.4);
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.2);
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.15);
         }
 
         .link-icon {
@@ -109,6 +202,9 @@
             margin-top: 40px;
             padding-top: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .admin-button {
@@ -141,6 +237,24 @@
             background: rgba(239, 68, 68, 0.3);
         }
 
+        /* Scrollbar styling */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(196, 181, 253, 0.2);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(196, 181, 253, 0.4);
+        }
+
         @media (max-width: 480px) {
             .title {
                 font-size: 24px;
@@ -149,87 +263,129 @@
             .logo {
                 font-size: 40px;
             }
+
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+                padding: 20px 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="logo" id="logo">👻</div>
-            <h1 class="title" id="siteName">GOTH</h1>
-            <p class="bio" id="siteBio">My personal links</p>
-        </div>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <a href="/" class="sidebar-header">
+            <div class="sidebar-logo">🖤</div>
+            <div class="sidebar-title">GothSlol</div>
+        </a>
 
-        <!-- Links -->
-        <div class="links-container" id="linksContainer">
-            <!-- Links will be added here dynamically -->
-            <a href="#" class="link-card">
-                <div class="link-icon">🔗</div>
-                <div class="link-info">
-                    <div class="link-title">My Website</div>
-                    <div class="link-description">Check out my main site</div>
-                </div>
-                <div class="link-arrow">→</div>
+        <div class="nav-section">
+            <div class="nav-section-title">Compte</div>
+            <a href="/customize" class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                Personnaliser
+            </a>
+            <a href="/links" class="nav-item active">
+                <span class="nav-icon">🔗</span>
+                Liens
             </a>
         </div>
 
-        <!-- Admin Section -->
-        <div class="admin-section" id="adminSection" style="display: none;">
-            <button class="admin-button" onclick="goToCustomize()">⚙️ Edit Page</button>
-            <button class="admin-button danger" onclick="logout()">🚪 Logout</button>
+        <div class="nav-section">
+            <div class="nav-section-title">Pages</div>
+            <a href="/" class="nav-item">
+                <span class="nav-icon">👁️</span>
+                Voir ma page
+            </a>
+        </div>
+
+        <div class="nav-section" id="adminNav" style="display: none;">
+            <div class="nav-section-title">Actions</div>
+            <a class="nav-item" onclick="logout()" style="cursor: pointer;">
+                <span class="nav-icon">🚪</span>
+                Déconnexion
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo" id="logo">👻</div>
+                <h1 class="title" id="siteName">GOTH</h1>
+                <p class="bio" id="siteBio">Mes liens personnels</p>
+            </div>
+
+            <!-- Links -->
+            <div class="links-container" id="linksContainer">
+                <!-- Links will be added dynamically -->
+            </div>
+
+            <!-- Admin Section -->
+            <div class="admin-section" id="adminSection" style="display: none;">
+                <button class="admin-button" onclick="goToCustomize()">⚙️ Modifier la page</button>
+                <button class="admin-button danger" onclick="logout()">🚪 Déconnexion</button>
+            </div>
         </div>
     </div>
 
     <script>
+        const token = localStorage.getItem('adminToken');
+
         // Check if logged in
         function isLoggedIn() {
-            return !!localStorage.getItem('adminToken');
+            return !!token;
         }
 
         // Load and display settings
         function loadSettings() {
-            const settings = JSON.parse(localStorage.getItem('gothSlolSettings') || '{}');
+            const settings = JSON.parse(localStorage.getItem('pageSettings')) || {
+                logo: '👻',
+                name: 'GOTH',
+                bio: 'Mes liens personnels',
+                primaryColor: '#7c3aed'
+            };
             
-            document.getElementById('logo').textContent = settings.logoEmoji || '👻';
-            document.getElementById('siteName').textContent = settings.logoText || 'GOTH';
-            document.getElementById('siteBio').textContent = settings.bioText || 'My personal links';
-
-            // Apply colors
-            if (settings.primaryColor) {
-                document.documentElement.style.setProperty('--primary', settings.primaryColor);
-            }
+            document.getElementById('logo').textContent = settings.logo || '👻';
+            document.getElementById('siteName').textContent = settings.name || 'GOTH';
+            document.getElementById('siteBio').textContent = settings.bio || 'Mes liens personnels';
         }
 
-        // Load links (placeholder - would come from database)
+        // Load links (placeholder)
         function loadLinks() {
-            const links = JSON.parse(localStorage.getItem('gothSlolLinks') || '[]');
+            const links = JSON.parse(localStorage.getItem('pageLinks') || '[]');
             const container = document.getElementById('linksContainer');
             
             if (links.length === 0) {
-                // Default links if none set
+                // Default links
                 container.innerHTML = `
                     <a href="https://twitter.com" class="link-card" target="_blank">
                         <div class="link-icon">𝕏</div>
                         <div class="link-info">
                             <div class="link-title">Twitter / X</div>
-                            <div class="link-description">Follow me on social</div>
+                            <div class="link-description">Suivez-moi en ligne</div>
                         </div>
                         <div class="link-arrow">→</div>
                     </a>
                     <a href="https://discord.gg" class="link-card" target="_blank">
                         <div class="link-icon">💜</div>
                         <div class="link-info">
-                            <div class="link-title">Discord Server</div>
-                            <div class="link-description">Join our community</div>
+                            <div class="link-title">Serveur Discord</div>
+                            <div class="link-description">Rejoignez la communauté</div>
                         </div>
                         <div class="link-arrow">→</div>
                     </a>
                     <a href="https://twitch.tv" class="link-card" target="_blank">
                         <div class="link-icon">▶️</div>
                         <div class="link-info">
-                            <div class="link-title">Stream</div>
-                            <div class="link-description">Watch live on Twitch</div>
+                            <div class="link-title">En direct</div>
+                            <div class="link-description">Regardez sur Twitch</div>
                         </div>
                         <div class="link-arrow">→</div>
                     </a>
@@ -248,29 +404,30 @@
             }
         }
 
-        // Show admin section if logged in
-        function showAdminSection() {
+        // Show admin section and navigation if logged in
+        function showAdmin() {
             if (isLoggedIn()) {
-                document.getElementById('adminSection').style.display = 'block';
+                document.getElementById('adminSection').style.display = 'flex';
+                document.getElementById('adminNav').style.display = 'block';
             }
         }
 
-        // Go to customize page
+        // Go to customize
         function goToCustomize() {
-            window.location.href = '/customize.html';
+            window.location.href = '/customize';
         }
 
         // Logout
         function logout() {
             localStorage.removeItem('adminToken');
-            localStorage.removeItem('gothSlolSettings');
-            window.location.reload();
+            localStorage.removeItem('pageSettings');
+            window.location.href = '/login';
         }
 
         // Initialize
         loadSettings();
         loadLinks();
-        showAdminSection();
+        showAdmin();
     </script>
 </body>
 </html>
