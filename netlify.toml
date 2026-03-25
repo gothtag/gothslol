@@ -9,13 +9,13 @@
   package = "@netlify/plugin-functions-install-core"
 
 [[redirects]]
-  from = "/goth"
-  to = "/goth.html"
+  from = "/login"
+  to = "/login.html"
   status = 200
 
 [[redirects]]
-  from = "/gothtag"
-  to = "/gothtag.html"
+  from = "/customize"
+  to = "/customize.html"
   status = 200
 
 [[redirects]]

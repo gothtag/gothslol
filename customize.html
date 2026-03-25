@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>goths.lol | Customize</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="attached_assets/favicon.png">
+    <link rel="apple-touch-icon" type="image/png" href="attached_assets/favicon.png">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #141414;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        .section {
+            margin-bottom: 2rem;
+            background: rgba(20,20,20,0.8);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #ff0087;
+        }
+        label {
+            display: block;
+            margin: 0.5rem 0 0.2rem;
+            font-weight: 500;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            background: #0a0a0a;
+            color: #fff;
+            border: 1px solid #333;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        button {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(45deg, #ff0087, #573362);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: linear-gradient(45deg, #e6007a, #4a2a52);
+        }
+        .logout {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #fff;
+            transition: background 0.3s;
+        }
+        .logout:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <a href="#" class="logout" onclick="logout()">Logout</a>
+    <div class="container">
+        <h1>Customize gothslol</h1>
+        <form id="customizeForm">
+            <div class="section">
+                <h2>Colors</h2>
+                <label>Background Color</label>
+                <input type="color" id="bgColor" value="#000000">
+                <label>Text Color</label>
+                <input type="color" id="textColor" value="#ffffff">
+                <label>Accent Color</label>
+                <input type="color" id="accentColor" value="#573362">
+            </div>
+            <div class="section">
+                <h2>Background</h2>
+                <label>Background Image URL</label>
+                <input type="text" id="bgImage" placeholder="https://example.com/image.jpg">
+                <label>Background Video URL</label>
+                <input type="text" id="bgVideo" placeholder="https://example.com/video.mp4">
+            </div>
+            <div class="section">
+                <h2>Links</h2>
+                <label>EV Link</label>
+                <input type="text" id="evLink" placeholder="https://example.com">
+                <label>EY Link</label>
+                <input type="text" id="eyLink" placeholder="https://example.com">
+            </div>
+            <div class="section">
+                <h2>Usernames</h2>
+                <label>EV Username</label>
+                <input type="text" id="evUsername" value="ev">
+                <label>EY Username</label>
+                <input type="text" id="eyUsername" value="ey">
+            </div>
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+    <script>
+        // Check if logged in
+        if (!localStorage.getItem('adminToken')) {
+            window.location.href = '/login';
+        }
+
+        document.getElementById('customizeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const settings = {
+                bgColor: document.getElementById('bgColor').value,
+                textColor: document.getElementById('textColor').value,
+                accentColor: document.getElementById('accentColor').value,
+                bgImage: document.getElementById('bgImage').value,
+                bgVideo: document.getElementById('bgVideo').value,
+                evLink: document.getElementById('evLink').value,
+                eyLink: document.getElementById('eyLink').value,
+                evUsername: document.getElementById('evUsername').value,
+                eyUsername: document.getElementById('eyUsername').value
+            };
+            const response = await fetch('/.netlify/functions/save-settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(settings)
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert('Settings saved!');
+            } else {
+                alert('Error saving settings');
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/login';
+        }
+    </script>
+</body>
+</html>

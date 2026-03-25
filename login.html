@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en" translate="no" class="notranslate">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>goths.lol | Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Satoshi';
+            src: url(https://assets.guns.lol/fonts/X6XYTKIVDUW7GZTZPZNN4EUM5KH54KHF.woff2) format('woff2'), url(https://assets.guns.lol/fonts/X6XYTKIVDUW7GZTZPZNN4EUM5KH54KHF.woff) format('woff'), url(https://assets.guns.lol/fonts/X6XYTKIVDUW7GZTZPZNN4EUM5KH54KHF.ttf) format('truetype');
+            font-weight: 300 900;
+            font-display: swap;
+            font-style: normal;
+        }
+    </style>
+    <link rel="icon" type="image/png" href="attached_assets/favicon.png">
+    <link rel="apple-touch-icon" type="image/png" href="attached_assets/favicon.png">
+    <style>
+        html {
+            background-color: #000000;
+            height: 100%;
+            min-height: 100dvh;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000000;
+            color: white;
+            font-family: 'Satoshi', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+            cursor: url('attached_assets/cursor3.png') 8 8, auto;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        *, *::before, *::after {
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        img, a, svg {
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        .background-layer {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            min-height: 100svh;
+            min-height: 100dvh;
+            z-index: 0;
+            pointer-events: none;
+            background: linear-gradient(rgba(20,20,20,0.5), rgba(20,20,20,0.5)), url('https://t4.ftcdn.net/jpg/12/36/09/79/360_F_1236097943_aSwjHFgF2apHNcW8KQQU6y6O8lXvilrM.jpg') no-repeat center center;
+            background-size: cover;
+            transform: translateZ(0);
+            filter: blur(2px);
+        }
+
+        .vignette {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            min-height: 100svh;
+            min-height: 100dvh;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%);
+        }
+
+        .gradient-layer {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            min-height: 100svh;
+            min-height: 100dvh;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.35;
+            background: linear-gradient(120deg, #000000 0%, #141414 45%, #0a0a0a 100%);
+            background-size: 200% 200%;
+            animation: ambientShift 18s ease-in-out infinite;
+        }
+
+        @keyframes ambientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .texture {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 100dvh;
+            z-index: 1;
+            opacity: 0.18;
+            pointer-events: none;
+            background: transparent url(https://assets.guns.lol/guns_dot.png) repeat 0 0;
+        }
+
+        .content-container {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+            width: 100%;
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+            padding: 0 1rem;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        .login-container {
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2) url(https://assets.guns.lol/guns_dot.png) repeat;
+            padding: 3rem;
+            border-radius: 65px;
+            backdrop-filter: blur(10px);
+            filter: brightness(1.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            animation: fadeIn 1s ease-in;
+            transform-style: preserve-3d;
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+            box-shadow: 0 0 100px rgba(0,0,0,0.9);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            width: 200px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: #ff0087;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background: #111;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(90deg, #ff0087, #573362);
+            background-size: 200% 100%;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            transition: background 0.3s;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .forgot {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .forgot a {
+            color: #ff0087;
+            text-decoration: none;
+        }
+
+        .forgot a:hover {
+            text-decoration: underline;
+        }
+
+        .input-group {
+            margin: 1rem 0;
+        }
+
+        .input-label {
+            font-size: 1rem;
+            color: #ff0087;
+            margin-bottom: 0.5rem;
+            text-align: left;
+        }
+
+        .input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 10px;
+            color: #fff;
+            z-index: 1;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 40px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background: #0a0a0a;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+            color: #fff;
+            z-index: 1;
+        }
+
+        .password-input {
+            padding-right: 40px;
+        }
+
+        .discord-login {
+            text-decoration: none;
+            color: #e6e8ff;
+            background-image: linear-gradient(120deg, #5661f6b4, #5661f648);
+            border: 2px solid #5661f648;
+            background-origin: border-box;
+            padding: 9px;
+            border-radius: 15px;
+            font-weight: 500;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-sizing: border-box;
+            cursor: pointer;
+            transition: .3s;
+            font-size: 17.5px;
+            direction: ltr;
+            margin: 1rem 0;
+        }
+
+        .separator {
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            color: #fff;
+        }
+
+        .separator .line {
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.2);
+        }
+
+        .separator span {
+            padding: 0 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-layer"></div>
+    <div class="vignette"></div>
+    <div class="gradient-layer"></div>
+    <div class="texture"></div>
+    <div class="content-container">
+        <div class="login-container">
+            <img src="attached_assets/gothslogo.png" alt="goths.lol Logo" class="logo">
+            <h1>Log in to your account</h1>
+            <button class="discord-login" id="discordLogin">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02c-2.72 4.07-3.47 8.03-3.1 11.95c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11-.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.09.22.17.33.26c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.01.06.02.09.01c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02M8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12m6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12"></path>
+                </svg> Discord
+            </button>
+            <div class="separator">
+                <div class="line"></div>
+                <span>Or with email</span>
+                <div class="line"></div>
+            </div>
+            <form id="loginForm">
+                <div class="input-group">
+                    <h1 class="input-label">Email</h1>
+                    <div class="input-container">
+                        <span class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M13.425 11.9q.275.2.575.2t.575-.2L21 7.425V5l-7 4.85L7 5v2.425zM3 21q-.825 0-1.412-.587T1 19V7.5q0-.425.288-.712T2 6.5q.425 0 .713.288T3 7.5V19h15.5q.425 0 .713.288T19.5 20q0 .425-.288.713T18.5 21zm4-4q-.825 0-1.412-.587T5 15V5q0-.825.588-1.412T7 3h14q.825 0 1.413.588T23 5v10q0 .825-.587 1.413T21 17z"></path>
+                            </svg>
+                        </span>
+                        <input type="email" id="email" class="input-field" placeholder="Email" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <h1 class="input-label">Password</h1>
+                    <div class="input-container">
+                        <span class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256">
+                                <path fill="currentColor" d="M160 16a80.07 80.07 0 0 0-76.09 104.78l-57.57 57.56A8 8 0 0 0 24 184v40a8 8 0 0 0 8 8h40a8 8 0 0 0 8-8v-16h16a8 8 0 0 0 8-8v-16h16a8 8 0 0 0 5.66-2.34l9.56-9.57A80 80 0 1 0 160 16m20 76a16 16 0 1 1 16-16a16 16 0 0 1-16 16"></path>
+                            </svg>
+                        </span>
+                        <span class="eye-icon" id="togglePassword">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" id="eye-show">
+                                <path fill="currentColor" d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"></path>
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" id="eye-hide" style="display: none;">
+                                <path fill="currentColor" d="M11.83 9L15 12.16V12a3 3 0 0 0-3-3zm-4.3.8l1.55 1.55c-.05.21-.08.42-.08.65a3 3 0 0 0 3 3c.22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53a5 5 0 0 1-5-5c0-.79.2-1.53.53-2.2M2 4.27l2.28 2.28l.45.45C3.08 8.3 1.78 10 1 12c1.73 4.39 6 7.5 11 7.5c1.55 0 3.03-.3 4.38-.84l.43.42L19.73 22L21 20.73L3.27 3M12 7a5 5 0 0 1 5 5c0 .64-.13 1.26-.36 1.82l2.93 2.93c1.5-1.25 2.7-2.89 3.43-4.75c-1.73-4.39-6-7.5-11-7.5c-1.4 0-2.74.25-4 .7l2.17 2.15C10.74 7.13 11.35 7 12 7"></path>
+                            </svg>
+                        </span>
+                        <input type="password" id="password" class="input-field password-input" placeholder="Password" required>
+                    </div>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <div class="forgot">
+                <a href="#" id="forgotLink">Forgot password?</a>
+            </div>
+            <p class="error" id="error"></p>
+        </div>
+    </div>
+    <script>
+        // Parallax effect like index.html
+        const frame = document.querySelector('.login-container');
+        const resetFrameTransform = function() {
+            frame.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
+        };
+
+        const applyFrameTransform = function(clientX, clientY) {
+            const x = (clientX / window.innerWidth - 0.5) * 20;
+            const y = (clientY / window.innerHeight - 0.5) * 20;
+            frame.style.transform = `perspective(1000px) rotateY(${x}deg) rotateX(${-y}deg) scale(1.02)`;
+        };
+
+        document.addEventListener('mousemove', function(e) {
+            applyFrameTransform(e.clientX, e.clientY);
+        });
+
+        document.addEventListener('mouseleave', resetFrameTransform);
+
+        document.getElementById('discordLogin').addEventListener('click', () => {
+            alert('Discord login not yet implemented');
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const response = await fetch('/.netlify/functions/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const result = await response.json();
+            if (result.success) {
+                localStorage.setItem('adminToken', result.token);
+                window.location.href = '/customize';
+            } else {
+                document.getElementById('error').textContent = 'Invalid credentials';
+            }
+        });
+
+        document.getElementById('togglePassword').addEventListener('click', () => {
+            const passwordInput = document.getElementById('password');
+            const eyeShow = document.getElementById('eye-show');
+            const eyeHide = document.getElementById('eye-hide');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            if (type === 'text') {
+                eyeShow.style.display = 'inline';
+                eyeHide.style.display = 'none';
+            } else {
+                eyeShow.style.display = 'none';
+                eyeHide.style.display = 'inline';
+            }
+        });
+
+        document.getElementById('forgotLink').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = prompt('Enter your email to reset password:');
+            if (email) {
+                const response = await fetch('/.netlify/functions/forgot-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const result = await response.json();
+                alert(result.message);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1460,5 +1460,161 @@
         }
 
     </script>
+
+    <script>
+        // Admin Edit Mode Script
+        let isEditMode = false;
+
+        function enableEditMode() {
+            isEditMode = true;
+            document.body.contentEditable = true;
+            document.body.style.border = '2px dashed red';
+
+            // Make profile names editable
+            const profileNames = document.querySelectorAll('.profile-name');
+            profileNames.forEach(name => {
+                name.contentEditable = true;
+                name.style.border = '1px solid yellow';
+            });
+
+            // Add upload buttons for avatars
+            const avatars = document.querySelectorAll('.avatar img');
+            avatars.forEach(img => {
+                const uploadBtn = document.createElement('input');
+                uploadBtn.type = 'file';
+                uploadBtn.accept = 'image/*';
+                uploadBtn.style.position = 'absolute';
+                uploadBtn.style.top = '0';
+                uploadBtn.style.left = '0';
+                uploadBtn.style.opacity = '0.5';
+                uploadBtn.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            img.src = event.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+                img.parentElement.style.position = 'relative';
+                img.parentElement.appendChild(uploadBtn);
+            });
+
+            // Add save button
+            const saveBtn = document.createElement('button');
+            saveBtn.textContent = 'Save Changes';
+            saveBtn.style.position = 'fixed';
+            saveBtn.style.top = '10px';
+            saveBtn.style.right = '10px';
+            saveBtn.style.zIndex = '10000';
+            saveBtn.style.background = 'red';
+            saveBtn.style.color = 'white';
+            saveBtn.style.border = 'none';
+            saveBtn.style.padding = '10px';
+            saveBtn.style.cursor = 'pointer';
+            saveBtn.addEventListener('click', saveChanges);
+            document.body.appendChild(saveBtn);
+        }
+
+        function disableEditMode() {
+            isEditMode = false;
+            document.body.contentEditable = false;
+            document.body.style.border = '';
+
+            const profileNames = document.querySelectorAll('.profile-name');
+            profileNames.forEach(name => {
+                name.contentEditable = false;
+                name.style.border = '';
+            });
+
+            // Remove upload buttons
+            const uploadBtns = document.querySelectorAll('input[type="file"]');
+            uploadBtns.forEach(btn => btn.remove());
+
+            // Remove save button
+            const saveBtn = document.querySelector('button');
+            if (saveBtn) saveBtn.remove();
+        }
+
+        function saveChanges() {
+            const changes = {
+                profileNames: {},
+                avatars: {}
+            };
+
+            const profileCards = document.querySelectorAll('.profile-card');
+            profileCards.forEach(card => {
+                const nameEl = card.querySelector('.profile-name');
+                const avatarImg = card.querySelector('.avatar img');
+                if (nameEl && avatarImg) {
+                    const key = nameEl.textContent.trim().split(' ')[0]; // first word as key
+                    changes.profileNames[key] = nameEl.textContent.trim();
+                    changes.avatars[key] = avatarImg.src;
+                }
+            });
+
+            localStorage.setItem('gothsEdits', JSON.stringify(changes));
+            alert('Changes saved to local storage!');
+        }
+
+        function loadChanges() {
+            const saved = localStorage.getItem('gothsEdits');
+            if (saved) {
+                const changes = JSON.parse(saved);
+                const profileCards = document.querySelectorAll('.profile-card');
+                profileCards.forEach(card => {
+                    const nameEl = card.querySelector('.profile-name');
+                    const avatarImg = card.querySelector('.avatar img');
+                    if (nameEl && avatarImg) {
+                        const key = nameEl.textContent.trim().split(' ')[0];
+                        if (changes.profileNames[key]) {
+                            nameEl.textContent = changes.profileNames[key];
+                        }
+                        if (changes.avatars[key]) {
+                            avatarImg.src = changes.avatars[key];
+                        }
+                    }
+                });
+            }
+        }
+
+        // Load settings from server
+        async function loadSettings() {
+            try {
+                const response = await fetch('/.netlify/functions/get-settings');
+                const settings = await response.json();
+                applySettings(settings);
+            } catch (e) {
+                console.log('No settings loaded');
+            }
+        }
+
+        function applySettings(settings) {
+            if (settings.bgColor) document.body.style.backgroundColor = settings.bgColor;
+            if (settings.textColor) document.body.style.color = settings.textColor;
+            if (settings.accentColor) {
+                // Apply to accents
+            }
+            if (settings.bgImage) {
+                document.querySelector('.background-layer').style.backgroundImage = `url(${settings.bgImage})`;
+            }
+            if (settings.bgVideo) {
+                // Add video background
+            }
+            // Update links and usernames
+            if (settings.evLink) {
+                const evLink = document.querySelector('a[href*="ev"]');
+                if (evLink) evLink.href = settings.evLink;
+            }
+            if (settings.eyLink) {
+                const eyLink = document.querySelector('a[href*="ey"]');
+                if (eyLink) eyLink.href = settings.eyLink;
+            }
+            // Update usernames in text
+        }
+
+        loadSettings();
+    </script>
 </body>
 </html>
