@@ -140,7 +140,6 @@
             width: 100%;
             height: 100%;
         }
-        }
 
         .main-content {
             margin-left: 280px;
@@ -151,6 +150,8 @@
 
         .settings-panel {
             width: 100%;
+            max-width: 1080px;
+            margin: 0 auto;
             background: rgba(20, 20, 20, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
@@ -160,26 +161,123 @@
             overflow-y: auto;
             position: relative;
 
-            display: flex;
-            flex-wrap: wrap;
-            align-items: flex-start;
+            display: block;
             gap: 16px;
         }
 
         .preview-panel {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 350px;
-            height: 250px;
+            position: relative;
+            width: 100%;
+            max-width: 620px;
+            min-height: 260px;
+            margin-bottom: 16px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: stretch;
             justify-content: flex-start;
-            background: #000000;
+            background: #0a0a0a;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px;
             overflow: hidden;
-            z-index: 10;
+            z-index: 2;
+        }
+
+        .preview-reset-btn {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: rgba(255, 0, 0, 0.85);
+            color: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 20;
+            font-size: 16px;
+            line-height: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .preview-content {
+            position: relative;
+            width: 100%;
+            height: 190px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-content-container {
+            width: 1920px;
+            height: 1080px;
+            transform: scale(0.095);
+            transform-origin: top left;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .preview-background-layer,
+        .preview-gradient-layer,
+        .preview-content-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1920px;
+            height: 1080px;
+        }
+
+        .preview-content-frame {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 25px;
+            padding: 40px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .preview-logo {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .preview-links {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .preview-profile-card {
+            width: 220px;
+        }
+
+        .preview-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #151515;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 3px solid #fff;
+        }
+
+        .preview-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         .button-group {
@@ -248,56 +346,7 @@
         }
 
         /* Preview content styles (simulating index.html) */
-        .preview-content {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000000;
-            color: white;
-            font-family: 'Roboto', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            transform: scale(0.4);
-            transform-origin: center;
-        }
-
-        .preview-background-layer {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            opacity: 0.35;
-            z-index: 0;
-        }
-
-        .preview-gradient-layer {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            opacity: 0.35;
-            background: linear-gradient(120deg, #0a0a0a 0%, #141414 45%, #050505 100%);
-        }
-
-        .preview-content-container {
-            position: relative;
-            z-index: 2;
-            max-width: 700px;
-            width: 100%;
-            padding: 0 1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0;
-        }
+        /* styles for scaled 1920x1080 preview container are defined above */
 
         .preview-content-frame {
             border: 1px solid rgba(255,255,255,0.1);
@@ -1185,7 +1234,7 @@
         </div>
 
         <!-- Profile Section -->
-        <div class="profile-section" id="profileSection" style="display: none;">
+        <div class="profile-section" id="profileSection" style="display: block;">
             <div class="profile-info">
                 <img src="https://wallpapers-clan.com/wp-content/uploads/2022/12/sanrio-pfp-7.jpg" alt="Admin Avatar" class="profile-avatar">
                 <div class="profile-details">
@@ -1230,6 +1279,7 @@
             <!-- Preview Panel -->
             <div class="preview-panel">
                 <div class="preview-title">Aperçu en temps réel</div>
+            <button class="preview-reset-btn" onclick="resetPreviewBackground()" title="Remettre arrière-plan de base">×</button>
                 <div class="preview-content">
                     <div class="preview-background-layer" id="previewBg"></div>
                     <div class="preview-gradient-layer"></div>
@@ -1269,8 +1319,16 @@
             <!-- Frame Section -->
             <div class="section-title">Cadre</div>
             <div class="form-group">
-                <label>Couleur du cadre</label>
+                <label>Couleur du contour</label>
                 <input type="color" id="frameColor" value="#ffffff">
+            </div>
+            <div class="form-group">
+                <label>Couleur du content-frame</label>
+                <input type="color" id="contentFrameColor" value="#000000">
+            </div>
+            <div class="form-group">
+                <label>Couleur du cadre des avatars</label>
+                <input type="color" id="profileBorderColor" value="#ffffff">
             </div>
 
             <!-- Music Section -->
@@ -1376,10 +1434,13 @@
             siteName: 'goths.lol',
             
             // Background
+            bgUrl: 'https://r2.guns.lol/ed920f02-a70f-47a3-a7e9-726df6ca5496.gif',
             bgOpacity: 35,
             
             // Frame color
-            frameColor: 'rgba(255, 255, 255, 0.1)',
+            frameColor: '#ffffff',
+            contentFrameColor: '#000000',
+            profileBorderColor: '#ffffff',
             
             // Audio settings
             audioList: [
@@ -1406,6 +1467,8 @@
             ]
         };
 
+        let initialBgUrl = DEFAULT_SETTINGS.bgUrl;
+
         // Load settings from API
         async function loadSettings() {
             try {
@@ -1424,13 +1487,28 @@
                 }
                 
                 // Load basic settings
-                document.getElementById('bgOpacity').value = merged.bgOpacity || 35;
-                document.getElementById('frameColor').value = merged.frameColor || '#ffffff';
-                document.getElementById('cursorUrl').value = merged.cursorUrl || '';
+                initialBgUrl = merged.bgFileData || merged.bgUrl || DEFAULT_SETTINGS.bgUrl;
+
+                const setValue = (id, value) => { const el = document.getElementById(id); if (el) el.value = value; };
+                setValue('bgOpacity', merged.bgOpacity || 35);
+                setValue('frameColor', merged.frameColor || '#ffffff');
+                setValue('contentFrameColor', merged.contentFrameColor || '#000000');
+                setValue('profileBorderColor', merged.profileBorderColor || '#ffffff');
+                setValue('cursorUrl', merged.cursorUrl || '');
+
+                // Profile section in sidebar (persistent UI)
+                const profileSection = document.getElementById('profileSection');
+                if (profileSection) {
+                    profileSection.style.display = 'block';
+                    const nameEl = profileSection.querySelector('.profile-name');
+                    const uidEl = profileSection.querySelector('.profile-uid');
+                    if (nameEl) nameEl.textContent = merged.userName || 'ev & ey';
+                    if (uidEl) uidEl.textContent = merged.userId ? `UID ${merged.userId}` : 'UID 1';
+                }
                 
                 // Load file previews if available
                 if (merged.bgFileData) {
-                    showFilePreview('bgPreview', 'bgInfo', merged.bgFileData, merged.bgFileName, merged.bgFileType);
+                    showFilePreview('bgPreviewContainer', 'bgInfo', merged.bgFileData, merged.bgFileName, merged.bgFileType);
                 }
                 if (merged.cursorFileData) {
                     showFilePreview('cursorPreview', 'cursorInfo', merged.cursorFileData, merged.cursorFileName, merged.cursorFileType);
@@ -1445,7 +1523,7 @@
                             <label>Profil ${idx + 1}</label>
                             <input type="text" class="profile-name" value="${profile.name || ''}" placeholder="Nom">
                             <input type="text" class="profile-url" value="${profile.url || ''}" placeholder="URL">
-                            <input type="text" class="profile-avatar" value="${profile.avatar || ''}" placeholder="Avatar URL">
+                            <input type="text" class="profile-avatar" value="${profile.avatar || ''}" placeholder="Avatar URL" ${['ev','ey'].includes((profile.name||'').toLowerCase()) ? 'readonly style="background: #222; color: #aaa;"' : ''}>
                             <input type="text" class="profile-role" value="${profile.role || ''}" placeholder="Rôle">
                             <button type="button" class="btn btn-secondary" onclick="removeProfile(${idx})">Supprimer</button>
                         </div>
@@ -1480,8 +1558,23 @@
                 console.error('Error loading settings:', error);
                 // Fallback to defaults
                 const merged = DEFAULT_SETTINGS;
-                document.getElementById('bgUrl').value = merged.bgUrl;
-                document.getElementById('bgOpacity').value = merged.bgOpacity;
+                initialBgUrl = merged.bgUrl;
+                const setValue = (id, value) => { const el = document.getElementById(id); if (el) el.value = value; };
+                setValue('bgOpacity', merged.bgOpacity);
+                setValue('frameColor', merged.frameColor);
+                setValue('contentFrameColor', merged.contentFrameColor);
+                setValue('profileBorderColor', merged.profileBorderColor);
+                setValue('cursorUrl', merged.cursorUrl);
+
+                const profileSection = document.getElementById('profileSection');
+                if (profileSection) {
+                    profileSection.style.display = 'block';
+                    const nameEl = profileSection.querySelector('.profile-name');
+                    const uidEl = profileSection.querySelector('.profile-uid');
+                    if (nameEl) nameEl.textContent = merged.userName || 'ev & ey';
+                    if (uidEl) uidEl.textContent = merged.userId ? `UID ${merged.userId}` : 'UID 1';
+                }
+
                 loadAudioSettings(merged);
                 // Update localStorage with defaults
                 localStorage.setItem('pageSettings', JSON.stringify(merged));
@@ -1494,30 +1587,44 @@
         // Update preview
         function updatePreview() {
             const bgOpacity = document.getElementById('bgOpacity').value;
-            const bgFileData = document.getElementById('bgFile').dataset.fileData;
+            const bgFileInput = document.getElementById('bgFile');
+            const bgFileData = bgFileInput.dataset.fileData;
+            const frameColor = document.getElementById('frameColor').value;
+            const contentFrameColor = document.getElementById('contentFrameColor').value;
+            const profileBorderColor = document.getElementById('profileBorderColor').value;
 
             const bgEl = document.getElementById('previewBg');
+            let appliedBg = null;
+            let previewText = '.MP4 / .GIF / .JPG / .PNG';
 
             if (bgFileData) {
-                bgEl.style.backgroundImage = `url('${bgFileData}')`;
-                bgEl.style.opacity = bgOpacity / 100;
+                appliedBg = bgFileData;
+                previewText = bgFileInput.dataset.fileName || 'Fichier sélectionné';
+            } else if (initialBgUrl) {
+                appliedBg = initialBgUrl;
+                previewText = initialBgUrl;
             }
 
-            // Update frame color
-            const frameColor = document.getElementById('frameColor').value;
-            const r = parseInt(frameColor.slice(1, 3), 16);
-            const g = parseInt(frameColor.slice(3, 5), 16);
-            const b = parseInt(frameColor.slice(5, 7), 16);
-            document.getElementById('previewFrame').style.borderColor = `rgba(${r}, ${g}, ${b}, 0.1)`;
+            if (appliedBg) {
+                bgEl.style.backgroundImage = `url('${appliedBg}')`;
+            } else {
+                bgEl.style.backgroundImage = 'none';
+            }
+            bgEl.style.opacity = Math.max(0, Math.min(1, (bgOpacity || 35) / 100));
 
-            // Update site name
-            const siteName = 'goths.lol'; // Could be made dynamic if needed
+            document.getElementById('bgFileText').textContent = previewText;
+
+            const previewFrame = document.getElementById('previewFrame');
+            previewFrame.style.borderColor = frameColor;
+            previewFrame.style.backgroundColor = contentFrameColor;
+
+            document.querySelectorAll('.preview-avatar').forEach(el => {
+                el.style.border = `3px solid ${profileBorderColor}`;
+            });
+
             document.getElementById('previewSiteName').innerHTML = `goths<span>.</span>lol`;
 
-            // Update profiles
             updatePreviewProfiles();
-
-            // Update social links
             updatePreviewSocialLinks();
         }
 
@@ -1545,30 +1652,42 @@
                 );
             }
 
-            profilesContainer.innerHTML = profiles.map(profile => `
-                <a href="${profile.url || '#'}" class="profile-card">
-                    <div class="avatar-container">
-                        <div class="avatar-gradient-ring"></div>
-                        <div class="avatar-decoration" data-discord-slot="${profile.name}" style="display: none;">
-                            <img src="" alt="" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
-                        </div>
-                        <div class="avatar">
-                            <img src="${profile.avatar || 'attached_assets/default-avatar.png'}" alt="@${profile.name}" data-discord-slot="${profile.name}" data-fallback-src="${profile.avatar || 'attached_assets/default-avatar.png'}" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
-                            <div class="avatar-overlay">
-                                <span>➜]</span>
+            profilesContainer.innerHTML = profiles.map(profile => {
+                let avatarImage = profile.avatar || 'attached_assets/default-avatar.png';
+                const profileNameLower = (profile.name || '').toLowerCase();
+
+                if (['ev', 'ey'].includes(profileNameLower)) {
+                    const discordImg = document.querySelector(`img[data-discord-slot="${profileNameLower}"]`);
+                    if (discordImg && discordImg.src) {
+                        avatarImage = discordImg.src;
+                    }
+                }
+
+                return `
+                    <a href="${profile.url || '#'}" class="preview-profile-card">
+                        <div class="avatar-container">
+                            <div class="avatar-gradient-ring"></div>
+                            <div class="avatar-decoration" data-discord-slot="${profile.name}" style="display: none;">
+                                <img src="" alt="" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
+                            </div>
+                            <div class="avatar">
+                                <img src="${avatarImage}" alt="@${profile.name}" data-discord-slot="${profile.name}" data-fallback-src="${profile.avatar || 'attached_assets/default-avatar.png'}" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
+                                <div class="avatar-overlay">
+                                    <span>➜]</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="profile-name">
-                        ${profile.name}
-                        <span class="clan-badge" data-discord-slot="${profile.name}" style="display: none;">
-                            <img class="clan-badge-img" src="" alt="">
-                            <span class="clan-tag"></span>
-                        </span>
-                    </div>
-                    <div class="profile-role">${profile.role || 'socials'}</div>
-                </a>
-            `).join('');
+                        <div class="profile-name">
+                            ${profile.name}
+                            <span class="clan-badge" data-discord-slot="${profile.name}" style="display: none;">
+                                <img class="clan-badge-img" src="" alt="">
+                                <span class="clan-tag"></span>
+                            </span>
+                        </div>
+                        <div class="profile-role">${profile.role || 'socials'}</div>
+                    </a>
+                `;
+            }).join('');
         }
 
         function updatePreviewSocialLinks() {
@@ -1616,12 +1735,15 @@
             const settings = {
                 bgOpacity: document.getElementById('bgOpacity').value,
                 frameColor: document.getElementById('frameColor').value,
+                contentFrameColor: document.getElementById('contentFrameColor').value,
+                profileBorderColor: document.getElementById('profileBorderColor').value,
                 cursorUrl: document.getElementById('cursorUrl').value,
-                // File data - use bgFileData as bgUrl if available
-                bgUrl: bgFileInput.dataset.fileData || '',
+                // File data - use chosen file or initial background URL
+                bgUrl: bgFileInput.dataset.fileData || initialBgUrl || '',
                 bgFileData: bgFileInput.dataset.fileData || null,
                 bgFileName: bgFileInput.dataset.fileName || null,
                 bgFileType: bgFileInput.files[0]?.type || null,
+                cursorUrl: document.getElementById('cursorUrl').value || '',
                 cursorFileData: cursorFileInput.dataset.fileData || null,
                 cursorFileName: cursorFileInput.dataset.fileName || null,
                 cursorFileType: cursorFileInput.files[0]?.type || null,
@@ -1716,7 +1838,16 @@
         }
 
         // Clear background function
+        function resetPreviewBackground() {
+            initialBgUrl = DEFAULT_SETTINGS.bgUrl;
+            clearBackground();
+            document.getElementById('bgFileText').textContent = DEFAULT_SETTINGS.bgUrl;
+            updatePreview();
+        }
+
         function clearBackground() {
+            initialBgUrl = DEFAULT_SETTINGS.bgUrl;
+
             const container = document.getElementById('bgPreviewContainer');
             const placeholder = document.getElementById('bgPlaceholder');
             const videoEl = document.getElementById('bgPreviewVideo');
@@ -1739,6 +1870,9 @@
             fileInput.value = '';
             delete fileInput.dataset.fileData;
             delete fileInput.dataset.fileName;
+
+            // Keep the reset link to base with cross preserved
+            document.querySelector('.preview-reset-btn').style.display = 'block';
 
             // Update preview
             updatePreview();
@@ -1902,7 +2036,8 @@
         // Event listeners
         document.getElementById('bgOpacity').addEventListener('input', updatePreview);
         document.getElementById('frameColor').addEventListener('input', updatePreview);
-        document.getElementById('bgOpacity').addEventListener('input', updatePreview);
+        document.getElementById('contentFrameColor').addEventListener('input', updatePreview);
+        document.getElementById('profileBorderColor').addEventListener('input', updatePreview);
         document.getElementById('bgFile').addEventListener('change', updatePreview);
 
         // Real-time preview updates for profiles and social links
@@ -2040,35 +2175,72 @@
             const preview = document.getElementById(previewId);
             const info = document.getElementById(infoId);
 
-            preview.innerHTML = '';
-            preview.style.display = 'block';
-            info.textContent = `Fichier: ${fileName}`;
-
-            // Update placeholder text if it's bg
-            if (previewId === 'bgPreview') {
-                document.getElementById('bgFileText').textContent = fileName;
+            if (!preview || !info) {
+                console.warn('showFilePreview: element not found', previewId, infoId);
+                return;
             }
 
-            if (fileType.startsWith('image/')) {
+            info.textContent = `Fichier: ${fileName || 'n/a'}`;
+
+            // Handling background preview container with existing layout
+            if (previewId === 'bgPreviewContainer') {
+                const placeholder = document.getElementById('bgPlaceholder');
+                const videoEl = document.getElementById('bgPreviewVideo');
+                const imgEl = document.getElementById('bgPreviewImg');
+                const fileInput = document.getElementById('bgFile');
+
+                if (placeholder) placeholder.style.display = 'none';
+
+                if (fileType && fileType.startsWith('video/')) {
+                    if (videoEl) {
+                        videoEl.src = fileData;
+                        videoEl.style.display = 'block';
+                        videoEl.autoplay = true;
+                        videoEl.loop = true;
+                        videoEl.muted = true;
+                        videoEl.playsInline = true;
+                    }
+                    if (imgEl) imgEl.style.display = 'none';
+                } else if (fileType && (fileType.startsWith('image/') || fileType === 'image/gif' || fileType.endsWith('svg+xml'))) {
+                    if (imgEl) {
+                        imgEl.src = fileData;
+                        imgEl.style.display = 'block';
+                    }
+                    if (videoEl) videoEl.style.display = 'none';
+                }
+
+                if (fileInput) {
+                    fileInput.dataset.fileData = fileData;
+                    fileInput.dataset.fileName = fileName;
+                }
+
+                document.getElementById('bgFileText').textContent = fileName || '.MP4 / .GIF / .JPG / .PNG';
+                document.querySelector('.preview-reset-btn').style.display = 'block';
+                return;
+            }
+
+            // Default generic preview usage
+            preview.innerHTML = '';
+            preview.style.display = 'block';
+
+            if (fileType && (fileType.startsWith('image/') || fileType.endsWith('svg+xml') || fileType === 'image/gif')) {
                 const img = document.createElement('img');
                 img.src = fileData;
+                img.alt = fileName;
+                img.style.maxWidth = '100%';
+                img.style.maxHeight = '100%';
                 preview.appendChild(img);
-            } else if (fileType.startsWith('video/')) {
-                // Show first frame as image
+            } else if (fileType && fileType.startsWith('video/')) {
                 const video = document.createElement('video');
                 video.src = fileData;
-                video.preload = 'metadata';
-                video.onloadedmetadata = function() {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(video, 0, 0);
-                    const img = document.createElement('img');
-                    img.src = canvas.toDataURL();
-                    preview.appendChild(img);
-                };
-            } else if (fileType.startsWith('audio/')) {
+                video.autoplay = true;
+                video.loop = true;
+                video.muted = true;
+                video.playsInline = true;
+                video.style.maxWidth = '100%';
+                video.style.maxHeight = '100%';
+                preview.appendChild(video);
+            } else if (fileType && fileType.startsWith('audio/')) {
                 const audio = document.createElement('audio');
                 audio.src = fileData;
                 audio.controls = true;

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "bgOpacity": "35",
   "frameColor": "#ffadd1",
   "cursorUrl": "attached_assets/cursor3.png",
@@ -18,8 +19,18 @@
       "duration": "2:01",
       "active": true
     }
+=======
+  "bgUrl": "https://r2.guns.lol/ed920f02-a70f-47a3-a7e9-726df6ca5496.gif",
+  "bgOpacity": 35,
+  "cursorUrl": "attached_assets/cursor3.png",
+  "profiles": [
+    { "name": "ev", "url": "ev.html", "avatar": "attached_assets/985e453463ba0af44c2e2df2bcca2fe9.jpg", "role": "socials" },
+    { "name": "ey", "url": "ey.html", "avatar": "attached_assets/cce169f5e720f9a062dcf82f3934cd12.jpg", "role": "socials" }
+>>>>>>> d28d632 (set)
   ],
-  "activeAudio": "attached_assets/deadprettygirlee.mp3",
-  "randomPlayback": false,
-  "audioWidget": false
+  "socialLinks": [
+    { "name": "Discord", "url": "https://discord.gg/gothtag", "icon": "attached_assets/discordlogo.png" },
+    { "name": "GOTHTAG", "url": "/goth", "icon": "attached_assets/gothslink.png" },
+    { "name": "Website", "url": "https://gothtag.com", "icon": "attached_assets/tag.png" }
+  ]
 }

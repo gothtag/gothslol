@@ -71,11 +71,12 @@
             -ms-user-select: none;
             user-select: none;
             -webkit-user-drag: none;
+            -webkit-user-drag: none;
         }
 
         img, a, svg {
             -webkit-user-drag: none;
-            user-drag: none;
+            /* user-drag: none;  not standard, suppr. pour warning */
         }
 
         .background-layer {
@@ -1595,6 +1596,7 @@
             if (settings.accentColor) {
                 // Apply to accents
             }
+
             if (settings.bgUrl) {
                 document.querySelector('.background-layer').style.backgroundImage = `url(${settings.bgUrl})`;
             }
@@ -1604,6 +1606,21 @@
             if (settings.cursorUrl) {
                 document.body.style.cursor = `url('${settings.cursorUrl}') 8 8, auto`;
             }
+
+            if (settings.contentFrameColor) {
+                const content = document.querySelector('.content-frame');
+                if (content) content.style.backgroundColor = settings.contentFrameColor;
+            }
+            if (settings.frameColor) {
+                const content = document.querySelector('.content-frame');
+                if (content) content.style.borderColor = settings.frameColor;
+            }
+            if (settings.profileBorderColor) {
+                document.querySelectorAll('.avatar').forEach(el => {
+                    el.style.border = `3px solid ${settings.profileBorderColor}`;
+                });
+            }
+
             if (settings.activeAudio) {
                 const audio = document.getElementById('background-music');
                 if (audio) {
@@ -1611,16 +1628,40 @@
                     audio.load(); // Reload the audio
                 }
             }
-            // Update links and usernames
-            if (settings.evLink) {
-                const evLink = document.querySelector('a[href*="ev"]');
-                if (evLink) evLink.href = settings.evLink;
+
+            if (Array.isArray(settings.profiles)) {
+                settings.profiles.forEach(profile => {
+                    if (!profile.name) return;
+                    const slot = profile.name.toLowerCase();
+                    const card = document.querySelector(`a.profile-card[href*="${slot}.html"]`);
+                    if (!card) return;
+                    if (profile.url) card.href = profile.url;
+                    const nameEl = card.querySelector('.profile-name');
+                    if (nameEl) {
+                        const textNode = [...nameEl.childNodes].find((n) => n.nodeType === Node.TEXT_NODE);
+                        if (textNode) textNode.textContent = profile.name;
+                    }
+                    const roleEl = card.querySelector('.profile-role');
+                    if (roleEl) roleEl.textContent = profile.role || 'socials';
+                });
             }
-            if (settings.eyLink) {
-                const eyLink = document.querySelector('a[href*="ey"]');
-                if (eyLink) eyLink.href = settings.eyLink;
+
+            if (Array.isArray(settings.socialLinks)) {
+                const cornerLinks = document.querySelectorAll('.corner-link');
+                settings.socialLinks.forEach((link, idx) => {
+                    const element = cornerLinks[idx];
+                    if (!element) return;
+                    element.href = link.url;
+                    const img = element.querySelector('img');
+                    if (img && link.icon) {
+                        img.src = link.icon;
+                    }
+                    const text = element.querySelector('.location-text');
+                    if (text) text.textContent = link.name;
+                });
             }
-            // Update usernames in text
+
+            // Keep ev/ey discord avatar sync via existing discord user hooks
         }
 
         loadSettings();
