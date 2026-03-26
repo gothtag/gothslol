@@ -146,10 +146,12 @@
             flex: 1;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             gap: 20px;
             padding: 20px;
             min-height: 100vh;
+            flex-wrap: nowrap;
+            overflow-x: auto;
         }
 
         .settings-panel {
@@ -1528,6 +1530,11 @@
 
         // Save all settings
         async function saveSettings() {
+            if (!token) {
+                alert('Erreur: Token d\'authentification manquant. Veuillez vous reconnecter.');
+                return;
+            }
+
             const bgFileInput = document.getElementById('bgFile');
             const cursorFileInput = document.getElementById('cursorFile');
 
@@ -1585,11 +1592,13 @@
                     localStorage.setItem('pageSettings', JSON.stringify(settings));
                     alert('Paramètres enregistrés avec succès!');
                 } else {
-                    alert('Erreur lors de la sauvegarde');
+                    const errorText = await response.text();
+                    console.error('Save error:', response.status, errorText);
+                    alert(`Erreur: ${response.status} - ${errorText || 'Impossible de sauvegarder'}`);
                 }
             } catch (error) {
                 console.error('Error saving settings:', error);
-                alert('Erreur lors de la sauvegarde');
+                alert('Erreur de connexion: ' + error.message);
             }
         }
 
