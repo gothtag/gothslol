@@ -1423,6 +1423,39 @@
                 <input type="color" id="profileBorderColor" value="#ffffff">
             </div>
 
+            <!-- Text Colors Section -->
+            <div class="section-title">Couleurs du texte</div>
+            <div class="form-group">
+                <label>Couleur du texte général</label>
+                <input type="color" id="generalTextColor" value="#ffffff">
+            </div>
+            <div class="form-group">
+                <label>Couleur du texte des profils</label>
+                <input type="color" id="profileTextColor" value="#ffffff">
+            </div>
+            <div class="form-group">
+                <label>Couleur du texte des rôles</label>
+                <input type="color" id="roleTextColor" value="#888888">
+            </div>
+
+            <!-- Social Links Colors Section -->
+            <div class="section-title">Couleurs des liens sociaux</div>
+            <div class="form-group">
+                <label>Couleur des icônes sociales</label>
+                <input type="color" id="socialIconColor" value="#ffffff">
+            </div>
+            <div class="form-group">
+                <label>Couleur du texte des liens sociaux</label>
+                <input type="color" id="socialTextColor" value="#ffffff">
+            </div>
+
+            <!-- Logo Section -->
+            <div class="section-title">Logo</div>
+            <div class="form-group">
+                <label>URL du logo principal</label>
+                <input type="text" id="logoUrl" placeholder="attached_assets/gothslogo.png" value="attached_assets/gothslogo.png">
+            </div>
+
             <!-- Music Section -->
             <div class="section-title">Musique de fond</div>
             <div class="form-group">
@@ -1534,6 +1567,18 @@
             contentFrameColor: '#000000',
             profileBorderColor: '#ffffff',
             
+            // Text colors
+            generalTextColor: '#ffffff',
+            profileTextColor: '#ffffff',
+            roleTextColor: '#888888',
+            
+            // Social links colors
+            socialIconColor: '#ffffff',
+            socialTextColor: '#ffffff',
+            
+            // Logo
+            logoUrl: 'attached_assets/gothslogo.png',
+            
             // Audio settings
             audioList: [
                 { name: 'deadprettygirlee', url: 'attached_assets/deadprettygirlee.mp3', duration: '2:01', active: true }
@@ -1586,6 +1631,12 @@
                 setValue('frameColor', merged.frameColor || '#ffffff');
                 setValue('contentFrameColor', merged.contentFrameColor || '#000000');
                 setValue('profileBorderColor', merged.profileBorderColor || '#ffffff');
+                setValue('generalTextColor', merged.generalTextColor || '#ffffff');
+                setValue('profileTextColor', merged.profileTextColor || '#ffffff');
+                setValue('roleTextColor', merged.roleTextColor || '#888888');
+                setValue('socialIconColor', merged.socialIconColor || '#ffffff');
+                setValue('socialTextColor', merged.socialTextColor || '#ffffff');
+                setValue('logoUrl', merged.logoUrl || 'attached_assets/gothslogo.png');
                 setValue('cursorUrl', merged.cursorUrl || '');
 
                 // Profile section in sidebar (persistent UI)
@@ -1656,6 +1707,12 @@
                 setValue('frameColor', merged.frameColor);
                 setValue('contentFrameColor', merged.contentFrameColor);
                 setValue('profileBorderColor', merged.profileBorderColor);
+                setValue('generalTextColor', merged.generalTextColor);
+                setValue('profileTextColor', merged.profileTextColor);
+                setValue('roleTextColor', merged.roleTextColor);
+                setValue('socialIconColor', merged.socialIconColor);
+                setValue('socialTextColor', merged.socialTextColor);
+                setValue('logoUrl', merged.logoUrl);
                 setValue('cursorUrl', merged.cursorUrl);
 
                 const profileSection = document.getElementById('profileSection');
@@ -1684,6 +1741,12 @@
             const frameColor = document.getElementById('frameColor').value;
             const contentFrameColor = document.getElementById('contentFrameColor').value;
             const profileBorderColor = document.getElementById('profileBorderColor').value;
+            const generalTextColor = document.getElementById('generalTextColor').value;
+            const profileTextColor = document.getElementById('profileTextColor').value;
+            const roleTextColor = document.getElementById('roleTextColor').value;
+            const socialIconColor = document.getElementById('socialIconColor').value;
+            const socialTextColor = document.getElementById('socialTextColor').value;
+            const logoUrl = document.getElementById('logoUrl').value;
 
             const bgEl = document.getElementById('previewBg');
             let appliedBg = null;
@@ -1708,13 +1771,39 @@
 
             const previewFrame = document.getElementById('previewFrame');
             previewFrame.style.borderColor = frameColor;
-            previewFrame.style.backgroundColor = contentFrameColor;
+            // Keep frame transparent by using rgba with alpha 0.2
+            const rgb = hexToRgb(contentFrameColor);
+            if (rgb) {
+                previewFrame.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`;
+            } else {
+                previewFrame.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+            }
 
             document.querySelectorAll('.preview-avatar').forEach(el => {
                 el.style.border = `3px solid ${profileBorderColor}`;
             });
 
-            document.getElementById('previewSiteName').innerHTML = `goths<span>.</span>lol`;
+            // Update text colors
+            document.querySelectorAll('.preview-profile-name').forEach(el => {
+                el.style.color = profileTextColor;
+            });
+            document.querySelectorAll('.preview-profile-role').forEach(el => {
+                el.style.color = roleTextColor;
+            });
+            document.querySelectorAll('.preview-corner-link').forEach(el => {
+                el.style.color = socialTextColor;
+            });
+            document.querySelectorAll('.preview-corner-link img').forEach(el => {
+                el.style.filter = `brightness(0) invert(${socialIconColor === '#ffffff' ? 1 : 0})`;
+            });
+
+            // Update logo
+            const logoEl = document.getElementById('previewSiteName');
+            if (logoUrl && logoUrl !== 'attached_assets/gothslogo.png') {
+                logoEl.innerHTML = `<img src="${logoUrl}" alt="Logo" style="max-width: 200px; max-height: 80px; object-fit: contain;">`;
+            } else {
+                logoEl.innerHTML = `goths<span>.</span>lol`;
+            }
 
             updatePreviewProfiles();
             updatePreviewSocialLinks();
@@ -1805,7 +1894,12 @@
                 frameColor: document.getElementById('frameColor').value,
                 contentFrameColor: document.getElementById('contentFrameColor').value,
                 profileBorderColor: document.getElementById('profileBorderColor').value,
-                cursorUrl: document.getElementById('cursorUrl').value,
+                generalTextColor: document.getElementById('generalTextColor').value,
+                profileTextColor: document.getElementById('profileTextColor').value,
+                roleTextColor: document.getElementById('roleTextColor').value,
+                socialIconColor: document.getElementById('socialIconColor').value,
+                socialTextColor: document.getElementById('socialTextColor').value,
+                logoUrl: document.getElementById('logoUrl').value,
                 // File data - use chosen file or initial background URL
                 bgUrl: bgFileInput.dataset.fileData || initialBgUrl || '',
                 bgFileData: bgFileInput.dataset.fileData || null,
@@ -1951,6 +2045,16 @@
             localStorage.removeItem('adminToken');
             localStorage.removeItem('pageSettings');
             window.location.href = '/login';
+        }
+
+        // Helper function to convert hex to rgb
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
         }
 
         // Audio Manager Functions
@@ -2106,6 +2210,12 @@
         document.getElementById('frameColor').addEventListener('input', updatePreview);
         document.getElementById('contentFrameColor').addEventListener('input', updatePreview);
         document.getElementById('profileBorderColor').addEventListener('input', updatePreview);
+        document.getElementById('generalTextColor').addEventListener('input', updatePreview);
+        document.getElementById('profileTextColor').addEventListener('input', updatePreview);
+        document.getElementById('roleTextColor').addEventListener('input', updatePreview);
+        document.getElementById('socialIconColor').addEventListener('input', updatePreview);
+        document.getElementById('socialTextColor').addEventListener('input', updatePreview);
+        document.getElementById('logoUrl').addEventListener('input', updatePreview);
         document.getElementById('bgFile').addEventListener('change', updatePreview);
 
         // Real-time preview updates for profiles and social links

@@ -2,6 +2,15 @@
   "bgUrl": "https://r2.guns.lol/ed920f02-a70f-47a3-a7e9-726df6ca5496.gif",
   "bgOpacity": 35,
   "cursorUrl": "attached_assets/cursor3.png",
+  "frameColor": "#ffffff",
+  "contentFrameColor": "#000000",
+  "profileBorderColor": "#ffffff",
+  "generalTextColor": "#ffffff",
+  "profileTextColor": "#ffffff",
+  "roleTextColor": "#888888",
+  "socialIconColor": "#ffffff",
+  "socialTextColor": "#ffffff",
+  "logoUrl": "attached_assets/gothslogo.png",
   "profiles": [
     {
       "name": "ev",

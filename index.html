@@ -1579,6 +1579,16 @@
             }
         }
 
+        // Helper function to convert hex to rgb
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
         // Load settings from server
         async function loadSettings() {
             try {
@@ -1592,7 +1602,7 @@
 
         function applySettings(settings) {
             if (settings.bgColor) document.body.style.backgroundColor = settings.bgColor;
-            if (settings.textColor) document.body.style.color = settings.textColor;
+            if (settings.generalTextColor) document.body.style.color = settings.generalTextColor;
             if (settings.accentColor) {
                 // Apply to accents
             }
@@ -1609,7 +1619,15 @@
 
             if (settings.contentFrameColor) {
                 const content = document.querySelector('.content-frame');
-                if (content) content.style.backgroundColor = settings.contentFrameColor;
+                if (content) {
+                    // Keep frame transparent by using rgba with alpha 0.2
+                    const rgb = hexToRgb(settings.contentFrameColor);
+                    if (rgb) {
+                        content.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`;
+                    } else {
+                        content.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+                    }
+                }
             }
             if (settings.frameColor) {
                 const content = document.querySelector('.content-frame');
@@ -1619,6 +1637,36 @@
                 document.querySelectorAll('.avatar').forEach(el => {
                     el.style.border = `3px solid ${settings.profileBorderColor}`;
                 });
+            }
+
+            // Apply text colors
+            if (settings.profileTextColor) {
+                document.querySelectorAll('.profile-name').forEach(el => {
+                    el.style.color = settings.profileTextColor;
+                });
+            }
+            if (settings.roleTextColor) {
+                document.querySelectorAll('.profile-role').forEach(el => {
+                    el.style.color = settings.roleTextColor;
+                });
+            }
+            if (settings.socialTextColor) {
+                document.querySelectorAll('.corner-link').forEach(el => {
+                    el.style.color = settings.socialTextColor;
+                });
+            }
+            if (settings.socialIconColor) {
+                document.querySelectorAll('.corner-link img').forEach(el => {
+                    el.style.filter = `brightness(0) invert(${settings.socialIconColor === '#ffffff' ? 1 : 0})`;
+                });
+            }
+
+            // Apply logo
+            if (settings.logoUrl && settings.logoUrl !== 'attached_assets/gothslogo.png') {
+                const logoEl = document.querySelector('.logo.top-logo');
+                if (logoEl) {
+                    logoEl.innerHTML = `<img src="${settings.logoUrl}" alt="Logo" style="max-width: 200px; max-height: 80px; object-fit: contain;">`;
+                }
             }
 
             if (settings.activeAudio) {
