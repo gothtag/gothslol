@@ -49,6 +49,15 @@ exports.handler = async (event) => {
     if (response.ok) {
         return { statusCode: 200, body: JSON.stringify({ success: true }) };
     } else {
-        return { statusCode: 500, body: JSON.stringify({ success: false }) };
+        const errBody = await response.text();
+        console.error('GitHub save error:', response.status, errBody);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({
+                success: false,
+                status: response.status,
+                error: errBody || 'GitHub API error'
+            })
+        };
     }
 };
