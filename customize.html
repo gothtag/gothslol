@@ -53,6 +53,26 @@
             padding: 20px;
             overflow-y: auto;
             flex-shrink: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(196, 181, 253, 0.2);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(196, 181, 253, 0.4);
         }
 
         .sidebar-header {
@@ -386,13 +406,62 @@
         }
 
         .preview-profile-card {
-            text-align: center;
-            color: white;
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
             text-decoration: none;
+            color: #fff;
+            width: auto;
+        }
+
+        .preview-profile-card:hover {
+            background: rgba(20, 20, 20, 0.9);
+            border-color: rgba(255, 0, 135, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 0, 135, 0.15);
+        }
+
+        .preview-profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        .preview-profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-profile-details {
+            flex: 1;
+            min-width: 0;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 1rem;
+            gap: 2px;
+            overflow: hidden;
+        }
+
+        .preview-profile-name {
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .preview-profile-role {
+            font-size: 12px;
+            color: #888;
         }
 
         .preview-avatar-container {
@@ -462,18 +531,29 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #757575;
+            color: #fff;
+            background: rgba(20, 20, 20, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.25s ease;
             font-family: 'Chillax', sans-serif;
             font-size: 0.95rem;
             font-weight: 450;
-            text-decoration: none;
+        }
+
+        .preview-corner-link:hover {
+            background: rgba(255, 0, 135, 0.15);
+            border-color: rgba(255, 0, 135, 0.4);
+            color: #ffb3d9;
         }
 
         .preview-corner-link img {
             width: 18px;
             height: 18px;
             object-fit: contain;
-            filter: grayscale(1) brightness(0.55);
+            filter: grayscale(1) brightness(0.65);
         }
 
         .form-group {
@@ -979,20 +1059,32 @@
         }
 
         .profile-menu-btn {
-            background: rgba(255, 0, 135, 0.15);
-            border: 1px solid rgba(255, 0, 135, 0.25);
-            color: #ff0087;
+            background: none;
+            border: none;
+            color: #797979;
             cursor: pointer;
-            padding: 6px 8px;
-            border-radius: 6px;
+            padding: 0;
+            border-radius: 0;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             width: auto;
             height: auto;
-            font-size: 18px;
             flex-shrink: 0;
+            outline: none;
+        }
+
+        .profile-menu-btn:hover {
+            color: #fff;
+        }
+
+        .profile-menu-btn svg {
+            font-size: 45px;
+            width: 45px;
+            height: 45px;
+            margin-right: 7px;
+            margin-bottom: -5px;
         }
 
         .profile-menu-btn:hover {
@@ -1653,38 +1745,14 @@
             }
 
             profilesContainer.innerHTML = profiles.map(profile => {
-                let avatarImage = profile.avatar || 'attached_assets/default-avatar.png';
-                const profileNameLower = (profile.name || '').toLowerCase();
-
-                if (['ev', 'ey'].includes(profileNameLower)) {
-                    const discordImg = document.querySelector(`img[data-discord-slot="${profileNameLower}"]`);
-                    if (discordImg && discordImg.src) {
-                        avatarImage = discordImg.src;
-                    }
-                }
-
+                const avatarImage = profile.avatar || 'attached_assets/default-avatar.png';
                 return `
-                    <a href="${profile.url || '#'}" class="preview-profile-card">
-                        <div class="avatar-container">
-                            <div class="avatar-gradient-ring"></div>
-                            <div class="avatar-decoration" data-discord-slot="${profile.name}" style="display: none;">
-                                <img src="" alt="" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
-                            </div>
-                            <div class="avatar">
-                                <img src="${avatarImage}" alt="@${profile.name}" data-discord-slot="${profile.name}" data-fallback-src="${profile.avatar || 'attached_assets/default-avatar.png'}" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
-                                <div class="avatar-overlay">
-                                    <span>➜]</span>
-                                </div>
-                            </div>
+                    <a href="${profile.url || '#'}" class="preview-profile-card" target="_blank" rel="noopener noreferrer">
+                        <div class="preview-profile-avatar"><img src="${avatarImage}" alt="${profile.name}"></div>
+                        <div class="preview-profile-details">
+                            <span class="preview-profile-name">${profile.name}</span>
+                            <span class="preview-profile-role">${profile.role || 'socials'}</span>
                         </div>
-                        <div class="profile-name">
-                            ${profile.name}
-                            <span class="clan-badge" data-discord-slot="${profile.name}" style="display: none;">
-                                <img class="clan-badge-img" src="" alt="">
-                                <span class="clan-tag"></span>
-                            </span>
-                        </div>
-                        <div class="profile-role">${profile.role || 'socials'}</div>
                     </a>
                 `;
             }).join('');

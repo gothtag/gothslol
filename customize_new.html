@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customize - goths.lol</title>
+    <link href="https://fonts.googleapis.com/css2?family=Satoshi:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: #0a0a0a;
+            color: #fafafa;
+            font-family: 'Satoshi', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background-color: #0f0f0f;
+            border-right: 2px solid #1a1a1a;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #ff0087;
+            border-radius: 3px;
+            opacity: 0.3;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            opacity: 0.6;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .sidebar-header img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #ff0087;
+            object-fit: cover;
+        }
+
+        .sidebar-header-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fafafa;
+            margin-bottom: 3px;
+        }
+
+        .sidebar-header-info p {
+            font-size: 13px;
+            color: #a1a1a1;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: auto;
+        }
+
+        .sidebar-nav a, .sidebar-nav button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 12px;
+            background: transparent;
+            border: none;
+            color: #fafafa;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 15px;
+            font-weight: 500;
+            text-decoration: none;
+            font-family: 'Satoshi', sans-serif;
+        }
+
+        .sidebar-nav a:hover, .sidebar-nav button:hover {
+            background-color: #ffb3d9;
+            color: #000;
+        }
+
+        .sidebar-nav a.active {
+            background: linear-gradient(135deg, #ff0087, #ffb3d9);
+            color: #000;
+        }
+
+        .sidebar-nav a svg, .sidebar-nav button svg {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .sidebar-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-top: 20px;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .sidebar-footer button {
+            padding: 10px 15px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ff0087, #c4b5fd);
+            border: none;
+            color: #fafafa;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .sidebar-footer button:hover {
+            opacity: 0.9;
+        }
+
+        /* Profile Section */
+        .profile-section {
+            margin-top: auto;
+            padding: 8px 10px;
+            border-radius: 12px;
+            background: rgba(255, 0, 135, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: 'Satoshi', sans-serif;
+            min-height: 70px;
+            gap: 12px;
+            flex-wrap: nowrap;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .profile-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .profile-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .profile-name {
+            color: #fff;
+            font-size: 21px;
+            font-weight: 500;
+            line-height: 1.1;
+            font-family: 'Satoshi', sans-serif;
+            white-space: nowrap;
+        }
+
+        .profile-uid {
+            color: #999;
+            font-size: 13.5px;
+            line-height: 1.1;
+            font-family: 'Satoshi', sans-serif;
+            white-space: nowrap;
+        }
+
+        .profile-menu-wrapper {
+            position: relative;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .profile-menu-btn {
+            background: none;
+            border: none;
+            color: #797979;
+            cursor: pointer;
+            padding: 0;
+            border-radius: 0;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: auto;
+            height: auto;
+            flex-shrink: 0;
+            outline: none;
+        }
+
+        .profile-menu-btn:hover {
+            color: #fff;
+        }
+
+        .profile-menu-btn svg {
+            font-size: 45px;
+            width: 45px;
+            height: 45px;
+            margin-right: 7px;
+            margin-bottom: -5px;
+        }
+
+        .profile-menu-btn:hover {
+            color: #fff;
+            background: #ff0087;
+            border-color: #ff0087;
+        }
+
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            top: -200px;
+            right: 0;
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(255, 0, 135, 0.2);
+            border-radius: 12px;
+            min-width: 200px;
+            z-index: 2000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .profile-dropdown.active {
+            display: block;
+        }
+
+        .profile-dropdown-content {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 0, 135, 0.1);
+        }
+
+        .profile-dropdown-content h3 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ff0087;
+            font-family: 'Satoshi', sans-serif;
+        }
+
+        .profile-dropdown-items {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-dropdown-item {
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-family: 'Satoshi', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .profile-dropdown-item:hover {
+            background: rgba(255, 0, 135, 0.1);
+            color: #ff0087;
+        }
+
+        .profile-dropdown-item svg {
+            width: 1.2em;
+            height: 1.2em;
+            flex-shrink: 0;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .content-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #1a1a1a;
+        }
+
+        .content-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fafafa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-header h1 span {
+            background: linear-gradient(135deg, #ff0087, #ffb3d9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .tabs::-webkit-scrollbar-thumb {
+            background: #ff0087;
+            border-radius: 2px;
+            opacity: 0.3;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: 2px solid #1a1a1a;
+            border-radius: 12px;
+            color: #a1a1a1;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 500;
+            white-space: nowrap;
+            font-family: 'Satoshi', sans-serif;
+        }
+
+        .tab:hover {
+            border-color: #ff0087;
+            color: #fafafa;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #ff0087, #ffb3d9);
+            border: 2px solid #ff0087;
+            color: #000;
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .section {
+            background-color: #121212;
+            border: 2px solid #1a1a1a;
+            border-radius: 20px;
+            padding: 25px;
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #fafafa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #c1c1c1;
+            margin-bottom: 8px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="color"],
+        .form-group input[type="file"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            background-color: #0c0c0c;
+            border: 2px solid #1a1a1a;
+            border-radius: 12px;
+            color: #fafafa;
+            font-family: 'Satoshi', sans-serif;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="color"]:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #ff0087;
+            outline: none;
+        }
+
+        .form-group input[type="color"] {
+            height: 50px;
+            cursor: pointer;
+        }
+
+        .upload-area {
+            border: 2px dashed #ff0087;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .upload-area:hover {
+            background-color: #ffb3d9;
+            opacity: 0.1;
+        }
+
+        .upload-area input {
+            display: none;
+        }
+
+        .preview {
+            width: 100%;
+            height: 200px;
+            background-color: #0c0c0c;
+            border: 2px solid #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .preview img, .preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Satoshi', sans-serif;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff0087, #ffb3d9);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px #ff0087;
+        }
+
+        .btn-secondary {
+            background-color: #1a1a1a;
+            color: #fafafa;
+            border: 2px solid #2a2a2a;
+        }
+
+        .btn-secondary:hover {
+            background-color: #2a2a2a;
+        }
+
+        .color-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-input-group input[type="color"] {
+            width: 50px;
+            height: 50px;
+            padding: 4px;
+        }
+
+        .color-input-group input[type="text"] {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 15px;
+            }
+
+            .sidebar:not(:hover) .sidebar-header-info,
+            .sidebar:not(:hover) .sidebar-nav a span,
+            .sidebar:not(:hover) .sidebar-footer {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                padding: 20px;
+            }
+
+            .sections-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <a href="/" class="sidebar-header">
+            <div class="sidebar-logo"></div>
+            <div class="sidebar-title">goths.lol</div>
+        </a>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Compte</div>
+            <a href="/customize" class="nav-item active">
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M5 19h1.425L16.2 9.225L14.775 7.8L5 17.575zm-2 2v-4.25L16.2 3.575q.3-.275.663-.425t.762-.15q.4 0 .775.15t.65.45L20.425 5q.3.275.438.65T21 6.4q0 .4-.137.763t-.438.662L7.25 21zM19 6.4L17.6 5zm-3.525 2.125l-.7-.725L16.2 9.225z"/>
+                    </svg>
+                </span>
+                Personnaliser
+            </a>
+            <a href="/links" class="nav-item">
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256">
+                        <path fill="currentColor" d="M136.37 187.53a12 12 0 0 1 0 17l-5.94 5.94a60 60 0 0 1-84.88-84.88l24.12-24.11A60 60 0 0 1 152 99a12 12 0 1 1-16 18a36 36 0 0 0-49.37 1.47l-24.1 24.08a36 36 0 0 0 50.92 50.92l5.94-5.94a12 12 0 0 1 16.98 0m74.08-142a60.09 60.09 0 0 0-84.88 0l-5.94 5.94a12 12 0 0 0 17 17l5.94-5.94a36 36 0 0 1 50.92 50.92l-24.11 24.12A36 36 0 0 1 120 139a12 12 0 0 0-16 18a60 60 0 0 0 82.3-2.43l24.12-24.11a60.09 60.09 0 0 0 .03-84.91Z"/>
+                    </svg>
+                </span>
+                Liens
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Pages</div>
+            <a href="/" class="nav-item">
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M11 6a1 1 0 1 1 0 2H5v11h11v-6a1 1 0 1 1 2 0v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm9-3a1 1 0 0 1 1 1v5a1 1 0 1 1-2 0V6.414l-8.293 8.293a1 1 0 0 1-1.414-1.414L17.586 5H15a1 1 0 1 1 0-2Z"/>
+                    </svg>
+                </span>
+                Voir ma page
+            </a>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="profile-section" id="profileSection">
+            <div class="profile-info">
+                <img src="https://wallpapers-clan.com/wp-content/uploads/2022/12/sanrio-pfp-7.jpg" alt="Admin Avatar" class="profile-avatar">
+                <div class="profile-details">
+                    <div class="profile-name">ev & ey</div>
+                    <div class="profile-uid">UID 1</div>
+                </div>
+            </div>
+            <div class="profile-menu-wrapper">
+                <button class="profile-menu-btn" id="profileMenuBtn" title="Menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M6 10.5a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0-3m4.5 1.5a1.5 1.5 0 1 1 3 0a1.5 1.5 0 0 1-3 0m6 0a1.5 1.5 0 1 1 3 0a1.5 1.5 0 0 1-3 0"/>
+                    </svg>
+                </button>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="profile-dropdown-content">
+                        <h3>Menu rapide</h3>
+                    </div>
+                    <div class="profile-dropdown-items">
+                        <button class="profile-dropdown-item" data-action="settings">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94c0-.32-.02-.64-.07-.94l1.72-1.34c.15-.12.19-.34.1-.51l-1.63-2.82c-.12-.22-.37-.29-.59-.22l-2.03.8c-.42-.32-.86-.58-1.35-.78l-.31-2.15c-.05-.24-.24-.41-.48-.41h-3.26c-.24 0-.43.17-.49.41l-.31 2.15c-.48.2-.93.46-1.35.78l-2.03-.8c-.22-.09-.47 0-.59.22L2.74 8.87c-.12.21-.08.44.1.51l1.72 1.34c-.05.3-.07.62-.07.94s.02.64.07.94L2.84 14.28c-.15.12-.19.34-.1.51l1.63 2.82c.12.22.37.29.59.22l2.03-.8c.42.32.86.58 1.35.78l.31 2.15c.05.24.25.41.48.41h3.26c.24 0 .44-.17.49-.41l.31-2.15c.49-.2.93-.47 1.35-.78l2.03.8c.22.09.47 0 .59-.22l1.63-2.82c.12-.22.07-.44-.1-.51l-1.72-1.34M12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6s3.6 1.62 3.6 3.6s-1.62 3.6-3.6 3.6"/>
+                            </svg>
+                            <span>Paramètres</span>
+                        </button>
+                        <button class="profile-dropdown-item" data-action="logout">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h7v2H5v14h7v2zm11-4l-1.375-1.45l2.55-2.55H9v-2h8.175l-2.55-2.55L16 7l5 5z"/>
+                            </svg>
+                            <span>Déconnexion</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="content-header">
+            <h1>
+                <span>GOTHTAG</span> Customize
+            </h1>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('general', this)">Général</button>
+            <button class="tab" onclick="showTab('background', this)">Arrière-plan</button>
+            <button class="tab" onclick="showTab('colors', this)">Couleurs</button>
+            <button class="tab" onclick="showTab('media', this)">Médias</button>
+            <button class="tab" onclick="showTab('profile', this)">Profil</button>
+            <button class="tab" onclick="showTab('preview', this)">Preview</button>
+        </div>
+
+        <!-- SECTIONS -->
+        <div class="sections-grid">
+            <!-- GENERAL SECTION -->
+            <div id="general" class="section active">
+                <h2>⚙️ Paramètres Généraux</h2>
+                
+                <div class="form-group">
+                    <label>Nom d'utilisateur</label>
+                    <input type="text" id="username" placeholder="Ton nom" value="GOTHTAG">
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="description" placeholder="Ta description..." rows="4">Welcome to my GOTHTAG profile</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Titre personnalisé</label>
+                    <input type="text" id="title" placeholder="Ex: Just vibing" value="Just vibing">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="saveSettings()">Sauvegarder</button>
+                    <button class="btn btn-secondary" onclick="previewChanges()">Aperçu</button>
+                </div>
+            </div>
+
+            <!-- BACKGROUND SECTION -->
+            <div id="background" class="section">
+                <h2>🖼️ Arrière-plan</h2>
+
+                <div class="form-group">
+                    <label>Image de fond</label>
+                    <div class="upload-area" onclick="document.getElementById('bgFile').click()">
+                        <p>Drag & drop ou clique pour uploader</p>
+                        <small>PNG, JPG, GIF, MP4</small>
+                        <input type="file" id="bgFile" accept="image/*,video/*" onchange="uploadBackground(this)">
+                    </div>
+                    <div class="preview" id="bgPreview"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Opacité du fond</label>
+                    <input type="range" id="bgOpacity" min="0" max="100" value="100" oninput="updateBackground()">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="saveSettings()">Sauvegarder</button>
+                    <button class="btn btn-secondary" onclick="resetBackground()">Réinitialiser</button>
+                </div>
+            </div>
+
+            <!-- COLORS SECTION -->
+            <div id="colors" class="section">
+                <h2>🎨 Couleurs</h2>
+
+                <div class="form-group">
+                    <label>Couleur principale</label>
+                    <div class="color-input-group">
+                        <input type="color" id="primaryColor" value="#ff0087" onchange="updatePreview()">
+                        <input type="text" id="primaryColorText" value="#ff0087" onchange="updatePreview()">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Couleur secondaire</label>
+                    <div class="color-input-group">
+                        <input type="color" id="secondaryColor" value="#ffb3d9" onchange="updatePreview()">
+                        <input type="text" id="secondaryColorText" value="#ffb3d9" onchange="updatePreview()">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Couleur d'accent</label>
+                    <div class="color-input-group">
+                        <input type="color" id="accentColor" value="#c4b5fd" onchange="updatePreview()">
+                        <input type="text" id="accentColorText" value="#c4b5fd" onchange="updatePreview()">
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="saveSettings()">Sauvegarder</button>
+                    <button class="btn btn-secondary" onclick="resetColors()">Réinitialiser</button>
+                </div>
+            </div>
+
+            <!-- MEDIA SECTION -->
+            <div id="media" class="section">
+                <h2>🎵 Audio</h2>
+
+                <div class="form-group">
+                    <label>Fichier audio</label>
+                    <div class="upload-area" onclick="document.getElementById('audioFile').click()">
+                        <p>Clique pour uploader un audio</p>
+                        <small>MP3, WAV, OGG</small>
+                        <input type="file" id="audioFile" accept="audio/*" onchange="uploadAudio(this)">
+                    </div>
+                    <div class="preview" id="audioPreview"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Volume</label>
+                    <input type="range" id="volume" min="0" max="100" value="50">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="saveSettings()">Sauvegarder</button>
+                    <button class="btn btn-secondary" onclick="testAudio()">Tester</button>
+                </div>
+            </div>
+
+            <!-- PROFILE SECTION -->
+            <div id="profile" class="section">
+                <h2>👤 Avatar du profil</h2>
+
+                <div class="form-group">
+                    <label>UID (profil_section)</label>
+                    <input type="text" id="uid" placeholder="UID" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Pseudo (profil_section)</label>
+                    <input type="text" id="pseudo" placeholder="Pseudo">
+                </div>
+
+                <div class="form-group">
+                    <label>EV (profil_section)</label>
+                    <input type="text" id="ev" placeholder="ex: 12345">
+                </div>
+
+                <div class="form-group">
+                    <label>EY (profil_section)</label>
+                    <input type="text" id="ey" placeholder="ex: 54321">
+                </div>
+
+                <h2>🔗 Réseaux sociaux</h2>
+                <div class="form-group">
+                    <label>Smash/socials JSON</label>
+                    <textarea id="socialsJson" rows="4" placeholder='[{"social":"x","value":"https://x.com/moncompte"}]'></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="applySocials()">Appliquer les réseaux</button>
+                    <button class="btn btn-secondary" onclick="resetSocials()">Réinitialiser réseaux</button>
+                </div>
+
+                <div class="preview" id="socialsPreview"></div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="saveSettings()">Sauvegarder</button>
+                    <button class="btn btn-secondary" onclick="resetSocials()">Réinitialiser réseaux</button>
+                </div>
+            </div>
+
+            <!-- PREVIEW SECTION -->
+            <div id="preview" class="section">
+                <h2>🧪 Preview</h2>
+                <div class="form-group">
+                    <label>Vue d'ensemble</label>
+                    <div class="preview" id="livePreview" style="min-height: 220px; padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+                        <strong id="previewTitle">Chargement...</strong>
+                        <span id="previewDescription"></span>
+                        <div id="previewProfileRow" style="display:flex;gap:10px;align-items:center;"></div>
+                        <div id="previewSocialsList" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check login
+        if (!localStorage.getItem('adminToken')) {
+            window.location.href = '/login';
+        }
+
+        const DEFAULT_SETTINGS = {
+            username: 'GOTHTAG',
+            description: 'Welcome to my GOTHTAG profile',
+            title: 'Just vibing',
+            primaryColor: '#ff0087',
+            secondaryColor: '#ffb3d9',
+            accentColor: '#c4b5fd',
+            bgOpacity: 100,
+            volume: 50
+        };
+
+        function showTab(tabName, button) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            const targetSection = document.getElementById(tabName);
+            if (targetSection) targetSection.classList.add('active');
+            if (button) button.classList.add('active');
+        }
+
+        function saveSettings() {
+            const settings = {
+                uid: document.getElementById('uid').value,
+                username: document.getElementById('username').value,
+                pseudo: document.getElementById('pseudo').value,
+                ev: document.getElementById('ev').value,
+                ey: document.getElementById('ey').value,
+                description: document.getElementById('description').value,
+                title: document.getElementById('title').value,
+                primaryColor: document.getElementById('primaryColor').value,
+                secondaryColor: document.getElementById('secondaryColor').value,
+                accentColor: document.getElementById('accentColor').value,
+                bgOpacity: document.getElementById('bgOpacity').value,
+                volume: document.getElementById('volume').value,
+                socials: document.getElementById('socialsJson').value ? JSON.parse(document.getElementById('socialsJson').value) : []
+            };
+
+            localStorage.setItem('pageSettings', JSON.stringify(settings));
+            renderPreview();
+            alert('✅ Paramètres sauvegardés!');
+        }
+
+        function loadSettings() {
+            const saved = localStorage.getItem('pageSettings');
+            if (saved) {
+                const settings = JSON.parse(saved);
+
+                document.getElementById('uid').value = settings.uid || '';
+                document.getElementById('pseudo').value = settings.pseudo || '';
+                document.getElementById('ev').value = settings.ev || '';
+                document.getElementById('ey').value = settings.ey || '';
+
+                document.getElementById('username').value = settings.username || DEFAULT_SETTINGS.username;
+                document.getElementById('description').value = settings.description || DEFAULT_SETTINGS.description;
+                document.getElementById('title').value = settings.title || DEFAULT_SETTINGS.title;
+
+                document.getElementById('primaryColor').value = settings.primaryColor || DEFAULT_SETTINGS.primaryColor;
+                document.getElementById('secondaryColor').value = settings.secondaryColor || DEFAULT_SETTINGS.secondaryColor;
+                document.getElementById('accentColor').value = settings.accentColor || DEFAULT_SETTINGS.accentColor;
+                document.getElementById('primaryColorText').value = document.getElementById('primaryColor').value;
+                document.getElementById('secondaryColorText').value = document.getElementById('secondaryColor').value;
+                document.getElementById('accentColorText').value = document.getElementById('accentColor').value;
+
+                document.getElementById('bgOpacity').value = settings.bgOpacity || DEFAULT_SETTINGS.bgOpacity;
+                document.getElementById('volume').value = settings.volume || DEFAULT_SETTINGS.volume;
+
+                const socials = settings.socials || [];
+                document.getElementById('socialsJson').value = JSON.stringify(socials, null, 2);
+                renderSocialsPreview(socials);
+            } else {
+                // initialise par défaut
+                document.getElementById('primaryColorText').value = DEFAULT_SETTINGS.primaryColor;
+                document.getElementById('secondaryColorText').value = DEFAULT_SETTINGS.secondaryColor;
+                document.getElementById('accentColorText').value = DEFAULT_SETTINGS.accentColor;
+            }
+
+            renderPreview();
+        }
+
+        function resetSettings() {
+            if (confirm('Réinitialiser tous les paramètres?')) {
+                localStorage.removeItem('pageSettings');
+                location.reload();
+            }
+        }
+
+        function applySocials() {
+            try {
+                const socials = JSON.parse(document.getElementById('socialsJson').value || '[]');
+                renderSocialsPreview(socials);
+                alert('Réseaux appliqués.');
+            } catch (e) {
+                alert('JSON invalide pour les réseaux sociaux.');
+            }
+        }
+
+        function resetSocials() {
+            document.getElementById('socialsJson').value = '[]';
+            renderSocialsPreview([]);
+        }
+
+        function renderSocialsPreview(socials = []) {
+            const container = document.getElementById('socialsPreview');
+            container.innerHTML = '';
+            socials.forEach(link => {
+                const a = document.createElement('a');
+                a.href = link.value || '#';
+                a.textContent = link.social ? `${link.social} →` : link.value;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                a.style.color = document.getElementById('accentColor').value;
+                a.style.background = 'rgba(255,255,255,0.08)';
+                a.style.border = '1px solid #444';
+                a.style.borderRadius = '8px';
+                a.style.padding = '6px 10px';
+                a.style.display = 'inline-block';
+                a.style.margin = '2px';
+                container.appendChild(a);
+            });
+        }
+
+        function renderPreview() {
+            const username = document.getElementById('username').value;
+            const description = document.getElementById('description').value;
+            const pseudo = document.getElementById('pseudo').value;
+            const uid = document.getElementById('uid').value;
+            const ev = document.getElementById('ev').value;
+            const ey = document.getElementById('ey').value;
+
+            document.getElementById('previewTitle').textContent = `${username || 'Nom'}${pseudo ? ` (${pseudo})` : ''}`;
+            document.getElementById('previewDescription').textContent = description || '';
+
+            const row = document.getElementById('previewProfileRow');
+            row.innerHTML = '';
+            if (uid) row.appendChild(document.createElement('span')).textContent = `UID: ${uid}`;
+            if (ev) row.appendChild(document.createElement('span')).textContent = `EV: ${ev}`;
+            if (ey) row.appendChild(document.createElement('span')).textContent = `EY: ${ey}`;
+
+            const socials = (() => {
+                try { return JSON.parse(document.getElementById('socialsJson').value || '[]'); }
+                catch { return [] }
+            })();
+
+            const socialsList = document.getElementById('previewSocialsList');
+            socialsList.innerHTML = '';
+            socials.forEach(s => {
+                const chip = document.createElement('span');
+                chip.textContent = s.social ? `${s.social}` : s.value;
+                chip.style.background = document.getElementById('secondaryColor').value;
+                chip.style.color = document.getElementById('primaryColor').value;
+                chip.style.padding = '4px 10px';
+                chip.style.borderRadius = '999px';
+                socialsList.appendChild(chip);
+            });
+
+            document.getElementById('livePreview').style.background = `linear-gradient(135deg, ${document.getElementById('primaryColor').value}, ${document.getElementById('secondaryColor').value})`;
+            document.getElementById('livePreview').style.color = '#fff';
+            document.getElementById('livePreview').style.border = '1px solid rgba(255,255,255,0.1)';
+            document.getElementById('livePreview').style.backgroundImage = 'url(https://assets.guns.lol/guns_dot.png)';
+            document.getElementById('livePreview').style.backgroundBlendMode = 'overlay';
+            document.getElementById('livePreview').style.backdropFilter = 'blur(10px)';
+            document.getElementById('livePreview').style.borderRadius = '65px';
+        }
+
+        function updatePreview() {
+            document.getElementById('primaryColorText').value = document.getElementById('primaryColor').value;
+            document.getElementById('secondaryColorText').value = document.getElementById('secondaryColor').value;
+            document.getElementById('accentColorText').value = document.getElementById('accentColor').value;
+            renderPreview();
+        }
+
+        function previewChanges() {
+            renderPreview();
+            alert('Aperçu mis à jour !');
+        }
+
+        function resetBackground() {
+            document.getElementById('bgFile').value = '';
+            document.getElementById('bgPreview').innerHTML = '';
+            document.getElementById('bgOpacity').value = 100;
+            updateBackground();
+        }
+
+        function uploadBackground(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('bgPreview').innerHTML = 
+                        `<${input.files[0].type.startsWith('video/') ? 'video' : 'img'} src="${e.target.result}" />`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function uploadAudio(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('audioPreview').innerHTML = 
+                        `<audio controls src="${e.target.result}" style="width:100%;"></audio>`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function resetColors() {
+            document.getElementById('primaryColor').value = DEFAULT_SETTINGS.primaryColor;
+            document.getElementById('secondaryColor').value = DEFAULT_SETTINGS.secondaryColor;
+            document.getElementById('accentColor').value = DEFAULT_SETTINGS.accentColor;
+            updatePreview();
+        }
+
+        function testAudio() {
+            alert('Lecture audio activée!');
+        }
+
+        function updateBackground() {
+            const opacity = document.getElementById('bgOpacity').value / 100;
+            document.getElementById('bgPreview').style.opacity = opacity;
+        }
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/login';
+        }
+
+        // Profile menu
+        document.getElementById('profileMenuBtn').addEventListener('click', () => {
+            document.getElementById('profileDropdown').classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.profile-menu-wrapper')) {
+                document.getElementById('profileDropdown').classList.remove('active');
+            }
+        });
+
+        document.querySelectorAll('.profile-dropdown-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const action = item.getAttribute('data-action');
+                if (action === 'logout') {
+                    logout();
+                } else if (action === 'settings') {
+                    // Could open settings modal or something
+                    alert('Paramètres non implémentés');
+                }
+            });
+        });
+
+        // Load settings on page load
+        loadSettings();
+    </script>
+</body>
+</html>

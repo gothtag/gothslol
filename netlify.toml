@@ -15,7 +15,7 @@
 
 [[redirects]]
   from = "/customize"
-  to = "/customize.html"
+  to = "/customize_new.html"
   status = 200
 
 [[redirects]]

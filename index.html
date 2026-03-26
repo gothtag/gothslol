@@ -1665,6 +1665,34 @@
         }
 
         loadSettings();
+
+        // Admin check
+        if (localStorage.getItem('adminToken')) {
+            // Add edit button
+            const editBtn = document.createElement('button');
+            editBtn.textContent = '✏️ Edit Page';
+            editBtn.style.position = 'fixed';
+            editBtn.style.top = '10px';
+            editBtn.style.right = '10px';
+            editBtn.style.zIndex = '10000';
+            editBtn.style.background = '#ff0087';
+            editBtn.style.color = 'white';
+            editBtn.style.border = 'none';
+            editBtn.style.padding = '10px 15px';
+            editBtn.style.borderRadius = '8px';
+            editBtn.style.cursor = 'pointer';
+            editBtn.style.fontFamily = 'Satoshi, sans-serif';
+            editBtn.addEventListener('click', () => {
+                if (isEditMode) {
+                    disableEditMode();
+                    editBtn.textContent = '✏️ Edit Page';
+                } else {
+                    enableEditMode();
+                    editBtn.textContent = '💾 Save Changes';
+                }
+            });
+            document.body.appendChild(editBtn);
+        }
     </script>
 </body>
 </html>
