@@ -145,7 +145,7 @@
         .main-content {
             flex: 1;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: flex-start;
             gap: 20px;
             padding: 20px;
@@ -155,7 +155,7 @@
         }
 
         .settings-panel {
-            flex: 1;
+            flex: 0 0 45%;
             min-width: 280px;
             background: rgba(20, 20, 20, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -167,8 +167,8 @@
         }
 
         .preview-panel {
-            flex: 1;
-            min-width: 400px;
+            flex: 0 0 50%;
+            min-width: 350px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -177,6 +177,7 @@
             border-radius: 20px;
             overflow: hidden;
             position: relative;
+            max-height: 90vh;
         }
 
         .preview-title {
