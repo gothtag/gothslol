@@ -156,33 +156,60 @@
         }
 
         .settings-panel {
-            flex: 1;
-            min-width: 0;
+            flex: 0 0 62%;
+            max-width: 62%;
+            min-width: 480px;
             background: rgba(20, 20, 20, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            padding: 25px;
+            padding: 20px;
             backdrop-filter: blur(10px);
             max-height: calc(100vh - 60px);
             overflow-y: auto;
 
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            align-items: flex-start;
+            gap: 16px;
         }
 
         .preview-panel {
-            width: 400px;
-            flex-shrink: 0;
+            flex: 0 0 30%;
+            max-width: 30%;
+            min-width: 300px;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: stretch;
             justify-content: flex-start;
             background: #000000;
             border-radius: 20px;
             overflow: hidden;
             position: relative;
             max-height: calc(100vh - 60px);
+        }
+
+        .button-group {
+            width: 100%;
+            display: flex;
+            gap: 10px;
+        }
+
+        .button-group .btn {
+            flex: 1;
+        }
+
+        .form-group,
+        .color-group,
+        .section-title {
+            width: 100%;
+        }
+
+        .form-group {
+            flex: 1 1 45%;
+        }
+
+        .color-group {
+            flex: 1 1 100%;
         }
 
         @media (max-width: 1200px) {
