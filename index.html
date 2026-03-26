@@ -824,7 +824,9 @@
 </head>
 <body>
     <div class="splash-screen" id="splash-screen">
-        <div class="splash-logo">goths<span>.</span>lol</div>
+        <div class="splash-logo">
+            <img src="attached_assets/gothslogo.png" alt="goths.lol" style="max-width: 200px; max-height: 80px; object-fit: contain;">
+        </div>
     </div>
 
     <audio id="background-music" loop>
@@ -1443,6 +1445,7 @@
 
         if (splashScreen) {
             const bgLayer = document.querySelector('.background-layer');
+            const audio = document.getElementById('background-music');
             if (bgLayer) {
                 bgLayer.style.backgroundImage = 'none';
             }
@@ -1451,10 +1454,10 @@
                 document.body.classList.add('started');
                 splashScreen.classList.add('hidden');
                 if (bgLayer) {
-                    bgLayer.style.backgroundImage = "url('https://r2.guns.lol/ed920f02-a70f-47a3-a7e9-726df6ca5496.gif')";
+                    bgLayer.style.backgroundImage = "url('https://r2.guns.lol/ed920f02-a70f-47a3-a7e9-726df6ca5496.gif?v=" + Date.now() + "')";
                 }
-                if (audio) {
-                    audio.play().catch(function() {});
+                if (audio && audio.src) {
+                    audio.play().catch(() => {});
                 }
             });
         }
@@ -1607,8 +1610,39 @@
                 // Apply to accents
             }
 
+            // Handle background - support both images and videos
+            const backgroundLayer = document.querySelector('.background-layer');
             if (settings.bgUrl) {
-                document.querySelector('.background-layer').style.backgroundImage = `url(${settings.bgUrl})`;
+                // Check if it's a video file
+                const isVideo = /\.(mp4|webm|ogg)$/i.test(settings.bgUrl);
+                if (isVideo) {
+                    // Remove existing background image
+                    backgroundLayer.style.backgroundImage = 'none';
+                    // Create or update video element
+                    let bgVideo = backgroundLayer.querySelector('.bg-video');
+                    if (!bgVideo) {
+                        bgVideo = document.createElement('video');
+                        bgVideo.className = 'bg-video';
+                        bgVideo.style.position = 'absolute';
+                        bgVideo.style.inset = '0';
+                        bgVideo.style.width = '100%';
+                        bgVideo.style.height = '100%';
+                        bgVideo.style.objectFit = 'cover';
+                        bgVideo.style.zIndex = '0';
+                        bgVideo.loop = true;
+                        bgVideo.muted = true;
+                        bgVideo.playsInline = true;
+                        backgroundLayer.appendChild(bgVideo);
+                    }
+                    bgVideo.src = settings.bgUrl + (settings.bgUrl.includes('?') ? '&' : '?') + 'v=' + Date.now();
+                    bgVideo.play().catch(() => {}); // Autoplay may be blocked
+                } else {
+                    // Remove video if exists
+                    const existingVideo = backgroundLayer.querySelector('.bg-video');
+                    if (existingVideo) existingVideo.remove();
+                    // Set as background image with cache busting
+                    backgroundLayer.style.backgroundImage = `url(${settings.bgUrl + (settings.bgUrl.includes('?') ? '&' : '?') + 'v=' + Date.now()})`;
+                }
             }
             if (settings.bgOpacity !== undefined) {
                 document.querySelector('.gradient-layer').style.opacity = settings.bgOpacity / 100;
@@ -1657,7 +1691,10 @@
             }
             if (settings.socialIconColor) {
                 document.querySelectorAll('.corner-link img').forEach(el => {
-                    el.style.filter = `brightness(0) invert(${settings.socialIconColor === '#ffffff' ? 1 : 0})`;
+                    // Apply custom color - for now, use a simple approach
+                    el.style.filter = settings.socialIconColor === '#ffffff' ? 'brightness(0) invert(1)' : 
+                                    settings.socialIconColor === '#000000' ? 'brightness(0)' : 
+                                    `brightness(0) invert(1) sepia(1) hue-rotate(${getHueFromHex(settings.socialIconColor)}deg) saturate(10)`;
                 });
             }
 
@@ -1709,7 +1746,37 @@
                 });
             }
 
-            // Keep ev/ey discord avatar sync via existing discord user hooks
+            // Helper function to convert hex to rgb
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        // Helper function to get hue from hex
+        function getHueFromHex(hex) {
+            const rgb = hexToRgb(hex);
+            if (!rgb) return 0;
+            const r = rgb.r / 255;
+            const g = rgb.g / 255;
+            const b = rgb.b / 255;
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h;
+            if (max === min) {
+                h = 0;
+            } else if (max === r) {
+                h = ((g - b) / (max - min)) % 6;
+            } else if (max === g) {
+                h = (b - r) / (max - min) + 2;
+            } else {
+                h = (r - g) / (max - min) + 4;
+            }
+            h *= 60;
+            return h < 0 ? h + 360 : h;
         }
 
         loadSettings();
@@ -1717,7 +1784,8 @@
         // Admin check
         if (localStorage.getItem('adminToken')) {
             // Add edit button
-            const editBtn = document.createElement('button');
+            const editBtn = document.createElement('a');
+            editBtn.href = '/customize';
             editBtn.textContent = '✏️ Edit Page';
             editBtn.style.position = 'fixed';
             editBtn.style.top = '10px';
@@ -1730,15 +1798,7 @@
             editBtn.style.borderRadius = '8px';
             editBtn.style.cursor = 'pointer';
             editBtn.style.fontFamily = 'Satoshi, sans-serif';
-            editBtn.addEventListener('click', () => {
-                if (isEditMode) {
-                    disableEditMode();
-                    editBtn.textContent = '✏️ Edit Page';
-                } else {
-                    enableEditMode();
-                    editBtn.textContent = '💾 Save Changes';
-                }
-            });
+            editBtn.style.textDecoration = 'none';
             document.body.appendChild(editBtn);
         }
     </script>
