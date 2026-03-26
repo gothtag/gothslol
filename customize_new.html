@@ -601,10 +601,10 @@
         <!-- Profile Section -->
         <div class="profile-section" id="profileSection">
             <div class="profile-info">
-                <img src="https://wallpapers-clan.com/wp-content/uploads/2022/12/sanrio-pfp-7.jpg" alt="Admin Avatar" class="profile-avatar">
+                <img src="https://wallpapers-clan.com/wp-content/uploads/2022/12/sanrio-pfp-7.jpg" alt="Admin Avatar" class="profile-avatar" id="profileAvatar">
                 <div class="profile-details">
-                    <div class="profile-name">ev & ey</div>
-                    <div class="profile-uid">UID 1</div>
+                    <div class="profile-name" id="profileName">ev & ey</div>
+                    <div class="profile-uid" id="profileUid">UID 1</div>
                 </div>
             </div>
             <div class="profile-menu-wrapper">
@@ -791,8 +791,23 @@
 
                 <h2>🔗 Réseaux sociaux</h2>
                 <div class="form-group">
+                    <label>Texte "SOCIALS"</label>
+                    <input type="text" id="socialsText" placeholder="SOCIALS" value="SOCIALS">
+                </div>
+
+                <div class="form-group">
+                    <label>Couleur du texte</label>
+                    <input type="color" id="textColor" value="#ffffff">
+                </div>
+
+                <div class="form-group">
+                    <label>Couleur des icônes</label>
+                    <input type="color" id="iconColor" value="#ffffff">
+                </div>
+
+                <div class="form-group">
                     <label>Smash/socials JSON</label>
-                    <textarea id="socialsJson" rows="4" placeholder='[{"social":"x","value":"https://x.com/moncompte"}]'></textarea>
+                    <textarea id="socialsJson" rows="4" placeholder='[{"name":"Discord","url":"https://discord.gg/...","icon":"fab fa-discord"}]'></textarea>
                 </div>
 
                 <div class="button-group">
@@ -817,6 +832,7 @@
                         <strong id="previewTitle">Chargement...</strong>
                         <span id="previewDescription"></span>
                         <div id="previewProfileRow" style="display:flex;gap:10px;align-items:center;"></div>
+                        <div id="previewSocialsTitle" style="font-weight:bold; margin-top:6px; margin-bottom:4px;">SOCIALS</div>
                         <div id="previewSocialsList" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
                     </div>
                 </div>
@@ -863,12 +879,34 @@
                 accentColor: document.getElementById('accentColor').value,
                 bgOpacity: document.getElementById('bgOpacity').value,
                 volume: document.getElementById('volume').value,
+                socialsText: document.getElementById('socialsText').value,
+                textColor: document.getElementById('textColor').value,
+                iconColor: document.getElementById('iconColor').value,
                 socials: document.getElementById('socialsJson').value ? JSON.parse(document.getElementById('socialsJson').value) : []
             };
 
             localStorage.setItem('pageSettings', JSON.stringify(settings));
+            saveServerSettings(settings);
             renderPreview();
             alert('✅ Paramètres sauvegardés!');
+        }
+
+        // Save settings to server
+        async function saveServerSettings(settings) {
+            try {
+                const response = await fetch('/.netlify/functions/save-settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(settings)
+                });
+                if (response.ok) {
+                    console.log('Settings saved to server');
+                } else {
+                    console.error('Failed to save settings');
+                }
+            } catch (e) {
+                console.error('Error saving to server:', e);
+            }
         }
 
         function loadSettings() {
@@ -894,6 +932,10 @@
 
                 document.getElementById('bgOpacity').value = settings.bgOpacity || DEFAULT_SETTINGS.bgOpacity;
                 document.getElementById('volume').value = settings.volume || DEFAULT_SETTINGS.volume;
+
+                document.getElementById('socialsText').value = settings.socialsText || 'SOCIALS';
+                document.getElementById('textColor').value = settings.textColor || '#ffffff';
+                document.getElementById('iconColor').value = settings.iconColor || '#ffffff';
 
                 const socials = settings.socials || [];
                 document.getElementById('socialsJson').value = JSON.stringify(socials, null, 2);
@@ -933,19 +975,40 @@
         function renderSocialsPreview(socials = []) {
             const container = document.getElementById('socialsPreview');
             container.innerHTML = '';
+            const textColor = document.getElementById('textColor').value || '#ffffff';
+            const iconColor = document.getElementById('iconColor').value || '#ffffff';
+
             socials.forEach(link => {
                 const a = document.createElement('a');
-                a.href = link.value || '#';
-                a.textContent = link.social ? `${link.social} →` : link.value;
+                a.href = link.url || link.value || '#';
                 a.target = '_blank';
                 a.rel = 'noopener noreferrer';
-                a.style.color = document.getElementById('accentColor').value;
+                a.style.display = 'inline-flex';
+                a.style.alignItems = 'center';
+                a.style.gap = '6px';
+                a.style.color = textColor;
                 a.style.background = 'rgba(255,255,255,0.08)';
                 a.style.border = '1px solid #444';
                 a.style.borderRadius = '8px';
                 a.style.padding = '6px 10px';
-                a.style.display = 'inline-block';
                 a.style.margin = '2px';
+
+                if (link.icon) {
+                    const iconEl = document.createElement('img');
+                    iconEl.src = link.icon;
+                    iconEl.alt = link.name || link.social || '';
+                    iconEl.style.width = '16px';
+                    iconEl.style.height = '16px';
+                    iconEl.style.filter = 'brightness(0) invert(1)';
+                    iconEl.style.objectFit = 'contain';
+                    a.appendChild(iconEl);
+                }
+
+                const label = document.createElement('span');
+                label.textContent = link.name || link.social || link.value || link.url || 'Social';
+                label.style.color = textColor;
+                a.appendChild(label);
+
                 container.appendChild(a);
             });
         }
@@ -972,15 +1035,45 @@
                 catch { return [] }
             })();
 
+            const socialLabel = document.getElementById('previewSocialsTitle');
+            const socialsText = document.getElementById('socialsText').value || 'SOCIALS';
+            const textColor = document.getElementById('textColor').value || '#ffffff';
+            const iconColor = document.getElementById('iconColor').value || '#ffffff';
+
+            socialLabel.textContent = socialsText;
+            socialLabel.style.color = textColor;
+
+            document.getElementById('profileName').textContent = pseudo || 'ev & ey';
+            document.getElementById('profileUid').textContent = uid ? `UID ${uid}` : 'UID 1';
+
             const socialsList = document.getElementById('previewSocialsList');
             socialsList.innerHTML = '';
             socials.forEach(s => {
                 const chip = document.createElement('span');
-                chip.textContent = s.social ? `${s.social}` : s.value;
+                chip.style.display = 'inline-flex';
+                chip.style.alignItems = 'center';
+                chip.style.gap = '6px';
                 chip.style.background = document.getElementById('secondaryColor').value;
-                chip.style.color = document.getElementById('primaryColor').value;
+                chip.style.color = textColor;
                 chip.style.padding = '4px 10px';
                 chip.style.borderRadius = '999px';
+
+                if (s.icon) {
+                    const icon = document.createElement('img');
+                    icon.src = s.icon;
+                    icon.alt = s.name || s.social || '';
+                    icon.style.width = '14px';
+                    icon.style.height = '14px';
+                    icon.style.objectFit = 'contain';
+                    icon.style.filter = 'brightness(0) invert(1)';
+                    chip.appendChild(icon);
+                }
+
+                const label = document.createElement('span');
+                label.textContent = s.name || s.social || s.value || s.url || '';
+                label.style.color = textColor;
+                chip.appendChild(label);
+
                 socialsList.appendChild(chip);
             });
 
@@ -1078,8 +1171,58 @@
             });
         });
 
+        async function loadServerSettings() {
+            try {
+                const response = await fetch('/.netlify/functions/get-settings');
+                const settings = await response.json();
+                applyServerSettings(settings);
+            } catch (e) {
+                console.log('No server settings loaded:', e);
+            }
+        }
+
+        function applyServerSettings(settings) {
+            if (!settings || typeof settings !== 'object') return;
+
+            if (settings.uid) document.getElementById('uid').value = settings.uid;
+            if (settings.pseudo) document.getElementById('pseudo').value = settings.pseudo;
+            if (settings.ev) document.getElementById('ev').value = settings.ev;
+            if (settings.ey) document.getElementById('ey').value = settings.ey;
+            if (settings.username) document.getElementById('username').value = settings.username;
+            if (settings.description) document.getElementById('description').value = settings.description;
+            if (settings.title) document.getElementById('title').value = settings.title;
+
+            if (Array.isArray(settings.profiles)) {
+                const evProfile = settings.profiles.find(p => p.name === 'ev');
+                const eyProfile = settings.profiles.find(p => p.name === 'ey');
+                if (evProfile) {
+                    document.getElementById('ev').value = evProfile.url || document.getElementById('ev').value;
+                    if (evProfile.avatar) document.getElementById('profileAvatar').src = evProfile.avatar;
+                }
+                if (eyProfile) {
+                    document.getElementById('ey').value = eyProfile.url || document.getElementById('ey').value;
+                }
+            }
+
+            if (Array.isArray(settings.socialLinks)) {
+                document.getElementById('socialsJson').value = JSON.stringify(settings.socialLinks, null, 2);
+                renderSocialsPreview(settings.socialLinks);
+            }
+
+            if (settings.socialsText) document.getElementById('socialsText').value = settings.socialsText;
+            if (settings.textColor) document.getElementById('textColor').value = settings.textColor;
+            if (settings.iconColor) document.getElementById('iconColor').value = settings.iconColor;
+
+            if (settings.primaryColor) document.getElementById('primaryColor').value = settings.primaryColor;
+            if (settings.secondaryColor) document.getElementById('secondaryColor').value = settings.secondaryColor;
+            if (settings.accentColor) document.getElementById('accentColor').value = settings.accentColor;
+
+            updatePreview();
+        }
+
         // Load settings on page load
         loadSettings();
+        loadServerSettings();
     </script>
 </body>
 </html>
