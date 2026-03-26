@@ -1235,8 +1235,8 @@
                     <div class="preview-gradient-layer"></div>
                     <div class="preview-content-container">
                         <div class="preview-logo" id="previewSiteName">goths<span>.</span>lol</div>
-                        <div class="preview-content-frame">
-                            <div class="preview-links" id="previewProfiles">
+                        <div class="preview-content-frame" id="previewFrame">
+                            <div class="links" id="previewProfiles">
                                 <!-- Profiles will be populated dynamically -->
                             </div>
                             <div class="preview-corner-badges" id="previewSocialLinks">
@@ -1252,7 +1252,7 @@
             <div class="form-group">
                 <div class="file-preview-container" id="bgPreviewContainer" onclick="document.getElementById('bgFile').click()">
                     <div class="file-preview-placeholder" id="bgPlaceholder">
-                        <span>.MP4 / .GIF / .JPG / .PNG</span>
+                        <span id="bgFileText">.MP4 / .GIF / .JPG / .PNG</span>
                         <span class="remove-btn" onclick="event.stopPropagation(); clearBackground()">×</span>
                     </div>
                     <video id="bgPreviewVideo" class="file-preview-media" style="display: none;"></video>
@@ -1546,15 +1546,28 @@
             }
 
             profilesContainer.innerHTML = profiles.map(profile => `
-                <div class="preview-profile-card">
-                    <div class="preview-avatar-container">
-                        <div class="preview-avatar">
-                            ${profile.avatar ? `<img src="${profile.avatar}" alt="${profile.name}">` : `<div class="preview-avatar placeholder">${profile.name.charAt(0).toUpperCase()}</div>`}
+                <a href="${profile.url || '#'}" class="profile-card">
+                    <div class="avatar-container">
+                        <div class="avatar-gradient-ring"></div>
+                        <div class="avatar-decoration" data-discord-slot="${profile.name}" style="display: none;">
+                            <img src="" alt="" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
+                        </div>
+                        <div class="avatar">
+                            <img src="${profile.avatar || 'attached_assets/default-avatar.png'}" alt="@${profile.name}" data-discord-slot="${profile.name}" data-fallback-src="${profile.avatar || 'attached_assets/default-avatar.png'}" loading="eager" decoding="sync" fetchpriority="high" referrerpolicy="no-referrer">
+                            <div class="avatar-overlay">
+                                <span>➜]</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="preview-profile-name">${profile.name}</div>
-                    <div class="preview-profile-role">${profile.role || 'profile'}</div>
-                </div>
+                    <div class="profile-name">
+                        ${profile.name}
+                        <span class="clan-badge" data-discord-slot="${profile.name}" style="display: none;">
+                            <img class="clan-badge-img" src="" alt="">
+                            <span class="clan-tag"></span>
+                        </span>
+                    </div>
+                    <div class="profile-role">${profile.role || 'socials'}</div>
+                </a>
             `).join('');
         }
 
@@ -1601,10 +1614,11 @@
             const cursorFileInput = document.getElementById('cursorFile');
 
             const settings = {
-                bgUrl: document.getElementById('bgUrl').value,
                 bgOpacity: document.getElementById('bgOpacity').value,
+                frameColor: document.getElementById('frameColor').value,
                 cursorUrl: document.getElementById('cursorUrl').value,
-                // File data
+                // File data - use bgFileData as bgUrl if available
+                bgUrl: bgFileInput.dataset.fileData || '',
                 bgFileData: bgFileInput.dataset.fileData || null,
                 bgFileName: bgFileInput.dataset.fileName || null,
                 bgFileType: bgFileInput.files[0]?.type || null,
@@ -1717,6 +1731,9 @@
             videoEl.src = '';
             imgEl.src = '';
             info.textContent = '';
+
+            // Reset placeholder text
+            document.getElementById('bgFileText').textContent = '.MP4 / .GIF / .JPG / .PNG';
 
             // Clear file data
             fileInput.value = '';
@@ -1883,7 +1900,8 @@
         }
 
         // Event listeners
-        document.getElementById('bgUrl').addEventListener('input', updatePreview);
+        document.getElementById('bgOpacity').addEventListener('input', updatePreview);
+        document.getElementById('frameColor').addEventListener('input', updatePreview);
         document.getElementById('bgOpacity').addEventListener('input', updatePreview);
         document.getElementById('bgFile').addEventListener('change', updatePreview);
 
@@ -2025,6 +2043,11 @@
             preview.innerHTML = '';
             preview.style.display = 'block';
             info.textContent = `Fichier: ${fileName}`;
+
+            // Update placeholder text if it's bg
+            if (previewId === 'bgPreview') {
+                document.getElementById('bgFileText').textContent = fileName;
+            }
 
             if (fileType.startsWith('image/')) {
                 const img = document.createElement('img');
